@@ -85,4 +85,4 @@ Fallos de carga (si los hubo):
 - No separa espera en cola de tiempo de transcodificacion ni registra CPU/memoria de las VMs de la aplicacion (eso lo hace la prueba completa con `correr_nivel.sh` y los monitores).
 - "Riesgo estimado de corte" = segmento que llego despues del momento en que el reproductor lo habria necesitado; es una estimacion, no una medicion de un reproductor real (no se mide tiempo hasta el primer cuadro).
 
-Datos crudos: `capacity-planning/escenario2/resultados/minima_20260928-0254` (resumen JSON, consola y reporte HTML de k6 por nivel).
+Datos crudos: `capacity-planning/escenario2/resultados/entrega2_minima_20260928-0254` (resumen JSON, consola y reporte HTML de k6 por nivel).

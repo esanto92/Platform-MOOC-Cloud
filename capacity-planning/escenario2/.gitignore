@@ -5,9 +5,3 @@ media/*
 
 # seed.json contiene tokens de sesion: es un secreto, nunca se sube.
 datos/
-
-# Binarios compilados por construir_herramientas.sh
-bin/
-
-# Registros de los monitores (el contenido util ya queda en los CSV)
-resultados/**/monitor_*.log

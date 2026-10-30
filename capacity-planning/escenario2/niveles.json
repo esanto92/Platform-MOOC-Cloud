@@ -1,5 +1,5 @@
 {
-  "_leeme": "Configuracion de los niveles de carga del Escenario 2. k6 lee este archivo (NIVEL=<nombre>). Mantener FIJO entre corridas que se comparan; cualquier cambio es una configuracion diferente y se reporta aparte.",
+  "_leeme": "Niveles de la prueba minima del Escenario 2. Son los MISMOS con los que se midio la Entrega 2 (resultados/entrega2_minima_20260928-0254): no cambiarlos, o la comparacion con la Entrega 3 deja de ser valida. k6 lee este archivo (NIVEL=<nombre>).",
 
   "comun": {
     "patron_perfiles": ["P1", "P2", "A1", "P1", "P3", "P2", "P1", "A1", "P2", "P1"],
@@ -9,57 +9,33 @@
     "segmentos_por_sesion": 20,
     "prebuffer_segmentos": 3,
     "pausa_entre_videos_s": 5,
-    "_consumo": "Cada espectador: pide el master .m3u8, elige una rendicion (rotando por usuario virtual), pre-carga 3 segmentos y luego pide cada segmento al ritmo de reproduccion (EXTINF) manteniendo 3 segmentos de ventaja. Ve hasta 20 segmentos (~2.8 min), pausa 5 s y pasa al siguiente contenido."
+    "_consumo": "Cada espectador: pide el master .m3u8, elige una rendicion (rotando por usuario virtual), pre-carga 3 segmentos y luego pide cada segmento al ritmo de reproduccion (EXTINF) manteniendo 3 segmentos de ventaja. Ve hasta 20 segmentos, pausa 5 s y pasa al siguiente contenido."
   },
 
   "niveles": {
-    "humo": {
-      "descripcion": "Solo para validar que los scripts funcionan (local). No se reporta.",
-      "calentamiento": "20s",
-      "duracion": "2m",
+    "L1": {
+      "descripcion": "Linea base con baja carga.",
+      "calentamiento": "30s",
+      "duracion": "3m",
       "cargas_por_min": 1,
-      "espectadores": 2,
+      "espectadores": 10,
       "drenaje_max": "15m"
     },
-    "base": {
-      "descripcion": "Linea base con baja carga.",
-      "calentamiento": "1m",
-      "duracion": "10m",
-      "cargas_por_min": 0.5,
-      "espectadores": 5,
-      "drenaje_max": "30m"
-    },
-    "n1": {
-      "descripcion": "Nivel 1: actividad prevista.",
-      "calentamiento": "1m",
-      "duracion": "10m",
-      "cargas_por_min": 1,
-      "espectadores": 25,
-      "drenaje_max": "30m"
-    },
-    "n2": {
-      "descripcion": "Nivel 2: el doble; cerca de la capacidad estimada del worker (2 vCPU, concurrencia 4).",
-      "calentamiento": "1m",
-      "duracion": "10m",
+    "L2": {
+      "descripcion": "El doble de L1.",
+      "calentamiento": "30s",
+      "duracion": "3m",
       "cargas_por_min": 2,
-      "espectadores": 50,
-      "drenaje_max": "40m"
+      "espectadores": 20,
+      "drenaje_max": "15m"
     },
-    "n3": {
-      "descripcion": "Nivel 3: por encima de la capacidad estimada; se espera que la cola crezca.",
-      "calentamiento": "1m",
-      "duracion": "10m",
-      "cargas_por_min": 3,
-      "espectadores": 100,
-      "drenaje_max": "60m"
-    },
-    "estres": {
-      "descripcion": "Aproximacion controlada al estres: buscar el punto de saturacion.",
-      "calentamiento": "1m",
-      "duracion": "10m",
-      "cargas_por_min": 5,
-      "espectadores": 150,
-      "drenaje_max": "90m"
+    "L3": {
+      "descripcion": "El cuadruple de L1: en la Entrega 2 la cola ya crecia (complete -> ready p95 de 770 s).",
+      "calentamiento": "30s",
+      "duracion": "3m",
+      "cargas_por_min": 4,
+      "espectadores": 40,
+      "drenaje_max": "15m"
     }
   }
 }

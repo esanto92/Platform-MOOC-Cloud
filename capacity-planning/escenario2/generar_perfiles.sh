@@ -16,66 +16,34 @@
 # SHA-256, partes de la carga multipart y rendiciones esperadas).
 # El script de k6 y el de preparacion leen ese perfiles.json.
 #
-# Uso (desde la raiz del repo, en WSL):
-#   ./capacity-planning/escenario2/generar_perfiles.sh "C:\Users\kevin\Pictures\fotos bonitas tatacoa\Cantos bajo la Luna.mp4"
+# Uso (desde la raiz del repo, en la VM de pruebas):
+#   ./capacity-planning/escenario2/generar_perfiles.sh ~/original_1080p.mp4
 #
-# Requiere ffmpeg/ffprobe. Si no los tienes en WSL, el script usa los que
-# vienen dentro de la imagen del worker (docker compose build worker).
-# Requiere jq y sha256sum.
+# Solo hace falta si media/ no tiene los 4 archivos. Para comparar con la
+# Entrega 2 conviene reutilizar los archivos de entonces: si el SHA-256 de un
+# archivo regenerado no coincide con perfiles.json (otra version de ffmpeg
+# codifica distinto P1 y P2), declararlo en el informe.
+#
+# Requiere ffmpeg/ffprobe (sudo apt-get install -y ffmpeg), jq y sha256sum.
 # =====================================================================
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT="$DIR/media"
-DEFAULT_VIDEO='C:\Users\kevin\Pictures\fotos bonitas tatacoa\Cantos bajo la Luna.mp4'
-SRC="${1:-${VIDEO_PATH:-$DEFAULT_VIDEO}}"
-WORKER_IMAGE="${WORKER_IMAGE:-mooc-platform-worker}"
+SRC="${1:?Uso: $0 <video original 1080p>}"
 PART_SIZE=$((8 * 1024 * 1024))   # igual que minPartSize en internal/api/handlers_media.go
 
 say() { printf '\n\033[1;36m== %s\033[0m\n' "$1"; }
 
-# Convierte C:\... a /mnt/c/... cuando estamos en WSL (igual que los smoke tests).
-resolve_path() {
-  local p="$1"
-  if [[ "$p" == [A-Za-z]:\\* ]] && command -v wslpath >/dev/null 2>&1; then
-    wslpath -u "$p"
-  else
-    printf '%s' "$p"
-  fi
-}
-
-SRC="$(resolve_path "$SRC")"
-if [ ! -f "$SRC" ]; then
-  echo "No existe el archivo: $SRC" >&2
-  echo "(recuerda: en WSL2 tu disco C: esta en /mnt/c/...)" >&2
-  exit 1
-fi
+[ -f "$SRC" ] || { echo "No existe el archivo: $SRC" >&2; exit 1; }
+command -v ffmpeg >/dev/null && command -v ffprobe >/dev/null ||
+  { echo "Falta ffmpeg: sudo apt-get install -y ffmpeg" >&2; exit 1; }
 mkdir -p "$OUT"
 
-# ---------------------------------------------------------------------
-# ffmpeg / ffprobe: locales si existen; si no, los del contenedor worker.
-# En modo Docker se monta la carpeta del original como /in y media/ como /out.
-# ---------------------------------------------------------------------
-SRC_DIR="$(cd "$(dirname "$SRC")" && pwd)"
 SRC_NAME="$(basename "$SRC")"
-if command -v ffmpeg >/dev/null 2>&1 && command -v ffprobe >/dev/null 2>&1; then
-  MODE=local
-  IN="$SRC"; O="$OUT"
-  ff()  { ffmpeg -hide_banner -loglevel error -y "$@"; }
-  ffp() { ffprobe -v error "$@"; }
-else
-  MODE=docker
-  if ! docker image inspect "$WORKER_IMAGE" >/dev/null 2>&1; then
-    echo "No encontre ffmpeg en WSL ni la imagen '$WORKER_IMAGE'." >&2
-    echo "Opciones: sudo apt install ffmpeg   o   docker compose build worker" >&2
-    exit 1
-  fi
-  IN="/in/$SRC_NAME"; O="/out"
-  DOCKER_RUN=(docker run --rm -u "$(id -u):$(id -g)" -v "$SRC_DIR:/in:ro" -v "$OUT:/out")
-  ff()  { "${DOCKER_RUN[@]}" --entrypoint ffmpeg "$WORKER_IMAGE" -hide_banner -loglevel error -y "$@"; }
-  ffp() { "${DOCKER_RUN[@]}" --entrypoint ffprobe "$WORKER_IMAGE" -v error "$@"; }
-fi
-echo "ffmpeg: modo $MODE"
+IN="$SRC"; O="$OUT"
+ff()  { ffmpeg -hide_banner -loglevel error -y "$@"; }
+ffp() { ffprobe -v error "$@"; }
 
 say "Original"
 ORIG_H=$(ffp -select_streams v:0 -show_entries stream=height -of csv=p=0 "$IN" | head -1)

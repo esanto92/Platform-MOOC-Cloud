@@ -22,8 +22,8 @@
 // (tokens, unidades, contenido HLS) en ../datos/seed.json (preparar_datos.sh)
 // y los archivos en ../media/ (generar_perfiles.sh).
 //
-// Uso tipico: ver correr_nivel.sh. Directo:
-//   NIVEL=humo k6 run capacity-planning/escenario2/k6/escenario2.js
+// Uso tipico: ver correr_minima.sh. Directo (desde la carpeta k6/):
+//   NIVEL=L1 k6 run escenario2.js
 // =====================================================================
 import http from 'k6/http';
 import { check, sleep } from 'k6';
@@ -33,12 +33,12 @@ import { open as abrirArchivo, SeekMode } from 'k6/experimental/fs';
 
 // ------------------------- Configuracion -------------------------
 const NIVELES = JSON.parse(open(__ENV.NIVELES || '../niveles.json'));
-const NIVEL_NOMBRE = __ENV.NIVEL || 'humo';
+const NIVEL_NOMBRE = __ENV.NIVEL || 'L1';
 const NIVEL = NIVELES.niveles[NIVEL_NOMBRE];
 if (!NIVEL) throw new Error(`Nivel desconocido: ${NIVEL_NOMBRE}`);
 const C = NIVELES.comun;
 
-// Permite ajustar un nivel sin editar el JSON (se registra en metadata.json).
+// Permite ajustar un nivel sin editar el JSON (correr_minima.sh lo registra en L<n>_params).
 const CARGAS_POR_MIN = Number(__ENV.CARGAS_POR_MIN || NIVEL.cargas_por_min);
 const ESPECTADORES = Number(__ENV.ESPECTADORES || NIVEL.espectadores);
 const DURACION = __ENV.DURACION || NIVEL.duracion;

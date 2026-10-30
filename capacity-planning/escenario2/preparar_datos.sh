@@ -18,12 +18,13 @@
 # OJO: seed.json contiene tokens de sesion (validos 24 h). No se versiona
 # (.gitignore) y si pasan mas de 24 h hay que volver a correr este script.
 #
-# Uso (desde la raiz del repo, con la plataforma arriba):
+# Uso (desde la raiz del repo, en la VM de pruebas):
+#   export API_URL=https://<ip-del-balanceador>.sslip.io
+#   export ADMIN_PASSWORD='<clave del admin>'   # nunca escribirla en el repo
 #   ./capacity-planning/escenario2/preparar_datos.sh
-#   API_URL=https://mi-dominio ./capacity-planning/escenario2/preparar_datos.sh   # en la nube
 #
 # Variables opcionales: PROFESORES (20), ESTUDIANTES (40), ADMIN_EMAIL,
-# ADMIN_PASSWORD, TIMEOUT_READY_S (1800).
+# TIMEOUT_READY_S (1800).
 # Requiere: curl, jq, dd. Antes: generar_perfiles.sh
 # =====================================================================
 set -euo pipefail
@@ -31,10 +32,11 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MEDIA="$DIR/media"
 DATOS="$DIR/datos"
-API_URL="${API_URL:-http://localhost:8080}"
+API_URL="${API_URL:?Falta API_URL (https://<ip-del-balanceador>.sslip.io)}"
+API_URL="${API_URL%/}"
 API="$API_URL/api/v1"
 ADMIN_EMAIL="${ADMIN_EMAIL:-admin@mooc.local}"
-ADMIN_PASSWORD="${ADMIN_PASSWORD:-Admin123!}"
+ADMIN_PASSWORD="${ADMIN_PASSWORD:?Falta ADMIN_PASSWORD (la del admin en la nube)}"
 PROFESORES="${PROFESORES:-20}"
 ESTUDIANTES="${ESTUDIANTES:-40}"
 TIMEOUT_READY_S="${TIMEOUT_READY_S:-1800}"

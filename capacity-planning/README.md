@@ -134,35 +134,22 @@ rechazos de negocio, 0 timeouts, quiz calificado y verificacion de
 idempotencia al 100%. Cuello de botella: CPU del Web Server (~98% en el nivel
 alto de 90 usuarios/s).
 
-### Escenario 2 - [`escenario2/resultados/`](escenario2/resultados/)
+### Escenario 2 - [`escenario2/`](escenario2/)
 
-Cada corrida vive en su propia carpeta (ver [`escenario2/README.md`](escenario2/README.md)
-seccion 1 para el formato general `<fecha>_<nivel>_<modo>`). La corrida
-`minima_20260928-0254` (prueba minima medida solo desde k6, sin monitores de
-CPU/cola en las VMs) tiene esta estructura:
+Prueba minima de tres niveles (L1/L2/L3 = 1/2/4 cargas de profesores por
+minuto y 10/20/40 espectadores HLS concurrentes), medida desde k6 en la VM de
+pruebas. Guia, definicion y como correrla: [`escenario2/README.md`](escenario2/README.md).
 
-```
-escenario2/resultados/
-  minima_20260928-0254.zip                    Copia comprimida de la corrida completa
-  minima_20260928-0254/
-    minima_20260928-0254/                     <- subcarpeta anidada (mismo nombre); los archivos estan AQUI, no en el nivel de arriba
-      L1_params                               Parametros de la corrida del nivel L1 (cargas/min, espectadores, etc.)
-      L1_consola.log                          Log de consola de k6 para L1
-      L1_salida.txt                           Salida completa de k6 (stdout) para L1
-      L1_resumen.json                         Resumen de k6 (--summary-export) para L1
-      L1_reporte_k6.html                      Reporte HTML de k6 para L1
-      L1_exit                                 Codigo de salida de k6 para L1
-      L2_...  L3_...                          Mismos seis archivos para los niveles L2 y L3
-      reporte.md                              Reporte consolidado (condiciones, perfiles, resultados por nivel y por perfil, umbrales, limitaciones) usado como base para pruebas_de_carga_entrega2.md seccion 2
-```
+| Corrida | Contenido |
+|---|---|
+| [`escenario2/resultados/entrega2_minima_20260928-0254/`](escenario2/resultados/entrega2_minima_20260928-0254/) | Linea base de la Entrega 2 (Web Server + Worker Server, 4 workers). Por nivel: `L<n>_params`, `L<n>_consola.log`, `L<n>_salida.txt`, `L<n>_resumen.json`, `L<n>_reporte_k6.html`, `L<n>_exit`; y `reporte.md` consolidado. |
+| `escenario2/resultados/entrega3_minima_<fecha>/` | La misma prueba sobre la arquitectura elastica (la deja `escenario2/correr_minima.sh`), con las mismas tablas mas instancias por grupo y ventanas de tiempo. |
 
-Resumen de `reporte.md`: API `https://136-114-53-21.sslip.io`, k6 v1.3.0,
-4 workers, niveles L1/L2/L3 (1/2/4 cargas por minuto de profesores y
-10/20/40 espectadores concurrentes). Todas las cargas terminaron `ready` y
-validadas, sin errores de control ni de transferencia, sin umbrales
-incumplidos y con riesgo estimado de corte de 0% en los tres niveles; datos
-crudos por nivel en los archivos `L*_resumen.json` / `L*_reporte_k6.html`
-listados arriba.
+Resumen de la linea base: todas las cargas terminaron `ready` y validadas,
+sin errores de control ni de transferencia, sin umbrales incumplidos y con
+riesgo estimado de corte de 0 % en los tres niveles; el tiempo de
+`complete -> ready` (p95) crecio de 97 s (L1) a 488 s (L2) y 770 s (L3):
+la cola de procesamiento es la que limita.
 
 ## Notas de fidelidad (para no invalidar la medicion)
 
