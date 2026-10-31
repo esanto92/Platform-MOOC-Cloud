@@ -27,8 +27,8 @@ Contenido:
 | Herramienta | SonarQube Cloud (sonarcloud.io), organizacion `esanto92`, proyecto `esanto92_Platform-MOOC-Cloud` |
 | Escaner | SonarScanner CLI 7.2.0.5079, via `SonarSource/sonarqube-scan-action@v6` |
 | Perfil de reglas | `Sonar way core` (perfil por defecto) para Go, TypeScript, CSS y YAML. Dockerfiles con las reglas por defecto de Docker |
-| Quality Gate | `Sonar way` (por defecto): condiciones sobre **codigo nuevo** (cobertura >= 80 %, duplicacion <= 3 %, ratings A, hotspots revisados) |
-| Umbrales de la entrega | Verificados aparte por el pipeline sobre **todo el codigo**: duplicacion <= 20 % y mantenibilidad C o mejor |
+| Umbrales de la entrega | Verificados por el pipeline sobre el **codigo total** (*Overall Code*): duplicacion <= 20 % y mantenibilidad C o mejor |
+| Quality Gate | `Sonar way` (por defecto). Es una barrera complementaria, no la medicion de la linea base: solo evalua las lineas cambiadas desde el 2026-10-25 (*New Code*) y exige, entre otras, 80 % de cobertura en ellas. Impide que entre codigo nuevo sin pruebas |
 | Pipeline | GitHub Actions, [`.github/workflows/calidad.yml`](../../.github/workflows/calidad.yml), en cada push a `main` y `entrega-3-infra` |
 | Configuracion del analisis | [`sonar-project.properties`](../../sonar-project.properties) |
 
@@ -101,6 +101,9 @@ inventario es:
 
 ## 2. Medicion inicial
 
+**Todos los valores de esta seccion corresponden al codigo total del
+proyecto (*Overall Code* en SonarQube), como exige el enunciado.**
+
 ### Diagnostico inicial (antes de corregir)
 
 Primer analisis completo del pipeline, sobre el codigo tal como estaba.
@@ -149,8 +152,8 @@ evidencia de que las correcciones cerraron sus hallazgos.
   reutilizables (`frontend/src/components/ui/`).
 - **El indicador mas debil es la cobertura (4,1 %).** No es un umbral de la
   entrega, pero limita la confianza en cualquier refactorizacion: es el
-  elemento DT-04 del inventario. El Quality Gate de codigo nuevo ya lo hace
-  visible: el primer intento de corregir `godre:S8239` fallo el gate por
+  elemento DT-04 del inventario. El Quality Gate ya lo hace visible en los
+  cambios: el primer intento de corregir `godre:S8239` fallo el gate por
   falta de cobertura en las lineas cambiadas, y se resolvio escribiendo la
   prueba (seccion 3).
 - **La seguridad en C** se debe a 4 consultas SQL armadas con `fmt.Sprintf`
@@ -291,8 +294,8 @@ Los responsables se identifican por su usuario de GitHub.
   criticas (progreso calculado por el servidor, clave del quiz, inmutabilidad
   de versiones) solo se validan con las pruebas de humo, que requieren el
   entorno completo. Refactorizar (DT-01) es riesgoso.
-- **Prioridad y justificacion:** P1. Bloquea otras correcciones y el gate de
-  codigo nuevo exige 80 %.
+- **Prioridad y justificacion:** P1. Bloquea otras correcciones, y el Quality
+  Gate exige 80 % de cobertura en cada linea cambiada.
 - **Tratamiento:** pruebas unitarias en este orden: `internal/progress`, la
   calificacion de quizzes (`gradeAttempt`), `internal/auth` y los handlers de
   autoria. Toda correccion nueva va con su prueba (lo exige el gate).
