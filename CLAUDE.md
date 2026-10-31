@@ -114,8 +114,11 @@ docs/entrega3/    guia-mig.md (arquitectura elastica, estado y pendientes) y
                   axe que corre en un contenedor (ejecutar.sh) y deja su
                   reporte en resultados/REPORTE.md
 .github/          workflows/calidad.yml: en cada push corre go test con
-                  cobertura y el analisis de SonarQube Cloud. Lo que se
-                  analiza lo define sonar-project.properties en la raiz
+                  cobertura y el analisis de SonarQube Cloud, verifica los
+                  umbrales de la Entrega 3 (duplicacion <= 20 %,
+                  mantenibilidad C o mejor) y publica el reporte JSON del
+                  commit como artefacto. Lo que se analiza lo define
+                  sonar-project.properties en la raiz
 docs/entrega1/testdata/
                   smoke.sh, otros smoke_*.sh (cada uno demuestra un
                   comportamiento concreto: un formato de archivo, un
