@@ -252,8 +252,10 @@ Cosas que estan asi a proposito y que no hay que "arreglar" sin hablarlo:
 - Los smoke tests no leen el token de verificacion de correo desde Mailpit;
   en produccion (`APP_ENV` distinto de `dev`) hay que leerlo a mano.
 - Pocas pruebas unitarias (`go test ./...`): `internal/queuemetrics`, la IP
-  del cliente detras del balanceador (`internal/api/proxies_test.go`) y los
-  trabajos interrumpidos (`internal/tasks/interrupted_test.go`). Las demas
+  del cliente detras del balanceador (`internal/api/proxies_test.go`), los
+  trabajos interrumpidos (`internal/tasks/interrupted_test.go`) y la
+  auditoria de la DLQ con el contexto del trabajo cancelado
+  (`internal/tasks/errorhandler_test.go`). Las demas
   pruebas automatizadas son la prueba de humo (`smoke*.sh`) y la auditoria de
   accesibilidad (`docs/entrega3/Prueba Accesibilidad/ejecutar.sh`). Faltan,
   segun la retroalimentacion de la Entrega 1, compatibilidad y recuperacion.
