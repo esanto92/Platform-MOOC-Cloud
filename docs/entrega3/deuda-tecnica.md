@@ -144,7 +144,7 @@ evidencia de que las correcciones cerraron sus hallazgos.
 - **0 min no significa cero deuda.** La estimación solo suma problemas de
   mantenibilidad. No incluye las vulnerabilidades: las 8 que siguen abiertas
   son de seguridad. Tampoco ve deuda de arquitectura, infraestructura,
-  pruebas u operación. El inventario de la sección 4 tiene 16 elementos y
+  pruebas u operación. El inventario de la sección 4 tiene 17 elementos y
   solo 3 vienen del analizador.
 - **La duplicación y la mantenibilidad holgadas** reflejan convenciones que el
   proyecto ya sigue: un archivo de handlers por dominio, errores de API con
@@ -209,6 +209,7 @@ Los responsables se identifican por su usuario de GitHub.
 | DT-14 | Seguridad | Antimalware de demostración (solo detecta EICAR) | Decisión documentada | P2 | @brehynnermraz | Aceptada temporalmente |
 | DT-15 | Código | Filtros resueltos en el BFF y constantes duplicadas | Revisión | P3 | @WhiteArctic | Aceptada |
 | DT-16 | Pipeline | Acciones de GitHub en Node 20 (obsoleto) | Advertencia de GitHub Actions | P1 | @esanto92 | Pendiente |
+| DT-17 | Código / confiabilidad | Carrera al crear intentos de quiz: 500 en lugar de 409 | Prueba de carga | P1 | @esanto92 | Pendiente |
 
 ### Detalle
 
@@ -536,6 +537,35 @@ Los responsables se identifican por su usuario de GitHub.
 - **Responsable y plazo:** @esanto92, Entrega 4.
 - **Estado:** pendiente.
 
+#### DT-17 - Carrera al crear intentos de quiz
+
+- **Categoría:** código / confiabilidad.
+- **Descripción y ubicación:** `POST /quizzes/{id}/attempts` cuenta los
+  intentos del estudiante y luego inserta `attempt_number = usados + 1`, sin
+  bloqueo entre las dos consultas. Dos peticiones simultáneas del mismo
+  estudiante calculan el mismo número y la segunda viola
+  `UNIQUE (quiz_id, user_id, attempt_number)`. Ubicación:
+  `internal/api/handlers_quiz_attempts.go:142-180`.
+- **Evidencia:** Escenario 1 de las pruebas de carga
+  ([`pruebas_de_carga_entrega3.md`](../../capacity-planning/pruebas_de_carga_entrega3.md),
+  sección 1.7): entre 1 016 y 1 066 respuestas 500 por corrida (1,4 %),
+  todas en `quiz_start`. La misma proporción aparece en la Entrega 2.
+- **Impacto:** confiabilidad. La integridad se conserva, porque la restricción
+  impide intentos duplicados. Pero el estudiante recibe un error de servidor
+  en lugar de su intento abierto o un 409, y los 500 inflan la tasa de
+  errores de las pruebas de capacidad.
+- **Prioridad y justificación:** P1. Afecta a usuarios reales con doble clic o
+  reintentos. No se corrigió en esta entrega para no cambiar la aplicación
+  entre las mediciones de la Entrega 2 y la 3.
+- **Tratamiento:** tratar la violación de unicidad (código `23505` de
+  PostgreSQL) devolviendo el intento abierto, o serializar la creación por
+  estudiante y quiz (`SELECT ... FOR UPDATE` o `pg_advisory_xact_lock`).
+  Agregar una prueba con dos peticiones concurrentes.
+  - **Verificación:** 0 respuestas 500 en `quiz_start` al repetir el
+    Escenario 1.
+- **Responsable y plazo:** @esanto92, Entrega 4.
+- **Estado:** pendiente.
+
 ---
 
 ## 5. Priorización y plan de tratamiento
@@ -548,7 +578,7 @@ de la corrección.
 | Plazo | Elementos | Motivo |
 |---|---|---|
 | Cierre de la Entrega 3 (P0) | DT-02, DT-09, DT-10, DT-13 | Contraseñas en documentación pública; reconstrucción reproducible obligatoria; costo de VMs sin uso |
-| Entrega 4 (P1) | DT-04, DT-05, DT-16, luego DT-08, DT-07, DT-11 | Primero las pruebas, que desbloquean refactorizaciones seguras; después los riesgos del escenario elástico |
+| Entrega 4 (P1) | DT-04, DT-05, DT-16, DT-17, luego DT-08, DT-07, DT-11 | Primero las pruebas, que desbloquean refactorizaciones seguras; después los riesgos del escenario elástico |
 | Entrega 5 (P2) | DT-01, DT-06, DT-12, DT-14 | Dependen de DT-04 o de cambios de infraestructura con costo |
 | Aceptadas (P3) | DT-03, DT-15 | Mitigadas o de bajo impacto; se revisan en cada entrega |
 
