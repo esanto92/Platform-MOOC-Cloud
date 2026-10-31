@@ -10,7 +10,8 @@ sustentación (enlazado desde el `README.md` raíz).
 | Dato | Valor |
 |---|---|
 | URL del frontend (HTTPS) | `https://34-149-212-102.sslip.io/` |
-| URL del balanceador de API (HTTPS) | `<COMPLETAR>` |
+| URL del balanceador de API (HTTPS) | `https://34-149-212-102.sslip.io/api/v1`: es el mismo balanceador; el URL map envía `/api/v1/*` al grupo `mooc-api` y el resto al frontend ([arquitectura, 4.4](../arquitectura.md#44-balanceador)) |
+| Versión desplegada del frontend | Imagen `mooc/web:61f22e4` (25-10-2026). **Es anterior a los últimos cambios del frontend.** Antes de la evidencia final se debe redesplegar desde el commit del tag ([arquitectura, 6.2](../arquitectura.md#62-desplegar-una-versión-nueva)) |
 | Commit / tag evaluado | tag `entrega-3` |
 | Base de datos | Cloud SQL PostgreSQL administrado |
 | Cuentas usadas | Profesor de prueba, estudiante de prueba (sin contraseñas en este documento) |
@@ -76,6 +77,54 @@ prefirmadas (la API nunca recibe el binario).
 | Procesamiento | Archivo en `scanning` / `processing` | "Preparando el archivo" / "Procesando…". **No se muestra como disponible**: el contenido solo se entrega con `asset_status = ready` (el backend responde 409 en otro caso) | ✅| `img/prof-10-procesando.png` |
 | Éxito | Quiz aprobado, publicación correcta | "¡Aprobado!", confirmación de publicación | ✅| `img/est-13-resultado.png` |
 | Error | Credenciales inválidas, publicación con problemas, archivo infectado | "Credenciales inválidas.", lista de problemas, "Archivo no disponible" | ✅| `img/est-error.png` |
+
+## 4.1 Autorización entre roles
+
+El enunciado exige verificar que un estudiante no pueda ejecutar acciones
+reservadas al profesor y que un profesor no pueda modificar cursos ajenos. La
+interfaz oculta esas acciones, pero la regla se aplica **en la API**:
+
+- el rol se exige con `requireRole("teacher", "admin")` en `internal/api/router.go`;
+- la propiedad se resuelve en el `WHERE` de cada consulta (`s.guard`).
+
+Por eso se verifica desde el navegador y también llamando directo a la API.
+
+| # | Caso | Desde el navegador | Esperado en la interfaz | Llamada directa a la API | Esperado en la API | Resultado | Evidencia |
+|---|---|---|---|---|---|---|---|
+| A1 | Estudiante abre la autoría | Con sesión de estudiante, ir a `/teach` o `/teach/new` | `requireTeacher` redirige a `/forbidden` (`frontend/src/lib/auth/guards.ts`) | `POST /api/v1/courses` con el token del estudiante | **403** "Tu rol no permite esta operacion." | PENDIENTE | `img/aut-01-estudiante-teach.png` |
+| A2 | Estudiante intenta editar o publicar | Ir a `/teach/<courseId>` de un curso existente | `/forbidden` | `PATCH /api/v1/courses/<id>` y `POST /api/v1/versions/<id>/publish` con el token del estudiante | **403** | PENDIENTE | `img/aut-02-estudiante-editar.png` |
+| A3 | Profesor B abre el curso del profesor A | Con sesión de B, ir a `/teach/<courseId de A>` | "No encontrado": la página llama a `notFound()` cuando la API responde 404 (`teach/[courseId]/page.tsx`) | `PATCH /api/v1/courses/<id de A>` con el token de B | **404** (restricción 8: lo ajeno responde 404, no 403) | PENDIENTE | `img/aut-03-profesor-ajeno.png` |
+| A4 | Profesor B modifica la estructura del curso de A | — | — | `POST /api/v1/versions/<versión de A>/modules` con el token de B | **404** | PENDIENTE | salida de `curl` |
+| A5 | Un estudiante consulta la inscripción de otro | — | — | `GET /api/v1/enrollments/<inscripción ajena>/outline` | **404** | ✅ en local (`smoke.sh`, paso 13) | `docs/entrega1/testdata/smoke.sh` |
+
+Para A1 a A4 contra el entorno cloud, los tokens se obtienen con
+`POST /api/v1/auth/login` y **no se pegan en la evidencia**:
+
+```bash
+API=https://34-149-212-102.sslip.io/api/v1
+curl -s -o /dev/null -w "%{http_code}\n" -X PATCH "$API/courses/$CURSO_A" \
+  -H "Authorization: Bearer $TOKEN_PROFESOR_B" -H 'Content-Type: application/json' \
+  -d '{"title":"intento ajeno"}'          # esperado: 404
+```
+
+## 4.2 Recorrido conectado
+
+Debe demostrarse sobre un **mismo curso**, en el entorno cloud y en este
+orden:
+
+1. El profesor crea el curso (P4 a P8).
+2. Sube un video y espera a que esté procesado (P9 y P10).
+3. Crea el quiz (P11) y publica (P12).
+4. El estudiante encuentra el curso en el catálogo (E3 y E4) y se inscribe
+   (E5).
+5. Reproduce el video (E8), registra progreso (E11) y presenta el quiz (E12 y
+   E13).
+
+En las capturas y en el video conviene que se vean el título del curso y la
+URL del entorno. Si las capturas de las secciones 2 y 3 se tomaron sobre
+cursos distintos, o sobre una versión del frontend distinta de la
+desplegada, hay que repetir el recorrido sobre un solo curso después del
+redespliegue.
 
 ## 5. Evidencia complementaria
 
