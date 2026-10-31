@@ -37,13 +37,17 @@ export function CardHeader({
 
 export function CardTitle({
   className,
+  children,
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
+  // children explicito: un titulo vacio no tiene nombre accesible
   return (
     <h3
       className={cn("text-xl font-semibold tracking-tight", className)}
       {...props}
-    />
+    >
+      {children}
+    </h3>
   );
 }
 

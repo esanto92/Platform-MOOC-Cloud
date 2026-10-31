@@ -36,16 +36,23 @@ Select.displayName = "Select";
 
 export function Label({
   className,
+  htmlFor,
+  children,
   ...props
 }: React.LabelHTMLAttributes<HTMLLabelElement>) {
+  // htmlFor y children explicitos: la etiqueta debe apuntar a su control y
+  // tener texto (ver Field, que siempre los pasa)
   return (
     <label
+      htmlFor={htmlFor}
       className={cn(
         "mb-1.5 block text-sm font-medium text-[var(--color-text)]",
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </label>
   );
 }
 
