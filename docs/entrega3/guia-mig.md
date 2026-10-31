@@ -423,8 +423,8 @@ Infraestructura y codigo:
 
 Calidad:
 
-- [ ] Analisis de calidad con SonarQube (lo implementa el equipo).
-- [ ] `docs/entrega3/deuda-tecnica.md`.
+- [x] Analisis de calidad con SonarQube: pipeline `calidad.yml` con umbrales y reporte por commit.
+- [x] [`deuda-tecnica.md`](deuda-tecnica.md). Falta llenar la linea base con el commit final (seccion 6).
 
 Documentacion y pruebas (entregables del enunciado):
 
