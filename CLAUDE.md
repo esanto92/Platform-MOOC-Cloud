@@ -114,8 +114,11 @@ docs/entrega3/    guia-mig.md (arquitectura elastica, estado y pendientes) y
                   axe que corre en un contenedor (ejecutar.sh) y deja su
                   reporte en resultados/REPORTE.md
 .github/          workflows/calidad.yml: en cada push corre go test con
-                  cobertura y el analisis de SonarQube Cloud. Lo que se
-                  analiza lo define sonar-project.properties en la raiz
+                  cobertura y el analisis de SonarQube Cloud, verifica los
+                  umbrales de la Entrega 3 (duplicacion <= 20 %,
+                  mantenibilidad C o mejor) y publica el reporte JSON del
+                  commit como artefacto. Lo que se analiza lo define
+                  sonar-project.properties en la raiz
 docs/entrega1/testdata/
                   smoke.sh, otros smoke_*.sh (cada uno demuestra un
                   comportamiento concreto: un formato de archivo, un
@@ -249,8 +252,10 @@ Cosas que estan asi a proposito y que no hay que "arreglar" sin hablarlo:
 - Los smoke tests no leen el token de verificacion de correo desde Mailpit;
   en produccion (`APP_ENV` distinto de `dev`) hay que leerlo a mano.
 - Pocas pruebas unitarias (`go test ./...`): `internal/queuemetrics`, la IP
-  del cliente detras del balanceador (`internal/api/proxies_test.go`) y los
-  trabajos interrumpidos (`internal/tasks/interrupted_test.go`). Las demas
+  del cliente detras del balanceador (`internal/api/proxies_test.go`), los
+  trabajos interrumpidos (`internal/tasks/interrupted_test.go`) y la
+  auditoria de la DLQ con el contexto del trabajo cancelado
+  (`internal/tasks/errorhandler_test.go`). Las demas
   pruebas automatizadas son la prueba de humo (`smoke*.sh`) y la auditoria de
   accesibilidad (`docs/entrega3/Prueba Accesibilidad/ejecutar.sh`). Faltan,
   segun la retroalimentacion de la Entrega 1, compatibilidad y recuperacion.

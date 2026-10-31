@@ -1,0 +1,582 @@
+{
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 635813.614299
+  },
+  "metrics": {
+    "http_req_blocked": {
+      "contains": "time",
+      "values": {
+        "max": 152.714243,
+        "avg": 0.5314785055287107,
+        "min": 0.00014,
+        "med": 0.0008,
+        "p(90)": 0.0011,
+        "p(95)": 0.0012,
+        "p(99)": 0.00171
+      },
+      "type": "trend"
+    },
+    "rechazos_negocio": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 2179,
+        "rate": 3.427104973841116
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 113.64808550013089,
+        "count": 72259
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "rate": 26135.9817189843,
+        "count": 16617613
+      }
+    },
+    "http_req_failed": {
+      "contains": "default",
+      "values": {
+        "rate": 0.04421594541856378,
+        "passes": 3195,
+        "fails": 69064
+      },
+      "type": "rate"
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 12559.281934,
+        "avg": 1195.2532981158377,
+        "min": 87.776681,
+        "med": 520.476545,
+        "p(90)": 3532.829417000001,
+        "p(95)": 4723.7571448,
+        "p(99)": 6725.522007639998
+      }
+    },
+    "http_req_tls_handshaking": {
+      "contains": "time",
+      "values": {
+        "avg": 0.27882371294925196,
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0,
+        "p(99)": 0,
+        "max": 86.76272
+      },
+      "type": "trend"
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 14272.82081835364,
+        "min": 473.561553,
+        "med": 14109.030998,
+        "p(90)": 23750.3221192,
+        "p(95)": 25809.468568799995,
+        "p(99)": 29579.127455460002,
+        "max": 40372.577182
+      }
+    },
+    "idempotencia_sin_doble_calificacion": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_duration{scenario:academica}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0,
+        "p(99)": 0,
+        "max": 0,
+        "avg": 0
+      },
+      "thresholds": {
+        "p(95)<800": {
+          "ok": true
+        },
+        "p(99)<2000": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 3.055312099999999,
+        "p(99)": 3.4871369999999997,
+        "max": 29.375638,
+        "avg": 1.1132536662837933,
+        "min": 0.02069,
+        "med": 1.400204,
+        "p(90)": 2.8794860000000013
+      }
+    },
+    "t_quiz_start": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 1048.0407859667723,
+        "min": 94.274862,
+        "med": 516.870457,
+        "p(90)": 2831.182976,
+        "p(95)": 3620.9337064,
+        "p(99)": 5190.364361120003,
+        "max": 8273.611325
+      }
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.13393562969318665,
+        "min": 0.02052,
+        "med": 0.128929,
+        "p(90)": 0.18851100000000004,
+        "p(95)": 0.214959,
+        "p(99)": 0.31999698,
+        "max": 6.78039
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 33402,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.98": {
+          "ok": true
+        }
+      }
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 9150,
+        "rate": 14.391009871797252
+      }
+    },
+    "quiz_calificado_correcto": {
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 5954,
+        "fails": 0
+      }
+    },
+    "t_catalog_detail": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 333.253844,
+        "p(90)": 1993.7397738000002,
+        "p(95)": 2582.6957514,
+        "p(99)": 3799.3119585600034,
+        "max": 6561.130948,
+        "avg": 736.0664865291293,
+        "min": 93.254021
+      }
+    },
+    "t_outline": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 1725.6079058065404,
+        "min": 105.622542,
+        "med": 788.042889,
+        "p(90)": 4858.504602800001,
+        "p(95)": 5951.800703400003,
+        "p(99)": 7777.592387840005,
+        "max": 11231.611944
+      }
+    },
+    "dropped_iterations": {
+      "contains": "default",
+      "values": {
+        "count": 18900,
+        "rate": 29.72569252207301
+      },
+      "type": "counter"
+    },
+    "group_duration": {
+      "contains": "time",
+      "values": {
+        "p(95)": 11896.398618599998,
+        "p(99)": 15888.840753340022,
+        "max": 24874.164031,
+        "avg": 3095.9938777508933,
+        "min": 108.724764,
+        "med": 1324.340148,
+        "p(90)": 9802.365310000003
+      },
+      "type": "trend"
+    },
+    "t_catalog_list": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 90.202969,
+        "med": 175.055946,
+        "p(90)": 602.3160218,
+        "p(95)": 910.2151868000003,
+        "p(99)": 1753.5978163600005,
+        "max": 7123.20536,
+        "avg": 293.41326539151737
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 128551219,
+        "rate": 202183.81001754868
+      }
+    },
+    "vus_max": {
+      "contains": "default",
+      "values": {
+        "value": 301,
+        "min": 51,
+        "max": 301
+      },
+      "type": "gauge"
+    },
+    "t_progreso_ms": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 9671.600000000002,
+        "p(95)": 11240.6,
+        "p(99)": 14022.640000000003,
+        "max": 19490,
+        "avg": 4433.465296753743,
+        "min": 317,
+        "med": 3092
+      }
+    },
+    "http_req_waiting": {
+      "values": {
+        "avg": 1174.098835725197,
+        "min": 85.385869,
+        "med": 504.389257,
+        "p(90)": 3507.844164400001,
+        "p(95)": 4691.470341499999,
+        "p(99)": 6698.318515019996,
+        "max": 12557.683171
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "vus": {
+      "values": {
+        "min": 0,
+        "max": 300,
+        "value": 12
+      },
+      "type": "gauge",
+      "contains": "default"
+    },
+    "errores_funcionales": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 1016,
+        "rate": 1.5979525715569407
+      },
+      "thresholds": {
+        "count<1": {
+          "ok": false
+        }
+      }
+    },
+    "t_quiz_submit": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 12559.281934,
+        "avg": 1176.2431695414984,
+        "min": 85.638238,
+        "med": 295.193377,
+        "p(90)": 4055.8328884,
+        "p(95)": 5452.629380399998,
+        "p(99)": 7514.377693920002
+      }
+    },
+    "t_progress_event": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 101.491587,
+        "med": 739.189499,
+        "p(90)": 4016.9427018000015,
+        "p(95)": 4989.087131599999,
+        "p(99)": 6698.840018200001,
+        "max": 10480.082074,
+        "avg": 1477.5595678950435
+      }
+    },
+    "http_req_connecting": {
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0,
+        "p(99)": 0,
+        "max": 72.65357,
+        "avg": 0.25103272509998764
+      },
+      "type": "trend"
+    },
+    "tasa_rate_limited": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 72176,
+        "rate": 0,
+        "passes": 0
+      }
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 85.638238,
+        "med": 505.46541,
+        "p(90)": 3509.0757696000005,
+        "p(95)": 4692.239364799998,
+        "p(99)": 6698.553688599995,
+        "max": 12559.281934,
+        "avg": 1175.346025021177
+      }
+    }
+  },
+  "setup_data": {
+    "consumibles": [
+      "45a32424-0c82-42b5-858d-1c570559140c",
+      "1ffd726e-b40f-4d0a-8f00-ea8734e06924",
+      "a3613844-2728-4153-87ad-75b623fc618f"
+    ],
+    "quizId": "8ba05dd6-2734-4204-94b6-e35f9650c307",
+    "slug": "curso-carga-e1-1793421386531",
+    "students": [
+      {
+        "enrollmentId": "3d1461c7-7751-4146-9291-c6ebf266b980",
+        "token": "<redactado>",
+        "email": "e2est1793421386531_0@mooc.local"
+      },
+      {
+        "token": "<redactado>",
+        "email": "e2est1793421386531_1@mooc.local",
+        "enrollmentId": "99c1a048-7b52-4812-91d3-3c0f30a42435"
+      },
+      {
+        "email": "e2est1793421386531_2@mooc.local",
+        "enrollmentId": "8446b771-9c65-42c9-ac04-25ded4a95123",
+        "token": "<redactado>"
+      },
+      {
+        "email": "e2est1793421386531_3@mooc.local",
+        "enrollmentId": "ef1929b9-96fb-4d65-b8fa-99175117bb78",
+        "token": "<redactado>"
+      },
+      {
+        "enrollmentId": "6812a922-4f32-4e87-a9e7-7b55e2d69781",
+        "token": "<redactado>",
+        "email": "e2est1793421386531_4@mooc.local"
+      },
+      {
+        "token": "<redactado>",
+        "email": "e2est1793421386531_5@mooc.local",
+        "enrollmentId": "484a7fea-b9dd-43b0-88c4-587a74f3bbb6"
+      },
+      {
+        "email": "e2est1793421386531_6@mooc.local",
+        "enrollmentId": "f8f47fc5-e548-46ab-ac28-776835c95f2d",
+        "token": "<redactado>"
+      },
+      {
+        "email": "e2est1793421386531_7@mooc.local",
+        "enrollmentId": "6dd06f0b-f7e8-4f3e-80bf-d66058af02ef",
+        "token": "<redactado>"
+      },
+      {
+        "email": "e2est1793421386531_8@mooc.local",
+        "enrollmentId": "c4dfbe9e-fb01-4fcf-bd4b-0bf81394c303",
+        "token": "<redactado>"
+      },
+      {
+        "token": "<redactado>",
+        "email": "e2est1793421386531_9@mooc.local",
+        "enrollmentId": "55325d00-87e6-4508-bd01-3b0028abf086"
+      },
+      {
+        "enrollmentId": "f1b136cb-fff2-4f0c-a0e8-ea2ed47d24b5",
+        "token": "<redactado>",
+        "email": "e2est1793421386531_10@mooc.local"
+      },
+      {
+        "email": "e2est1793421386531_11@mooc.local",
+        "enrollmentId": "262c8cbd-0921-4c61-80f6-05f6ade40bd3",
+        "token": "<redactado>"
+      },
+      {
+        "email": "e2est1793421386531_12@mooc.local",
+        "enrollmentId": "05a53768-d721-4a4e-930c-bbeee66b353a",
+        "token": "<redactado>"
+      },
+      {
+        "email": "e2est1793421386531_13@mooc.local",
+        "enrollmentId": "e82e4f68-c552-4f7a-8a1b-d627f2a58f1e",
+        "token": "<redactado>"
+      },
+      {
+        "email": "e2est1793421386531_14@mooc.local",
+        "enrollmentId": "a8ab70ba-a8df-404e-a73b-7aaee1dc2624",
+        "token": "<redactado>"
+      },
+      {
+        "token": "<redactado>",
+        "email": "e2est1793421386531_15@mooc.local",
+        "enrollmentId": "8b867287-f056-4871-908f-08820b3d6bd4"
+      },
+      {
+        "enrollmentId": "0200cdcc-e0dd-4e68-b417-4d09e10ad337",
+        "token": "<redactado>",
+        "email": "e2est1793421386531_16@mooc.local"
+      },
+      {
+        "email": "e2est1793421386531_17@mooc.local",
+        "enrollmentId": "89542bc8-87a5-44b8-9dd3-e9c16c85e624",
+        "token": "<redactado>"
+      },
+      {
+        "email": "e2est1793421386531_18@mooc.local",
+        "enrollmentId": "2f7cfd41-1a19-4d1f-a240-b92d8f10f68e",
+        "token": "<redactado>"
+      },
+      {
+        "token": "<redactado>",
+        "email": "e2est1793421386531_19@mooc.local",
+        "enrollmentId": "0bd4a601-36f6-4e30-8905-ff2b9a75641c"
+      }
+    ]
+  },
+  "root_group": {
+    "checks": [
+      {
+        "passes": 1,
+        "fails": 0,
+        "name": "duplicado no recalifica (respuesta identica)",
+        "path": "::duplicado no recalifica (respuesta identica)",
+        "id": "7055c1537a157ba58b76977c8a6ac716"
+      }
+    ],
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "name": "catalogo",
+        "path": "::catalogo",
+        "id": "b2dc2ee6e55b82e40a55b12419727d66",
+        "groups": [],
+        "checks": [
+          {
+            "name": "catalogo 200",
+            "path": "::catalogo::catalogo 200",
+            "id": "0ca58df53c935fa6a72a9b329ae5514f",
+            "passes": 9149,
+            "fails": 0
+          },
+          {
+            "path": "::catalogo::detalle 200",
+            "id": "24da926a23e9f549dc9fcfb876072290",
+            "passes": 9149,
+            "fails": 0,
+            "name": "detalle 200"
+          }
+        ]
+      },
+      {
+        "name": "contenido",
+        "path": "::contenido",
+        "id": "1b6cc47eac682d9a3e19fc19bb27efc1",
+        "groups": [],
+        "checks": [
+          {
+            "name": "outline 200",
+            "path": "::contenido::outline 200",
+            "id": "8b49d68551157d4bf749badc2c528e76",
+            "passes": 9149,
+            "fails": 0
+          }
+        ]
+      },
+      {
+        "id": "2946e99f499861c4c81ca3de1e2a56b7",
+        "groups": [],
+        "checks": [
+          {
+            "id": "6aa2b10f5b53df890b87945504750183",
+            "passes": 5954,
+            "fails": 0,
+            "name": "quiz calificado 100/aprobado",
+            "path": "::quiz::quiz calificado 100/aprobado"
+          }
+        ],
+        "name": "quiz",
+        "path": "::quiz"
+      }
+    ]
+  },
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "max"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  }
+}

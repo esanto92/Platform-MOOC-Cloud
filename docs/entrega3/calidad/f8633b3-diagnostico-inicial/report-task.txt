@@ -1,0 +1,6 @@
+organization=esanto92
+projectKey=esanto92_Platform-MOOC-Cloud
+serverUrl=https://sonarcloud.io
+dashboardUrl=https://sonarcloud.io/dashboard?id=esanto92_Platform-MOOC-Cloud&branch=main
+ceTaskId=AaGP3x26iZo3JtdS_Vz4
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AaGP3x26iZo3JtdS_Vz4

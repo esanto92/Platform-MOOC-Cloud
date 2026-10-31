@@ -32,6 +32,85 @@ jobs:
       #    Va en el MISMO job que go test para encontrar coverage.out.
       - name: Analisis SonarQube
         uses: SonarSource/sonarqube-scan-action@v6
+        # Sin esto el escaner termina apenas sube el analisis, y el paso 5
+        # leeria las metricas del analisis ANTERIOR
+        with:
+          args: -Dsonar.qualitygate.wait=true
         env:
           SONAR_HOST_URL: https://sonarcloud.io
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # 5. Exporta el resultado del analisis de ESTE commit a reporte/. Es la
+      #    evidencia de la linea base: el enunciado no acepta capturas, y el
+      #    tablero de SonarCloud solo muestra el ultimo analisis.
+      #    !cancelled(): se exporta aunque el Quality Gate haya fallado, que es
+      #    justo cuando mas interesa ver el reporte.
+      - name: Exportar reporte de SonarQube
+        if: ${{ !cancelled() }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mkdir -p reporte
+          base="https://sonarcloud.io/api"
+          proyecto="esanto92_Platform-MOOC-Cloud"
+          rama="branch=${GITHUB_REF_NAME}"
+          api() { curl -sf -u "$SONAR_TOKEN:" -o "reporte/$1" "$base/$2"; }
+
+          api medidas.json "measures/component?component=$proyecto&$rama&metricKeys=duplicated_lines_density,sqale_rating,sqale_index,sqale_debt_ratio,code_smells,bugs,vulnerabilities,reliability_rating,security_rating,security_hotspots,coverage,ncloc,ncloc_language_distribution"
+          api quality-gate.json "qualitygates/project_status?projectKey=$proyecto&$rama"
+          # 500 es el maximo por pagina; hoy hay 12 hallazgos abiertos
+          api hallazgos.json "issues/search?componentKeys=$proyecto&$rama&resolved=false&ps=500&facets=severities,types,rules"
+          api hotspots.json "hotspots/search?projectKey=$proyecto&$rama&ps=500"
+
+          # El escaner deja aqui la version del servidor y el enlace al analisis
+          cp .scannerwork/report-task.txt reporte/ 2>/dev/null || true
+
+          jq -n \
+            --arg commit "$GITHUB_SHA" \
+            --arg rama "$GITHUB_REF_NAME" \
+            --arg fecha "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg ejecucion "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            --arg tablero "https://sonarcloud.io/summary/overall?id=$proyecto&$rama" \
+            '{commit: $commit, rama: $rama, fecha: $fecha, ejecucion: $ejecucion, tablero: $tablero}' \
+            > reporte/metadatos.json
+          cat reporte/metadatos.json
+
+      # 6. Umbrales de la entrega 3, medidos sobre TODO el codigo (el Quality
+      #    Gate por defecto solo mira el codigo nuevo). Si no se cumplen, el
+      #    pipeline falla. Lee las medidas que exporto el paso 5.
+      #    sqale_rating es la mantenibilidad en numero: 1=A 2=B 3=C 4=D 5=E
+      - name: Verificar umbrales de calidad
+        if: ${{ !cancelled() }}
+        env:
+          MAX_DUPLICACION: 20   # porcentaje maximo de lineas duplicadas
+          MAX_RATING: 3         # C o mejor
+        run: |
+          valor() { jq -r --arg m "$1" '.component.measures[] | select(.metric == $m) | .value' reporte/medidas.json; }
+          duplicacion=$(valor duplicated_lines_density)
+          rating=$(valor sqale_rating)
+          deuda=$(valor sqale_index)
+
+          echo "Commit:        $GITHUB_SHA"
+          echo "Duplicacion:   ${duplicacion}% (maximo ${MAX_DUPLICACION}%)"
+          echo "Mantenibilidad: $rating (maximo $MAX_RATING)"
+          echo "Deuda tecnica: ${deuda} min"
+
+          falla=0
+          if awk "BEGIN { exit !($duplicacion > $MAX_DUPLICACION) }"; then
+            echo "::error::Duplicacion ${duplicacion}% supera el ${MAX_DUPLICACION}%"; falla=1
+          fi
+          if awk "BEGIN { exit !($rating > $MAX_RATING) }"; then
+            echo "::error::Mantenibilidad $rating peor que C"; falla=1
+          fi
+          exit $falla
+
+      # 7. Publica reporte/ como artefacto de la ejecucion, con el SHA en el
+      #    nombre para que quede atado al commit evaluado. Se descarga desde
+      #    la pagina del run (seccion Artifacts).
+      - name: Publicar reporte
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-sonarqube-${{ github.sha }}
+          path: reporte/
+          retention-days: 90

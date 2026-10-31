@@ -1,0 +1,12 @@
+corrida:    humo
+script:     capacity-planning/k6/escenario1_actividad_academica.js
+commit:     34bbbe4
+k6:         grafana/k6:1.6.1 (Docker)
+generador:  esanto02, 8 vCPU, 15.5 GiB, Linux 7.2.8-9-omarchy
+base_url:   https://34-149-212-102.sslip.io/api/v1
+N_STUDENTS: <default del script>
+RATE_SCALE: 0.2
+STAGE_DUR:  30s
+BASE_DUR:   15s
+PRE_VUS:    <default del script>
+MAX_VUS:    <default del script>

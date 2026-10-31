@@ -156,7 +156,10 @@ func (d *Deps) ErrorHandler() asynq.ErrorHandlerFunc {
 			metrics.JobsProcessed.WithLabelValues(task.Type(), "dead_letter").Inc()
 			log.Printf("ALERTA: %s agoto %d reintentos y paso a la DLQ: %v", task.Type(), maxRetry, err)
 
-			bgCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			// ctx puede venir cancelado (el trabajo fallo por timeout) y la
+			// auditoria se perderia. WithoutCancel ignora esa cancelacion pero
+			// conserva los valores del contexto, como la traza.
+			bgCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
 			defer cancel()
 			d.Audit.Log(bgCtx, "", audit.ActionJobDeadLettered, "job", task.Type(), "",
 				map[string]any{

@@ -1,0 +1,2591 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: capacity-planning/k6/escenario1_actividad_academica.js
+        output: json (capacity-planning/escenario1/resultados/entrega3_r2_20261031-0454/raw.json)
+
+     scenarios: (100.00%) 2 scenarios, 301 max VUs, 10m40s max duration (incl. graceful stop):
+              * integridad_idempotencia: 1 iterations for each of 1 VUs (maxDuration: 10m0s, exec: integridadIdempotencia, gracefulStop: 30s)
+              * carga_academica: Up to 90.00 iterations/s for 10m0s over 6 stages (maxVUs: 50-300, exec: actividadAcademica, startTime: 10s, gracefulStop: 30s)
+
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+
+Run                       [ 100% ] setup()
+integridad_idempotencia   [   0% ]
+carga_academica           [   0% ]
+time="2026-10-31T04:55:05Z" level=info msg="setup listo: curso=curso-carga-e1-1793422493417 quiz=bd04b886-1b9e-4ab8-932b-094b47e8a196 estudiantes=20 consumibles=3" source=console
+time="2026-10-31T04:55:06Z" level=info msg="integridad: submit1 score=100 submit2 score=100 identico=true" source=console
+
+running (00m13.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  09.5s          
+
+running (00m14.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  08.5s          
+
+running (00m15.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  07.5s          
+
+running (00m16.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  06.5s          
+
+running (00m17.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  05.5s          
+
+running (00m18.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  04.5s          
+
+running (00m19.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  03.5s          
+
+running (00m20.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  02.5s          
+
+running (00m21.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  01.5s          
+
+running (00m22.0s), 000/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs    00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         • [   0% ] waiting  00.5s          
+
+running (00m23.0s), 002/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   0% ] 002/050 VUs  00m00.5s/10m0s  05.00 iters/s
+
+running (00m24.0s), 007/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   0% ] 007/050 VUs  00m01.5s/10m0s  05.00 iters/s
+
+running (00m25.0s), 012/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   0% ] 012/050 VUs  00m02.5s/10m0s  05.00 iters/s
+
+running (00m26.0s), 017/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   1% ] 017/050 VUs  00m03.5s/10m0s  05.00 iters/s
+
+running (00m27.0s), 022/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   1% ] 022/050 VUs  00m04.5s/10m0s  05.00 iters/s
+
+running (00m28.0s), 027/051 VUs, 1 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   1% ] 027/050 VUs  00m05.5s/10m0s  05.00 iters/s
+
+running (00m29.0s), 029/051 VUs, 4 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   1% ] 029/050 VUs  00m06.5s/10m0s  05.00 iters/s
+
+running (00m30.0s), 033/051 VUs, 5 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   1% ] 033/050 VUs  00m07.5s/10m0s  05.00 iters/s
+
+running (00m31.0s), 029/051 VUs, 14 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   1% ] 029/050 VUs  00m08.5s/10m0s  05.00 iters/s
+
+running (00m32.0s), 033/051 VUs, 15 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   2% ] 033/050 VUs  00m09.5s/10m0s  05.00 iters/s
+
+running (00m33.0s), 031/051 VUs, 22 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   2% ] 031/050 VUs  00m10.5s/10m0s  05.00 iters/s
+
+running (00m34.0s), 032/051 VUs, 26 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   2% ] 032/050 VUs  00m11.5s/10m0s  05.00 iters/s
+
+running (00m35.0s), 032/051 VUs, 31 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   2% ] 032/050 VUs  00m12.5s/10m0s  05.00 iters/s
+
+running (00m36.0s), 032/051 VUs, 36 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   2% ] 032/050 VUs  00m13.5s/10m0s  05.00 iters/s
+
+running (00m37.0s), 030/051 VUs, 43 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   2% ] 030/050 VUs  00m14.5s/10m0s  05.00 iters/s
+
+running (00m38.0s), 031/051 VUs, 47 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   3% ] 031/050 VUs  00m15.5s/10m0s  05.00 iters/s
+
+running (00m39.0s), 028/051 VUs, 55 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   3% ] 028/050 VUs  00m16.5s/10m0s  05.00 iters/s
+
+running (00m40.0s), 030/051 VUs, 58 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   3% ] 030/050 VUs  00m17.5s/10m0s  05.00 iters/s
+
+running (00m41.0s), 030/051 VUs, 63 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   3% ] 030/050 VUs  00m18.5s/10m0s  05.00 iters/s
+
+running (00m42.0s), 032/051 VUs, 66 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   3% ] 032/050 VUs  00m19.5s/10m0s  05.00 iters/s
+
+running (00m43.0s), 028/051 VUs, 75 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   3% ] 028/050 VUs  00m20.5s/10m0s  05.00 iters/s
+
+running (00m44.0s), 030/051 VUs, 78 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   4% ] 030/050 VUs  00m21.5s/10m0s  05.00 iters/s
+
+running (00m45.0s), 030/051 VUs, 83 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   4% ] 030/050 VUs  00m22.5s/10m0s  05.00 iters/s
+
+running (00m46.0s), 030/051 VUs, 88 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   4% ] 030/050 VUs  00m23.5s/10m0s  05.00 iters/s
+
+running (00m47.0s), 032/051 VUs, 91 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   4% ] 032/050 VUs  00m24.5s/10m0s  05.00 iters/s
+
+running (00m48.0s), 035/051 VUs, 93 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   4% ] 035/050 VUs  00m25.5s/10m0s  05.00 iters/s
+
+running (00m49.0s), 033/051 VUs, 100 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   4% ] 033/050 VUs  00m26.5s/10m0s  05.00 iters/s
+
+running (00m50.0s), 035/051 VUs, 103 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   5% ] 035/050 VUs  00m27.5s/10m0s  05.00 iters/s
+
+running (00m51.0s), 035/051 VUs, 108 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   5% ] 035/050 VUs  00m28.5s/10m0s  05.00 iters/s
+
+running (00m52.0s), 034/051 VUs, 114 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   5% ] 034/050 VUs  00m29.5s/10m0s  05.00 iters/s
+
+running (00m53.0s), 031/051 VUs, 122 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   5% ] 031/050 VUs  00m30.5s/10m0s  05.00 iters/s
+
+running (00m54.0s), 032/051 VUs, 126 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   5% ] 032/050 VUs  00m31.5s/10m0s  05.00 iters/s
+
+running (00m55.0s), 029/051 VUs, 134 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   5% ] 029/050 VUs  00m32.5s/10m0s  05.00 iters/s
+
+running (00m56.0s), 030/051 VUs, 138 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   6% ] 030/050 VUs  00m33.5s/10m0s  05.00 iters/s
+
+running (00m57.0s), 032/051 VUs, 141 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   6% ] 032/050 VUs  00m34.5s/10m0s  05.00 iters/s
+
+running (00m58.0s), 031/051 VUs, 147 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   6% ] 031/050 VUs  00m35.5s/10m0s  05.00 iters/s
+
+running (00m59.0s), 029/051 VUs, 154 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   6% ] 029/050 VUs  00m36.5s/10m0s  05.00 iters/s
+
+running (01m00.0s), 029/051 VUs, 159 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   6% ] 029/050 VUs  00m37.5s/10m0s  05.00 iters/s
+
+running (01m01.0s), 029/051 VUs, 164 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   6% ] 029/050 VUs  00m38.5s/10m0s  05.00 iters/s
+
+running (01m02.0s), 031/051 VUs, 167 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   7% ] 031/050 VUs  00m39.5s/10m0s  05.00 iters/s
+
+running (01m03.0s), 030/051 VUs, 173 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   7% ] 030/050 VUs  00m40.5s/10m0s  05.00 iters/s
+
+running (01m04.0s), 028/051 VUs, 180 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   7% ] 028/050 VUs  00m41.5s/10m0s  05.00 iters/s
+
+running (01m05.0s), 029/051 VUs, 184 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   7% ] 029/050 VUs  00m42.5s/10m0s  05.00 iters/s
+
+running (01m06.0s), 027/051 VUs, 191 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   7% ] 027/050 VUs  00m43.5s/10m0s  05.00 iters/s
+
+running (01m07.0s), 029/051 VUs, 194 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   7% ] 029/050 VUs  00m44.5s/10m0s  05.00 iters/s
+
+running (01m08.0s), 029/051 VUs, 199 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   8% ] 029/050 VUs  00m45.5s/10m0s  05.00 iters/s
+
+running (01m09.0s), 030/051 VUs, 203 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   8% ] 030/050 VUs  00m46.5s/10m0s  05.00 iters/s
+
+running (01m10.0s), 028/051 VUs, 210 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   8% ] 028/050 VUs  00m47.5s/10m0s  05.00 iters/s
+
+running (01m11.0s), 029/051 VUs, 214 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   8% ] 029/050 VUs  00m48.5s/10m0s  05.00 iters/s
+
+running (01m12.0s), 030/051 VUs, 218 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   8% ] 030/050 VUs  00m49.5s/10m0s  05.00 iters/s
+
+running (01m13.0s), 028/051 VUs, 225 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   8% ] 028/050 VUs  00m50.5s/10m0s  05.00 iters/s
+
+running (01m14.0s), 029/051 VUs, 229 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   9% ] 029/050 VUs  00m51.5s/10m0s  05.00 iters/s
+
+running (01m15.0s), 029/051 VUs, 234 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   9% ] 029/050 VUs  00m52.5s/10m0s  05.00 iters/s
+
+running (01m16.0s), 030/051 VUs, 238 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   9% ] 030/050 VUs  00m53.5s/10m0s  05.00 iters/s
+
+running (01m17.0s), 028/051 VUs, 245 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   9% ] 028/050 VUs  00m54.5s/10m0s  05.00 iters/s
+
+running (01m18.0s), 029/051 VUs, 249 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   9% ] 029/050 VUs  00m55.5s/10m0s  05.00 iters/s
+
+running (01m19.0s), 029/051 VUs, 254 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [   9% ] 029/050 VUs  00m56.5s/10m0s  05.00 iters/s
+
+running (01m20.0s), 030/051 VUs, 258 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  10% ] 030/050 VUs  00m57.5s/10m0s  05.00 iters/s
+
+running (01m21.0s), 032/051 VUs, 261 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  10% ] 032/050 VUs  00m58.5s/10m0s  05.00 iters/s
+
+running (01m22.0s), 027/051 VUs, 271 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  10% ] 027/050 VUs  00m59.5s/10m0s  05.00 iters/s
+
+running (01m23.0s), 030/051 VUs, 273 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  10% ] 030/050 VUs  01m00.5s/10m0s  05.06 iters/s
+
+running (01m24.0s), 029/051 VUs, 279 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  10% ] 029/050 VUs  01m01.5s/10m0s  05.18 iters/s
+
+running (01m25.0s), 030/051 VUs, 283 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  10% ] 030/050 VUs  01m02.5s/10m0s  05.30 iters/s
+
+running (01m26.0s), 029/051 VUs, 290 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  11% ] 029/050 VUs  01m03.5s/10m0s  05.44 iters/s
+
+running (01m27.0s), 031/051 VUs, 293 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  11% ] 031/050 VUs  01m04.5s/10m0s  05.56 iters/s
+
+running (01m28.0s), 032/051 VUs, 298 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  11% ] 032/050 VUs  01m05.5s/10m0s  05.69 iters/s
+
+running (01m29.0s), 031/051 VUs, 305 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  11% ] 031/050 VUs  01m06.5s/10m0s  05.82 iters/s
+
+running (01m30.0s), 032/051 VUs, 310 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  11% ] 032/050 VUs  01m07.5s/10m0s  05.95 iters/s
+
+running (01m31.0s), 033/051 VUs, 315 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  11% ] 033/050 VUs  01m08.5s/10m0s  06.07 iters/s
+
+running (01m32.0s), 035/051 VUs, 319 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  12% ] 035/050 VUs  01m09.5s/10m0s  06.19 iters/s
+
+running (01m33.0s), 033/051 VUs, 327 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  12% ] 033/050 VUs  01m10.5s/10m0s  06.31 iters/s
+
+running (01m34.0s), 035/051 VUs, 331 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  12% ] 035/050 VUs  01m11.5s/10m0s  06.43 iters/s
+
+running (01m35.0s), 036/051 VUs, 337 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  12% ] 036/050 VUs  01m12.5s/10m0s  06.57 iters/s
+
+running (01m36.0s), 038/051 VUs, 341 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  12% ] 038/050 VUs  01m13.5s/10m0s  06.68 iters/s
+
+running (01m37.0s), 041/051 VUs, 345 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  12% ] 041/050 VUs  01m14.5s/10m0s  06.81 iters/s
+
+running (01m38.0s), 040/051 VUs, 353 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  13% ] 040/050 VUs  01m15.5s/10m0s  06.94 iters/s
+
+running (01m39.0s), 040/051 VUs, 360 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  13% ] 040/050 VUs  01m16.5s/10m0s  07.06 iters/s
+
+running (01m40.0s), 040/051 VUs, 367 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  13% ] 040/050 VUs  01m17.5s/10m0s  07.19 iters/s
+
+running (01m41.0s), 041/051 VUs, 373 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  13% ] 041/050 VUs  01m18.5s/10m0s  07.31 iters/s
+
+running (01m42.0s), 045/051 VUs, 377 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  13% ] 045/050 VUs  01m19.5s/10m0s  07.44 iters/s
+
+running (01m43.0s), 047/051 VUs, 382 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  13% ] 047/050 VUs  01m20.5s/10m0s  07.56 iters/s
+
+running (01m44.0s), 048/052 VUs, 388 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  14% ] 048/051 VUs  01m21.5s/10m0s  07.69 iters/s
+
+running (01m45.0s), 046/052 VUs, 398 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  14% ] 046/051 VUs  01m22.5s/10m0s  07.82 iters/s
+
+running (01m46.0s), 044/052 VUs, 408 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  14% ] 044/051 VUs  01m23.5s/10m0s  07.95 iters/s
+
+running (01m47.0s), 047/052 VUs, 413 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  14% ] 047/051 VUs  01m24.5s/10m0s  08.07 iters/s
+
+running (01m48.0s), 051/053 VUs, 416 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  14% ] 051/052 VUs  01m25.5s/10m0s  08.19 iters/s
+
+running (01m49.0s), 053/055 VUs, 420 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  14% ] 053/054 VUs  01m26.5s/10m0s  08.31 iters/s
+
+running (01m50.0s), 051/055 VUs, 430 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  15% ] 051/054 VUs  01m27.5s/10m0s  08.43 iters/s
+
+running (01m51.0s), 049/055 VUs, 441 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  15% ] 049/054 VUs  01m28.5s/10m0s  08.57 iters/s
+
+running (01m52.0s), 052/055 VUs, 447 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  15% ] 052/054 VUs  01m29.5s/10m0s  08.70 iters/s
+
+running (01m53.0s), 054/055 VUs, 453 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  15% ] 054/054 VUs  01m30.5s/10m0s  08.81 iters/s
+
+running (01m54.0s), 053/056 VUs, 462 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  15% ] 053/055 VUs  01m31.5s/10m0s  08.94 iters/s
+
+running (01m55.0s), 053/056 VUs, 471 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  15% ] 053/055 VUs  01m32.5s/10m0s  09.06 iters/s
+
+running (01m56.0s), 053/056 VUs, 480 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  16% ] 053/055 VUs  01m33.5s/10m0s  09.19 iters/s
+
+running (01m57.0s), 050/056 VUs, 493 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  16% ] 050/055 VUs  01m34.5s/10m0s  09.32 iters/s
+
+running (01m58.0s), 055/056 VUs, 497 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  16% ] 055/055 VUs  01m35.5s/10m0s  09.44 iters/s
+
+running (01m59.0s), 055/058 VUs, 504 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  16% ] 055/057 VUs  01m36.5s/10m0s  09.56 iters/s
+
+running (02m00.0s), 054/058 VUs, 515 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  16% ] 054/057 VUs  01m37.5s/10m0s  09.69 iters/s
+
+running (02m01.0s), 055/058 VUs, 524 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  16% ] 055/057 VUs  01m38.5s/10m0s  09.82 iters/s
+
+running (02m02.0s), 055/058 VUs, 534 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  17% ] 055/057 VUs  01m39.5s/10m0s  09.94 iters/s
+
+running (02m03.0s), 052/058 VUs, 547 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  17% ] 052/057 VUs  01m40.5s/10m0s  10.07 iters/s
+
+running (02m04.0s), 057/058 VUs, 552 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  17% ] 057/057 VUs  01m41.5s/10m0s  10.19 iters/s
+
+running (02m05.0s), 058/061 VUs, 558 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  17% ] 058/060 VUs  01m42.5s/10m0s  10.31 iters/s
+
+running (02m06.0s), 058/062 VUs, 567 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  17% ] 058/061 VUs  01m43.5s/10m0s  10.43 iters/s
+
+running (02m07.0s), 054/062 VUs, 582 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  17% ] 054/061 VUs  01m44.5s/10m0s  10.57 iters/s
+
+running (02m08.0s), 056/062 VUs, 591 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  18% ] 056/061 VUs  01m45.5s/10m0s  10.69 iters/s
+
+running (02m09.0s), 060/063 VUs, 596 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  18% ] 060/062 VUs  01m46.5s/10m0s  10.81 iters/s
+
+running (02m10.0s), 058/063 VUs, 609 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  18% ] 058/062 VUs  01m47.5s/10m0s  10.94 iters/s
+
+running (02m11.0s), 060/064 VUs, 617 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  18% ] 060/063 VUs  01m48.5s/10m0s  11.06 iters/s
+
+running (02m12.0s), 062/065 VUs, 625 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  18% ] 062/064 VUs  01m49.5s/10m0s  11.19 iters/s
+
+running (02m13.0s), 065/067 VUs, 632 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  18% ] 065/066 VUs  01m50.5s/10m0s  11.32 iters/s
+
+running (02m14.0s), 065/067 VUs, 643 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  19% ] 065/066 VUs  01m51.5s/10m0s  11.44 iters/s
+
+running (02m15.0s), 065/067 VUs, 654 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  19% ] 065/066 VUs  01m52.5s/10m0s  11.56 iters/s
+
+running (02m16.0s), 062/067 VUs, 669 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  19% ] 062/066 VUs  01m53.5s/10m0s  11.69 iters/s
+
+running (02m17.0s), 065/068 VUs, 677 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  19% ] 065/067 VUs  01m54.5s/10m0s  11.82 iters/s
+
+running (02m18.0s), 063/069 VUs, 690 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  19% ] 063/068 VUs  01m55.5s/10m0s  11.94 iters/s
+
+running (02m19.0s), 068/069 VUs, 697 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  19% ] 068/068 VUs  01m56.5s/10m0s  12.07 iters/s
+
+running (02m20.0s), 067/069 VUs, 710 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  20% ] 067/068 VUs  01m57.5s/10m0s  12.19 iters/s
+
+running (02m21.0s), 070/072 VUs, 716 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  20% ] 070/071 VUs  01m58.5s/10m0s  12.31 iters/s
+
+running (02m22.0s), 063/072 VUs, 735 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  20% ] 063/071 VUs  01m59.5s/10m0s  12.43 iters/s
+
+running (02m23.0s), 066/072 VUs, 745 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  20% ] 066/071 VUs  02m00.5s/10m0s  12.56 iters/s
+
+running (02m24.0s), 068/072 VUs, 756 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  20% ] 068/071 VUs  02m01.5s/10m0s  12.69 iters/s
+
+running (02m25.0s), 066/072 VUs, 770 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  20% ] 066/071 VUs  02m02.5s/10m0s  12.81 iters/s
+
+running (02m26.0s), 069/073 VUs, 779 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  21% ] 069/072 VUs  02m03.5s/10m0s  12.94 iters/s
+
+running (02m27.0s), 072/073 VUs, 789 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  21% ] 072/072 VUs  02m04.5s/10m0s  13.06 iters/s
+
+running (02m28.0s), 074/075 VUs, 798 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  21% ] 074/074 VUs  02m05.5s/10m0s  13.19 iters/s
+
+running (02m29.0s), 068/078 VUs, 815 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  21% ] 068/077 VUs  02m06.5s/10m0s  13.32 iters/s
+
+running (02m30.0s), 070/078 VUs, 826 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  21% ] 070/077 VUs  02m07.5s/10m0s  13.44 iters/s
+
+running (02m31.0s), 070/078 VUs, 839 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  21% ] 070/077 VUs  02m08.5s/10m0s  13.56 iters/s
+
+running (02m32.0s), 074/078 VUs, 849 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  22% ] 074/077 VUs  02m09.5s/10m0s  13.69 iters/s
+
+running (02m33.0s), 076/078 VUs, 861 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  22% ] 076/077 VUs  02m10.5s/10m0s  13.82 iters/s
+
+running (02m34.0s), 078/080 VUs, 871 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  22% ] 078/079 VUs  02m11.5s/10m0s  13.94 iters/s
+
+running (02m35.0s), 080/081 VUs, 882 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  22% ] 080/080 VUs  02m12.5s/10m0s  14.07 iters/s
+
+running (02m36.0s), 078/082 VUs, 897 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  22% ] 078/081 VUs  02m13.5s/10m0s  14.19 iters/s
+
+running (02m37.0s), 081/083 VUs, 907 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  22% ] 081/082 VUs  02m14.5s/10m0s  14.31 iters/s
+
+running (02m38.0s), 081/084 VUs, 920 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  23% ] 081/083 VUs  02m15.5s/10m0s  14.44 iters/s
+
+running (02m39.0s), 079/084 VUs, 937 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  23% ] 079/083 VUs  02m16.5s/10m0s  14.56 iters/s
+
+running (02m40.0s), 083/084 VUs, 948 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  23% ] 083/083 VUs  02m17.5s/10m0s  14.69 iters/s
+
+running (02m41.0s), 084/086 VUs, 959 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  23% ] 084/085 VUs  02m18.5s/10m0s  14.81 iters/s
+
+running (02m42.0s), 083/086 VUs, 975 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  23% ] 083/085 VUs  02m19.5s/10m0s  14.94 iters/s
+
+running (02m43.0s), 081/087 VUs, 991 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  23% ] 081/086 VUs  02m20.5s/10m0s  15.06 iters/s
+
+running (02m44.0s), 084/088 VUs, 1002 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  24% ] 084/087 VUs  02m21.5s/10m0s  15.19 iters/s
+
+running (02m45.0s), 083/088 VUs, 1019 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  24% ] 083/087 VUs  02m22.5s/10m0s  15.32 iters/s
+
+running (02m46.0s), 087/089 VUs, 1029 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  24% ] 087/088 VUs  02m23.5s/10m0s  15.44 iters/s
+
+running (02m47.0s), 092/093 VUs, 1035 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  24% ] 092/092 VUs  02m24.5s/10m0s  15.56 iters/s
+
+running (02m48.0s), 091/094 VUs, 1051 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  24% ] 091/093 VUs  02m25.5s/10m0s  15.69 iters/s
+
+running (02m49.0s), 093/095 VUs, 1064 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  24% ] 093/094 VUs  02m26.5s/10m0s  15.82 iters/s
+
+running (02m50.0s), 094/097 VUs, 1077 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  25% ] 094/096 VUs  02m27.5s/10m0s  15.94 iters/s
+
+running (02m51.0s), 090/098 VUs, 1096 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  25% ] 090/097 VUs  02m28.5s/10m0s  16.07 iters/s
+
+running (02m52.0s), 095/098 VUs, 1107 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  25% ] 095/097 VUs  02m29.5s/10m0s  16.19 iters/s
+
+running (02m53.0s), 095/099 VUs, 1122 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  25% ] 095/098 VUs  02m30.5s/10m0s  16.31 iters/s
+
+running (02m54.0s), 094/099 VUs, 1140 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  25% ] 094/098 VUs  02m31.5s/10m0s  16.44 iters/s
+
+running (02m55.0s), 093/099 VUs, 1157 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  25% ] 093/098 VUs  02m32.5s/10m0s  16.56 iters/s
+
+running (02m56.0s), 093/099 VUs, 1174 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  26% ] 093/098 VUs  02m33.5s/10m0s  16.69 iters/s
+
+running (02m57.0s), 094/101 VUs, 1187 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  26% ] 094/100 VUs  02m34.5s/10m0s  16.81 iters/s
+
+running (02m58.0s), 097/101 VUs, 1201 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  26% ] 097/100 VUs  02m35.5s/10m0s  16.94 iters/s
+
+running (02m59.0s), 100/101 VUs, 1215 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  26% ] 100/100 VUs  02m36.5s/10m0s  17.06 iters/s
+
+running (03m00.0s), 100/102 VUs, 1231 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  26% ] 100/101 VUs  02m37.5s/10m0s  17.19 iters/s
+
+running (03m01.0s), 094/102 VUs, 1255 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  26% ] 094/101 VUs  02m38.5s/10m0s  17.32 iters/s
+
+running (03m02.0s), 098/102 VUs, 1268 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  27% ] 098/101 VUs  02m39.5s/10m0s  17.44 iters/s
+
+running (03m03.0s), 103/105 VUs, 1278 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  27% ] 103/104 VUs  02m40.5s/10m0s  17.57 iters/s
+
+running (03m04.0s), 098/106 VUs, 1299 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  27% ] 098/105 VUs  02m41.5s/10m0s  17.69 iters/s
+
+running (03m05.0s), 100/106 VUs, 1315 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  27% ] 100/105 VUs  02m42.5s/10m0s  17.82 iters/s
+
+running (03m06.0s), 102/106 VUs, 1331 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  27% ] 102/105 VUs  02m43.5s/10m0s  17.94 iters/s
+
+running (03m07.0s), 102/107 VUs, 1348 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  27% ] 102/106 VUs  02m44.5s/10m0s  18.07 iters/s
+
+running (03m08.0s), 103/107 VUs, 1365 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  28% ] 103/106 VUs  02m45.5s/10m0s  18.19 iters/s
+
+running (03m09.0s), 106/107 VUs, 1380 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  28% ] 106/106 VUs  02m46.5s/10m0s  18.31 iters/s
+
+running (03m10.0s), 106/110 VUs, 1396 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  28% ] 106/109 VUs  02m47.5s/10m0s  18.44 iters/s
+
+running (03m11.0s), 107/110 VUs, 1413 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  28% ] 107/109 VUs  02m48.5s/10m0s  18.56 iters/s
+
+running (03m12.0s), 107/110 VUs, 1432 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  28% ] 107/109 VUs  02m49.5s/10m0s  18.69 iters/s
+
+running (03m13.0s), 103/110 VUs, 1454 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  28% ] 103/109 VUs  02m50.5s/10m0s  18.81 iters/s
+
+running (03m14.0s), 108/110 VUs, 1468 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  29% ] 108/109 VUs  02m51.5s/10m0s  18.94 iters/s
+
+running (03m15.0s), 112/113 VUs, 1480 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  29% ] 112/112 VUs  02m52.5s/10m0s  19.06 iters/s
+
+running (03m16.0s), 109/114 VUs, 1501 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  29% ] 109/113 VUs  02m53.5s/10m0s  19.19 iters/s
+
+running (03m17.0s), 110/114 VUs, 1520 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  29% ] 110/113 VUs  02m54.5s/10m0s  19.32 iters/s
+
+running (03m18.0s), 113/116 VUs, 1534 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  29% ] 113/115 VUs  02m55.5s/10m0s  19.44 iters/s
+
+running (03m19.0s), 104/116 VUs, 1563 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  29% ] 104/115 VUs  02m56.5s/10m0s  19.57 iters/s
+
+running (03m20.0s), 108/116 VUs, 1578 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  30% ] 108/115 VUs  02m57.5s/10m0s  19.69 iters/s
+
+running (03m21.0s), 114/117 VUs, 1591 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  30% ] 114/116 VUs  02m58.5s/10m0s  19.81 iters/s
+
+running (03m22.0s), 115/118 VUs, 1609 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  30% ] 115/117 VUs  02m59.5s/10m0s  19.94 iters/s
+
+running (03m23.0s), 116/119 VUs, 1627 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  30% ] 116/118 VUs  03m00.5s/10m0s  20.13 iters/s
+
+running (03m24.0s), 118/120 VUs, 1644 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  30% ] 118/119 VUs  03m01.5s/10m0s  20.38 iters/s
+
+running (03m25.0s), 119/120 VUs, 1664 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  30% ] 119/119 VUs  03m02.5s/10m0s  20.63 iters/s
+
+running (03m26.0s), 118/121 VUs, 1684 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  31% ] 118/120 VUs  03m03.5s/10m0s  20.87 iters/s
+
+running (03m27.0s), 119/123 VUs, 1702 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  31% ] 119/122 VUs  03m04.5s/10m0s  21.12 iters/s
+
+running (03m28.0s), 117/123 VUs, 1726 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  31% ] 117/122 VUs  03m05.5s/10m0s  21.38 iters/s
+
+running (03m29.0s), 121/124 VUs, 1742 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  31% ] 121/123 VUs  03m06.5s/10m0s  21.63 iters/s
+
+running (03m30.0s), 121/125 VUs, 1763 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  31% ] 121/124 VUs  03m07.5s/10m0s  21.88 iters/s
+
+running (03m31.0s), 124/126 VUs, 1781 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  31% ] 124/125 VUs  03m08.5s/10m0s  22.13 iters/s
+
+running (03m32.0s), 125/128 VUs, 1800 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  32% ] 125/127 VUs  03m09.5s/10m0s  22.38 iters/s
+
+running (03m33.0s), 123/128 VUs, 1825 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  32% ] 123/127 VUs  03m10.5s/10m0s  22.63 iters/s
+
+running (03m34.0s), 124/129 VUs, 1845 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  32% ] 124/128 VUs  03m11.5s/10m0s  22.87 iters/s
+
+running (03m35.0s), 130/131 VUs, 1860 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  32% ] 130/130 VUs  03m12.5s/10m0s  23.12 iters/s
+
+running (03m36.0s), 131/134 VUs, 1880 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  32% ] 131/133 VUs  03m13.5s/10m0s  23.38 iters/s
+
+running (03m37.0s), 135/136 VUs, 1897 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  32% ] 135/135 VUs  03m14.5s/10m0s  23.63 iters/s
+
+running (03m38.0s), 132/137 VUs, 1923 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  33% ] 132/136 VUs  03m15.5s/10m0s  23.88 iters/s
+
+running (03m39.0s), 133/140 VUs, 1943 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  33% ] 133/139 VUs  03m16.5s/10m0s  24.13 iters/s
+
+running (03m40.0s), 136/141 VUs, 1963 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  33% ] 136/140 VUs  03m17.5s/10m0s  24.38 iters/s
+
+running (03m41.0s), 142/143 VUs, 1980 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  33% ] 142/142 VUs  03m18.5s/10m0s  24.63 iters/s
+
+running (03m42.0s), 141/145 VUs, 2003 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  33% ] 141/144 VUs  03m19.5s/10m0s  24.87 iters/s
+
+running (03m43.0s), 133/145 VUs, 2036 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  33% ] 133/144 VUs  03m20.5s/10m0s  25.12 iters/s
+
+running (03m44.0s), 142/145 VUs, 2053 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  34% ] 142/144 VUs  03m21.5s/10m0s  25.38 iters/s
+
+running (03m45.0s), 149/151 VUs, 2065 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  34% ] 149/150 VUs  03m22.5s/10m0s  25.63 iters/s
+
+running (03m46.0s), 147/152 VUs, 2092 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  34% ] 147/151 VUs  03m23.5s/10m0s  25.88 iters/s
+
+running (03m47.0s), 152/155 VUs, 2110 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  34% ] 152/154 VUs  03m24.5s/10m0s  26.13 iters/s
+
+running (03m48.0s), 156/158 VUs, 2129 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  34% ] 156/157 VUs  03m25.5s/10m0s  26.38 iters/s
+
+running (03m49.0s), 149/160 VUs, 2161 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  34% ] 149/159 VUs  03m26.5s/10m0s  26.63 iters/s
+
+running (03m50.0s), 155/160 VUs, 2181 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  35% ] 155/159 VUs  03m27.5s/10m0s  26.87 iters/s
+
+running (03m51.0s), 159/163 VUs, 2201 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  35% ] 159/162 VUs  03m28.5s/10m0s  27.12 iters/s
+
+running (03m52.0s), 162/164 VUs, 2225 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  35% ] 162/163 VUs  03m29.5s/10m0s  27.38 iters/s
+
+running (03m53.0s), 167/169 VUs, 2242 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  35% ] 167/168 VUs  03m30.5s/10m0s  27.63 iters/s
+
+running (03m54.0s), 172/173 VUs, 2261 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  35% ] 172/172 VUs  03m31.5s/10m0s  27.88 iters/s
+
+running (03m55.0s), 168/174 VUs, 2292 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  35% ] 168/173 VUs  03m32.5s/10m0s  28.13 iters/s
+
+running (03m56.0s), 170/174 VUs, 2318 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  36% ] 170/173 VUs  03m33.5s/10m0s  28.38 iters/s
+
+running (03m57.0s), 170/174 VUs, 2347 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  36% ] 170/173 VUs  03m34.5s/10m0s  28.63 iters/s
+
+running (03m58.0s), 168/176 VUs, 2375 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  36% ] 168/175 VUs  03m35.5s/10m0s  28.87 iters/s
+
+running (03m59.0s), 173/176 VUs, 2399 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  36% ] 173/175 VUs  03m36.5s/10m0s  29.12 iters/s
+
+running (04m00.0s), 174/176 VUs, 2428 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  36% ] 174/175 VUs  03m37.5s/10m0s  29.38 iters/s
+
+running (04m01.0s), 176/178 VUs, 2453 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  36% ] 176/177 VUs  03m38.5s/10m0s  29.63 iters/s
+
+running (04m02.0s), 174/180 VUs, 2483 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  37% ] 174/179 VUs  03m39.5s/10m0s  29.88 iters/s
+
+running (04m03.0s), 177/182 VUs, 2508 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  37% ] 177/181 VUs  03m40.5s/10m0s  30.13 iters/s
+
+running (04m04.0s), 179/184 VUs, 2534 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  37% ] 179/183 VUs  03m41.5s/10m0s  30.38 iters/s
+
+running (04m05.0s), 176/185 VUs, 2567 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  37% ] 176/184 VUs  03m42.5s/10m0s  30.63 iters/s
+
+running (04m06.0s), 185/187 VUs, 2586 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  37% ] 185/186 VUs  03m43.5s/10m0s  30.87 iters/s
+
+running (04m07.0s), 184/190 VUs, 2615 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  37% ] 184/189 VUs  03m44.5s/10m0s  31.12 iters/s
+
+running (04m08.0s), 192/194 VUs, 2635 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  38% ] 192/193 VUs  03m45.5s/10m0s  31.38 iters/s
+
+running (04m09.0s), 196/200 VUs, 2656 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  38% ] 196/199 VUs  03m46.5s/10m0s  31.63 iters/s
+
+running (04m10.0s), 203/205 VUs, 2676 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  38% ] 203/204 VUs  03m47.5s/10m0s  31.88 iters/s
+
+running (04m11.0s), 208/209 VUs, 2699 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  38% ] 208/208 VUs  03m48.5s/10m0s  32.13 iters/s
+
+running (04m12.0s), 212/213 VUs, 2723 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  38% ] 212/212 VUs  03m49.5s/10m0s  32.38 iters/s
+
+running (04m13.0s), 201/214 VUs, 2766 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  38% ] 201/213 VUs  03m50.5s/10m0s  32.63 iters/s
+
+running (04m14.0s), 198/214 VUs, 2801 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  39% ] 198/213 VUs  03m51.5s/10m0s  32.87 iters/s
+
+running (04m15.0s), 198/214 VUs, 2834 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  39% ] 198/213 VUs  03m52.5s/10m0s  33.12 iters/s
+
+running (04m16.0s), 208/214 VUs, 2858 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  39% ] 208/213 VUs  03m53.5s/10m0s  33.38 iters/s
+
+running (04m17.0s), 203/214 VUs, 2896 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  39% ] 203/213 VUs  03m54.5s/10m0s  33.63 iters/s
+
+running (04m18.0s), 216/217 VUs, 2914 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  39% ] 216/216 VUs  03m55.5s/10m0s  33.88 iters/s
+
+running (04m19.0s), 211/218 VUs, 2952 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  39% ] 211/217 VUs  03m56.5s/10m0s  34.13 iters/s
+
+running (04m20.0s), 215/220 VUs, 2980 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  40% ] 215/219 VUs  03m57.5s/10m0s  34.38 iters/s
+
+running (04m21.0s), 219/220 VUs, 3011 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  40% ] 219/219 VUs  03m58.5s/10m0s  34.63 iters/s
+
+running (04m22.0s), 221/223 VUs, 3041 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  40% ] 221/222 VUs  03m59.5s/10m0s  34.88 iters/s
+
+running (04m23.0s), 222/228 VUs, 3070 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  40% ] 222/227 VUs  04m00.5s/10m0s  35.13 iters/s
+
+running (04m24.0s), 231/233 VUs, 3091 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  40% ] 231/232 VUs  04m01.5s/10m0s  35.38 iters/s
+
+running (04m25.0s), 229/238 VUs, 3123 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  40% ] 229/237 VUs  04m02.5s/10m0s  35.63 iters/s
+
+running (04m26.0s), 233/238 VUs, 3155 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  41% ] 233/237 VUs  04m03.5s/10m0s  35.88 iters/s
+
+running (04m27.0s), 238/240 VUs, 3184 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  41% ] 238/239 VUs  04m04.5s/10m0s  36.13 iters/s
+
+running (04m28.0s), 240/245 VUs, 3213 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  41% ] 240/244 VUs  04m05.5s/10m0s  36.38 iters/s
+
+running (04m29.0s), 245/248 VUs, 3242 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  41% ] 245/247 VUs  04m06.5s/10m0s  36.63 iters/s
+
+running (04m30.0s), 243/249 VUs, 3280 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  41% ] 243/248 VUs  04m07.5s/10m0s  36.88 iters/s
+
+running (04m31.0s), 245/249 VUs, 3315 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  41% ] 245/248 VUs  04m08.5s/10m0s  37.13 iters/s
+
+running (04m32.0s), 238/250 VUs, 3358 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  42% ] 238/249 VUs  04m09.5s/10m0s  37.38 iters/s
+
+running (04m33.0s), 245/250 VUs, 3388 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  42% ] 245/249 VUs  04m10.5s/10m0s  37.63 iters/s
+
+running (04m34.0s), 249/254 VUs, 3418 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  42% ] 249/253 VUs  04m11.5s/10m0s  37.88 iters/s
+
+running (04m35.0s), 256/257 VUs, 3446 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  42% ] 256/256 VUs  04m12.5s/10m0s  38.13 iters/s
+
+running (04m36.0s), 265/267 VUs, 3465 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  42% ] 265/266 VUs  04m13.5s/10m0s  38.38 iters/s
+
+running (04m37.0s), 257/268 VUs, 3511 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  42% ] 257/267 VUs  04m14.5s/10m0s  38.63 iters/s
+
+running (04m38.0s), 271/273 VUs, 3531 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  43% ] 271/272 VUs  04m15.5s/10m0s  38.88 iters/s
+
+running (04m39.0s), 275/279 VUs, 3560 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  43% ] 275/278 VUs  04m16.5s/10m0s  39.13 iters/s
+
+running (04m40.0s), 280/284 VUs, 3589 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  43% ] 280/283 VUs  04m17.5s/10m0s  39.38 iters/s
+
+running (04m41.0s), 290/292 VUs, 3610 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  43% ] 289/291 VUs  04m18.5s/10m0s  39.63 iters/s
+
+running (04m42.0s), 299/301 VUs, 3632 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  43% ] 299/300 VUs  04m19.5s/10m0s  39.88 iters/s
+
+running (04m43.0s), 296/301 VUs, 3675 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  43% ] 296/300 VUs  04m20.5s/10m0s  40.13 iters/s
+
+running (04m44.0s), 298/301 VUs, 3713 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  44% ] 298/300 VUs  04m21.5s/10m0s  40.38 iters/s
+time="2026-10-31T04:59:37Z" level=warning msg="Insufficient VUs, reached 300 active VUs and cannot initialize more" executor=ramping-arrival-rate scenario=carga_academica
+
+running (04m45.0s), 299/301 VUs, 3750 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  44% ] 299/300 VUs  04m22.5s/10m0s  40.63 iters/s
+
+running (04m46.0s), 299/301 VUs, 3778 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  44% ] 299/300 VUs  04m23.5s/10m0s  40.88 iters/s
+
+running (04m47.0s), 293/301 VUs, 3820 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  44% ] 293/300 VUs  04m24.5s/10m0s  41.13 iters/s
+
+running (04m48.0s), 300/301 VUs, 3848 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  44% ] 300/300 VUs  04m25.5s/10m0s  41.38 iters/s
+
+running (04m49.0s), 298/301 VUs, 3887 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  44% ] 298/300 VUs  04m26.5s/10m0s  41.63 iters/s
+
+running (04m50.0s), 300/301 VUs, 3918 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  45% ] 300/300 VUs  04m27.5s/10m0s  41.88 iters/s
+
+running (04m51.0s), 296/301 VUs, 3954 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  45% ] 296/300 VUs  04m28.5s/10m0s  42.13 iters/s
+
+running (04m52.0s), 291/301 VUs, 4000 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  45% ] 291/300 VUs  04m29.5s/10m0s  42.38 iters/s
+
+running (04m53.0s), 300/301 VUs, 4024 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  45% ] 300/300 VUs  04m30.5s/10m0s  42.63 iters/s
+
+running (04m54.0s), 300/301 VUs, 4047 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  45% ] 300/300 VUs  04m31.5s/10m0s  42.88 iters/s
+
+running (04m55.0s), 300/301 VUs, 4080 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  45% ] 300/300 VUs  04m32.5s/10m0s  43.13 iters/s
+
+running (04m56.0s), 299/301 VUs, 4112 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  46% ] 299/300 VUs  04m33.5s/10m0s  43.38 iters/s
+
+running (04m57.0s), 297/301 VUs, 4146 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  46% ] 297/300 VUs  04m34.5s/10m0s  43.63 iters/s
+
+running (04m58.0s), 297/301 VUs, 4179 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  46% ] 297/300 VUs  04m35.5s/10m0s  43.88 iters/s
+
+running (04m59.0s), 296/301 VUs, 4215 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  46% ] 296/300 VUs  04m36.5s/10m0s  44.13 iters/s
+
+running (05m00.0s), 298/301 VUs, 4252 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  46% ] 298/300 VUs  04m37.5s/10m0s  44.38 iters/s
+
+running (05m01.0s), 300/301 VUs, 4285 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  46% ] 300/300 VUs  04m38.5s/10m0s  44.63 iters/s
+
+running (05m02.0s), 300/301 VUs, 4324 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  47% ] 300/300 VUs  04m39.5s/10m0s  44.88 iters/s
+
+running (05m03.0s), 299/301 VUs, 4351 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  47% ] 299/300 VUs  04m40.5s/10m0s  45.13 iters/s
+
+running (05m04.0s), 299/301 VUs, 4383 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  47% ] 299/300 VUs  04m41.5s/10m0s  45.38 iters/s
+
+running (05m05.0s), 300/301 VUs, 4410 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  47% ] 300/300 VUs  04m42.5s/10m0s  45.63 iters/s
+
+running (05m06.0s), 300/301 VUs, 4441 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  47% ] 300/300 VUs  04m43.5s/10m0s  45.88 iters/s
+
+running (05m07.0s), 300/301 VUs, 4477 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  47% ] 300/300 VUs  04m44.5s/10m0s  46.13 iters/s
+
+running (05m08.0s), 300/301 VUs, 4507 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  48% ] 300/300 VUs  04m45.5s/10m0s  46.38 iters/s
+
+running (05m09.0s), 300/301 VUs, 4546 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  48% ] 300/300 VUs  04m46.5s/10m0s  46.63 iters/s
+
+running (05m10.0s), 300/301 VUs, 4573 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  48% ] 300/300 VUs  04m47.5s/10m0s  46.88 iters/s
+
+running (05m11.0s), 300/301 VUs, 4603 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  48% ] 300/300 VUs  04m48.5s/10m0s  47.13 iters/s
+
+running (05m12.0s), 299/301 VUs, 4633 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  48% ] 299/300 VUs  04m49.5s/10m0s  47.38 iters/s
+
+running (05m13.0s), 300/301 VUs, 4663 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  48% ] 300/300 VUs  04m50.5s/10m0s  47.63 iters/s
+
+running (05m14.0s), 299/301 VUs, 4688 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  49% ] 299/300 VUs  04m51.5s/10m0s  47.88 iters/s
+
+running (05m15.0s), 298/301 VUs, 4717 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  49% ] 298/300 VUs  04m52.5s/10m0s  48.13 iters/s
+
+running (05m16.0s), 300/301 VUs, 4741 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  49% ] 300/300 VUs  04m53.5s/10m0s  48.38 iters/s
+
+running (05m17.0s), 299/301 VUs, 4771 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  49% ] 299/300 VUs  04m54.5s/10m0s  48.63 iters/s
+
+running (05m18.0s), 300/301 VUs, 4784 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  49% ] 300/300 VUs  04m55.5s/10m0s  48.88 iters/s
+
+running (05m19.0s), 300/301 VUs, 4802 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  49% ] 300/300 VUs  04m56.5s/10m0s  49.13 iters/s
+
+running (05m20.0s), 299/301 VUs, 4827 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  50% ] 299/300 VUs  04m57.5s/10m0s  49.38 iters/s
+
+running (05m21.0s), 300/301 VUs, 4850 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  50% ] 300/300 VUs  04m58.5s/10m0s  49.63 iters/s
+
+running (05m22.0s), 300/301 VUs, 4864 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  50% ] 300/300 VUs  04m59.5s/10m0s  49.88 iters/s
+
+running (05m23.0s), 300/301 VUs, 4871 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  50% ] 300/300 VUs  05m00.5s/10m0s  50.17 iters/s
+
+running (05m24.0s), 300/301 VUs, 4877 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  50% ] 300/300 VUs  05m01.5s/10m0s  50.51 iters/s
+
+running (05m25.0s), 300/301 VUs, 4887 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  50% ] 300/300 VUs  05m02.5s/10m0s  50.84 iters/s
+
+running (05m26.0s), 300/301 VUs, 4897 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  51% ] 300/300 VUs  05m03.5s/10m0s  51.17 iters/s
+
+running (05m27.0s), 300/301 VUs, 4906 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  51% ] 300/300 VUs  05m04.5s/10m0s  51.51 iters/s
+
+running (05m28.0s), 300/301 VUs, 4917 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  51% ] 300/300 VUs  05m05.5s/10m0s  51.84 iters/s
+
+running (05m29.0s), 300/301 VUs, 4930 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  51% ] 300/300 VUs  05m06.5s/10m0s  52.17 iters/s
+
+running (05m30.0s), 300/301 VUs, 4944 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  51% ] 300/300 VUs  05m07.5s/10m0s  52.51 iters/s
+
+running (05m31.0s), 300/301 VUs, 4957 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  51% ] 300/300 VUs  05m08.5s/10m0s  52.84 iters/s
+
+running (05m32.0s), 300/301 VUs, 4964 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  52% ] 300/300 VUs  05m09.5s/10m0s  53.17 iters/s
+
+running (05m33.0s), 300/301 VUs, 4974 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  52% ] 300/300 VUs  05m10.5s/10m0s  53.51 iters/s
+
+running (05m34.0s), 300/301 VUs, 4996 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  52% ] 300/300 VUs  05m11.5s/10m0s  53.84 iters/s
+
+running (05m35.0s), 300/301 VUs, 5021 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  52% ] 300/300 VUs  05m12.5s/10m0s  54.17 iters/s
+
+running (05m36.0s), 300/301 VUs, 5048 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  52% ] 300/300 VUs  05m13.5s/10m0s  54.51 iters/s
+
+running (05m37.0s), 299/301 VUs, 5060 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  52% ] 299/300 VUs  05m14.5s/10m0s  54.84 iters/s
+
+running (05m38.0s), 300/301 VUs, 5071 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  53% ] 300/300 VUs  05m15.5s/10m0s  55.17 iters/s
+
+running (05m39.0s), 300/301 VUs, 5087 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  53% ] 300/300 VUs  05m16.5s/10m0s  55.51 iters/s
+
+running (05m40.0s), 297/301 VUs, 5113 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  53% ] 297/300 VUs  05m17.5s/10m0s  55.84 iters/s
+
+running (05m41.0s), 300/301 VUs, 5143 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  53% ] 300/300 VUs  05m18.5s/10m0s  56.17 iters/s
+
+running (05m42.0s), 300/301 VUs, 5157 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  53% ] 300/300 VUs  05m19.5s/10m0s  56.51 iters/s
+
+running (05m43.0s), 300/301 VUs, 5178 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  53% ] 300/300 VUs  05m20.5s/10m0s  56.84 iters/s
+
+running (05m44.0s), 300/301 VUs, 5190 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  54% ] 300/300 VUs  05m21.5s/10m0s  57.17 iters/s
+
+running (05m45.0s), 300/301 VUs, 5198 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  54% ] 300/300 VUs  05m22.5s/10m0s  57.51 iters/s
+
+running (05m46.0s), 300/301 VUs, 5208 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  54% ] 300/300 VUs  05m23.5s/10m0s  57.84 iters/s
+
+running (05m47.0s), 300/301 VUs, 5217 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  54% ] 300/300 VUs  05m24.5s/10m0s  58.17 iters/s
+
+running (05m48.0s), 300/301 VUs, 5230 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  54% ] 300/300 VUs  05m25.5s/10m0s  58.51 iters/s
+
+running (05m49.0s), 299/301 VUs, 5245 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  54% ] 299/300 VUs  05m26.5s/10m0s  58.84 iters/s
+
+running (05m50.0s), 299/301 VUs, 5261 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  55% ] 299/300 VUs  05m27.5s/10m0s  59.17 iters/s
+
+running (05m51.0s), 300/301 VUs, 5276 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  55% ] 300/300 VUs  05m28.5s/10m0s  59.51 iters/s
+
+running (05m52.0s), 300/301 VUs, 5304 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  55% ] 300/300 VUs  05m29.5s/10m0s  59.84 iters/s
+
+running (05m53.0s), 300/301 VUs, 5319 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  55% ] 300/300 VUs  05m30.5s/10m0s  60.17 iters/s
+
+running (05m54.0s), 300/301 VUs, 5332 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  55% ] 300/300 VUs  05m31.5s/10m0s  60.51 iters/s
+
+running (05m55.0s), 300/301 VUs, 5349 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  55% ] 300/300 VUs  05m32.5s/10m0s  60.84 iters/s
+
+running (05m56.0s), 300/301 VUs, 5363 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  56% ] 300/300 VUs  05m33.5s/10m0s  61.17 iters/s
+
+running (05m57.0s), 300/301 VUs, 5389 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  56% ] 300/300 VUs  05m34.5s/10m0s  61.51 iters/s
+
+running (05m58.0s), 299/301 VUs, 5420 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  56% ] 299/300 VUs  05m35.5s/10m0s  61.84 iters/s
+
+running (05m59.0s), 300/301 VUs, 5437 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  56% ] 300/300 VUs  05m36.5s/10m0s  62.17 iters/s
+
+running (06m00.0s), 300/301 VUs, 5451 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  56% ] 300/300 VUs  05m37.5s/10m0s  62.51 iters/s
+
+running (06m01.0s), 300/301 VUs, 5465 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  56% ] 300/300 VUs  05m38.5s/10m0s  62.84 iters/s
+
+running (06m02.0s), 300/301 VUs, 5483 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  57% ] 300/300 VUs  05m39.5s/10m0s  63.17 iters/s
+
+running (06m03.0s), 300/301 VUs, 5501 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  57% ] 300/300 VUs  05m40.5s/10m0s  63.51 iters/s
+
+running (06m04.0s), 300/301 VUs, 5510 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  57% ] 300/300 VUs  05m41.5s/10m0s  63.84 iters/s
+
+running (06m05.0s), 300/301 VUs, 5520 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  57% ] 300/300 VUs  05m42.5s/10m0s  64.17 iters/s
+
+running (06m06.0s), 300/301 VUs, 5527 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  57% ] 300/300 VUs  05m43.5s/10m0s  64.51 iters/s
+
+running (06m07.0s), 300/301 VUs, 5540 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  57% ] 300/300 VUs  05m44.5s/10m0s  64.84 iters/s
+
+running (06m08.0s), 300/301 VUs, 5551 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  58% ] 300/300 VUs  05m45.5s/10m0s  65.17 iters/s
+
+running (06m09.0s), 300/301 VUs, 5567 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  58% ] 300/300 VUs  05m46.5s/10m0s  65.51 iters/s
+
+running (06m10.0s), 300/301 VUs, 5581 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  58% ] 300/300 VUs  05m47.5s/10m0s  65.84 iters/s
+
+running (06m11.0s), 300/301 VUs, 5595 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  58% ] 300/300 VUs  05m48.5s/10m0s  66.17 iters/s
+
+running (06m12.0s), 300/301 VUs, 5615 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  58% ] 300/300 VUs  05m49.5s/10m0s  66.51 iters/s
+
+running (06m13.0s), 300/301 VUs, 5636 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  58% ] 300/300 VUs  05m50.5s/10m0s  66.84 iters/s
+
+running (06m14.0s), 300/301 VUs, 5648 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  59% ] 300/300 VUs  05m51.5s/10m0s  67.17 iters/s
+
+running (06m15.0s), 300/301 VUs, 5668 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  59% ] 300/300 VUs  05m52.5s/10m0s  67.51 iters/s
+
+running (06m16.0s), 300/301 VUs, 5689 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  59% ] 300/300 VUs  05m53.5s/10m0s  67.84 iters/s
+
+running (06m17.0s), 300/301 VUs, 5710 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  59% ] 300/300 VUs  05m54.5s/10m0s  68.17 iters/s
+
+running (06m18.0s), 300/301 VUs, 5729 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  59% ] 300/300 VUs  05m55.5s/10m0s  68.51 iters/s
+
+running (06m19.0s), 300/301 VUs, 5753 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  59% ] 300/300 VUs  05m56.5s/10m0s  68.84 iters/s
+
+running (06m20.0s), 300/301 VUs, 5764 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  60% ] 300/300 VUs  05m57.5s/10m0s  69.17 iters/s
+
+running (06m21.0s), 300/301 VUs, 5781 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  60% ] 300/300 VUs  05m58.5s/10m0s  69.51 iters/s
+
+running (06m22.0s), 300/301 VUs, 5797 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  60% ] 300/300 VUs  05m59.5s/10m0s  69.84 iters/s
+
+running (06m23.0s), 300/301 VUs, 5810 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  60% ] 300/300 VUs  06m00.5s/10m0s  70.17 iters/s
+
+running (06m24.0s), 300/301 VUs, 5822 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  60% ] 300/300 VUs  06m01.5s/10m0s  70.51 iters/s
+
+running (06m25.0s), 300/301 VUs, 5834 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  60% ] 300/300 VUs  06m02.5s/10m0s  70.84 iters/s
+
+running (06m26.0s), 300/301 VUs, 5854 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  61% ] 300/300 VUs  06m03.5s/10m0s  71.17 iters/s
+
+running (06m27.0s), 298/301 VUs, 5867 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  61% ] 298/300 VUs  06m04.5s/10m0s  71.51 iters/s
+
+running (06m28.0s), 300/301 VUs, 5882 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  61% ] 300/300 VUs  06m05.5s/10m0s  71.84 iters/s
+
+running (06m29.0s), 299/301 VUs, 5894 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  61% ] 299/300 VUs  06m06.5s/10m0s  72.17 iters/s
+
+running (06m30.0s), 300/301 VUs, 5908 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  61% ] 300/300 VUs  06m07.5s/10m0s  72.51 iters/s
+
+running (06m31.0s), 300/301 VUs, 5927 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  61% ] 300/300 VUs  06m08.5s/10m0s  72.84 iters/s
+
+running (06m32.0s), 300/301 VUs, 5939 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  62% ] 300/300 VUs  06m09.5s/10m0s  73.17 iters/s
+
+running (06m33.0s), 300/301 VUs, 5953 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  62% ] 300/300 VUs  06m10.5s/10m0s  73.51 iters/s
+
+running (06m34.0s), 300/301 VUs, 5974 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  62% ] 300/300 VUs  06m11.5s/10m0s  73.84 iters/s
+
+running (06m35.0s), 300/301 VUs, 5993 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  62% ] 300/300 VUs  06m12.5s/10m0s  74.17 iters/s
+
+running (06m36.0s), 300/301 VUs, 6010 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  62% ] 300/300 VUs  06m13.5s/10m0s  74.51 iters/s
+
+running (06m37.0s), 300/301 VUs, 6027 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  62% ] 300/300 VUs  06m14.5s/10m0s  74.84 iters/s
+
+running (06m38.0s), 300/301 VUs, 6047 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  63% ] 300/300 VUs  06m15.5s/10m0s  75.17 iters/s
+
+running (06m39.0s), 300/301 VUs, 6062 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  63% ] 300/300 VUs  06m16.5s/10m0s  75.50 iters/s
+
+running (06m40.0s), 300/301 VUs, 6071 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  63% ] 300/300 VUs  06m17.5s/10m0s  75.84 iters/s
+
+running (06m41.0s), 300/301 VUs, 6085 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  63% ] 300/300 VUs  06m18.5s/10m0s  76.17 iters/s
+
+running (06m42.0s), 300/301 VUs, 6104 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  63% ] 300/300 VUs  06m19.5s/10m0s  76.50 iters/s
+
+running (06m43.0s), 300/301 VUs, 6114 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  63% ] 300/300 VUs  06m20.5s/10m0s  76.84 iters/s
+
+running (06m44.0s), 300/301 VUs, 6127 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  64% ] 300/300 VUs  06m21.5s/10m0s  77.17 iters/s
+
+running (06m45.0s), 299/301 VUs, 6140 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  64% ] 299/300 VUs  06m22.5s/10m0s  77.50 iters/s
+
+running (06m46.0s), 300/301 VUs, 6150 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  64% ] 300/300 VUs  06m23.5s/10m0s  77.84 iters/s
+
+running (06m47.0s), 300/301 VUs, 6166 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  64% ] 300/300 VUs  06m24.5s/10m0s  78.17 iters/s
+
+running (06m48.0s), 300/301 VUs, 6179 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  64% ] 300/300 VUs  06m25.5s/10m0s  78.50 iters/s
+
+running (06m49.0s), 300/301 VUs, 6197 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  64% ] 300/300 VUs  06m26.5s/10m0s  78.84 iters/s
+
+running (06m50.0s), 300/301 VUs, 6212 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  65% ] 300/300 VUs  06m27.5s/10m0s  79.17 iters/s
+
+running (06m51.0s), 300/301 VUs, 6232 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  65% ] 300/300 VUs  06m28.5s/10m0s  79.50 iters/s
+
+running (06m52.0s), 300/301 VUs, 6241 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  65% ] 300/300 VUs  06m29.5s/10m0s  79.84 iters/s
+
+running (06m53.0s), 300/301 VUs, 6258 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  65% ] 300/300 VUs  06m30.5s/10m0s  80.17 iters/s
+
+running (06m54.0s), 300/301 VUs, 6281 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  65% ] 300/300 VUs  06m31.5s/10m0s  80.50 iters/s
+
+running (06m55.0s), 300/301 VUs, 6298 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  65% ] 300/300 VUs  06m32.5s/10m0s  80.84 iters/s
+
+running (06m56.0s), 300/301 VUs, 6320 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  66% ] 300/300 VUs  06m33.5s/10m0s  81.17 iters/s
+
+running (06m57.0s), 300/301 VUs, 6345 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  66% ] 300/300 VUs  06m34.5s/10m0s  81.50 iters/s
+
+running (06m58.0s), 300/301 VUs, 6359 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  66% ] 300/300 VUs  06m35.5s/10m0s  81.84 iters/s
+
+running (06m59.0s), 300/301 VUs, 6378 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  66% ] 300/300 VUs  06m36.5s/10m0s  82.17 iters/s
+
+running (07m00.0s), 300/301 VUs, 6397 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  66% ] 300/300 VUs  06m37.5s/10m0s  82.50 iters/s
+
+running (07m01.0s), 300/301 VUs, 6410 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  66% ] 300/300 VUs  06m38.5s/10m0s  82.84 iters/s
+
+running (07m02.0s), 300/301 VUs, 6421 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  67% ] 300/300 VUs  06m39.5s/10m0s  83.17 iters/s
+
+running (07m03.0s), 300/301 VUs, 6432 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  67% ] 300/300 VUs  06m40.5s/10m0s  83.50 iters/s
+
+running (07m04.0s), 300/301 VUs, 6450 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  67% ] 300/300 VUs  06m41.5s/10m0s  83.84 iters/s
+
+running (07m05.0s), 300/301 VUs, 6467 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  67% ] 300/300 VUs  06m42.5s/10m0s  84.17 iters/s
+
+running (07m06.0s), 300/301 VUs, 6479 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  67% ] 300/300 VUs  06m43.5s/10m0s  84.50 iters/s
+
+running (07m07.0s), 300/301 VUs, 6492 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  67% ] 300/300 VUs  06m44.5s/10m0s  84.84 iters/s
+
+running (07m08.0s), 300/301 VUs, 6505 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  68% ] 300/300 VUs  06m45.5s/10m0s  85.17 iters/s
+
+running (07m09.0s), 300/301 VUs, 6514 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  68% ] 300/300 VUs  06m46.5s/10m0s  85.50 iters/s
+
+running (07m10.0s), 299/301 VUs, 6531 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  68% ] 299/300 VUs  06m47.5s/10m0s  85.84 iters/s
+
+running (07m11.0s), 300/301 VUs, 6548 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  68% ] 300/300 VUs  06m48.5s/10m0s  86.17 iters/s
+
+running (07m12.0s), 300/301 VUs, 6566 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  68% ] 300/300 VUs  06m49.5s/10m0s  86.50 iters/s
+
+running (07m13.0s), 300/301 VUs, 6583 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  68% ] 300/300 VUs  06m50.5s/10m0s  86.84 iters/s
+
+running (07m14.0s), 300/301 VUs, 6612 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  69% ] 300/300 VUs  06m51.5s/10m0s  87.17 iters/s
+
+running (07m15.0s), 300/301 VUs, 6628 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  69% ] 300/300 VUs  06m52.5s/10m0s  87.50 iters/s
+
+running (07m16.0s), 300/301 VUs, 6636 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  69% ] 300/300 VUs  06m53.5s/10m0s  87.84 iters/s
+
+running (07m17.0s), 300/301 VUs, 6651 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  69% ] 300/300 VUs  06m54.5s/10m0s  88.17 iters/s
+
+running (07m18.0s), 300/301 VUs, 6677 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  69% ] 300/300 VUs  06m55.5s/10m0s  88.50 iters/s
+
+running (07m19.0s), 300/301 VUs, 6701 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  69% ] 300/300 VUs  06m56.5s/10m0s  88.84 iters/s
+
+running (07m20.0s), 300/301 VUs, 6713 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  70% ] 300/300 VUs  06m57.5s/10m0s  89.17 iters/s
+
+running (07m21.0s), 300/301 VUs, 6731 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  70% ] 300/300 VUs  06m58.5s/10m0s  89.50 iters/s
+
+running (07m22.0s), 300/301 VUs, 6747 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  70% ] 300/300 VUs  06m59.5s/10m0s  89.84 iters/s
+
+running (07m23.0s), 300/301 VUs, 6766 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  70% ] 300/300 VUs  07m00.5s/10m0s  90.00 iters/s
+
+running (07m24.0s), 300/301 VUs, 6776 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  70% ] 300/300 VUs  07m01.5s/10m0s  90.00 iters/s
+
+running (07m25.0s), 300/301 VUs, 6798 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  70% ] 300/300 VUs  07m02.5s/10m0s  90.00 iters/s
+
+running (07m26.0s), 300/301 VUs, 6807 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  71% ] 300/300 VUs  07m03.5s/10m0s  90.00 iters/s
+
+running (07m27.0s), 300/301 VUs, 6815 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  71% ] 300/300 VUs  07m04.5s/10m0s  90.00 iters/s
+
+running (07m28.0s), 300/301 VUs, 6834 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  71% ] 300/300 VUs  07m05.5s/10m0s  90.00 iters/s
+
+running (07m29.0s), 300/301 VUs, 6848 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  71% ] 300/300 VUs  07m06.5s/10m0s  90.00 iters/s
+
+running (07m30.0s), 300/301 VUs, 6867 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  71% ] 300/300 VUs  07m07.5s/10m0s  90.00 iters/s
+
+running (07m31.0s), 300/301 VUs, 6886 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  71% ] 300/300 VUs  07m08.5s/10m0s  90.00 iters/s
+
+running (07m32.0s), 300/301 VUs, 6901 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  72% ] 300/300 VUs  07m09.5s/10m0s  90.00 iters/s
+
+running (07m33.0s), 300/301 VUs, 6913 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  72% ] 300/300 VUs  07m10.5s/10m0s  90.00 iters/s
+
+running (07m34.0s), 300/301 VUs, 6931 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  72% ] 300/300 VUs  07m11.5s/10m0s  90.00 iters/s
+
+running (07m35.0s), 300/301 VUs, 6950 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  72% ] 300/300 VUs  07m12.5s/10m0s  90.00 iters/s
+
+running (07m36.0s), 300/301 VUs, 6968 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  72% ] 300/300 VUs  07m13.5s/10m0s  90.00 iters/s
+
+running (07m37.0s), 300/301 VUs, 6986 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  72% ] 300/300 VUs  07m14.5s/10m0s  90.00 iters/s
+
+running (07m38.0s), 300/301 VUs, 7002 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  73% ] 300/300 VUs  07m15.5s/10m0s  90.00 iters/s
+
+running (07m39.0s), 300/301 VUs, 7016 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  73% ] 300/300 VUs  07m16.5s/10m0s  90.00 iters/s
+
+running (07m40.0s), 300/301 VUs, 7031 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  73% ] 300/300 VUs  07m17.5s/10m0s  90.00 iters/s
+
+running (07m41.0s), 300/301 VUs, 7052 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  73% ] 300/300 VUs  07m18.5s/10m0s  90.00 iters/s
+
+running (07m42.0s), 300/301 VUs, 7064 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  73% ] 300/300 VUs  07m19.5s/10m0s  90.00 iters/s
+
+running (07m43.0s), 300/301 VUs, 7077 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  73% ] 300/300 VUs  07m20.5s/10m0s  90.00 iters/s
+
+running (07m44.0s), 300/301 VUs, 7089 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  74% ] 300/300 VUs  07m21.5s/10m0s  90.00 iters/s
+
+running (07m45.0s), 300/301 VUs, 7102 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  74% ] 300/300 VUs  07m22.5s/10m0s  90.00 iters/s
+
+running (07m46.0s), 300/301 VUs, 7121 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  74% ] 300/300 VUs  07m23.5s/10m0s  90.00 iters/s
+
+running (07m47.0s), 300/301 VUs, 7129 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  74% ] 300/300 VUs  07m24.5s/10m0s  90.00 iters/s
+
+running (07m48.0s), 300/301 VUs, 7150 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  74% ] 300/300 VUs  07m25.5s/10m0s  90.00 iters/s
+
+running (07m49.0s), 300/301 VUs, 7165 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  74% ] 300/300 VUs  07m26.5s/10m0s  90.00 iters/s
+
+running (07m50.0s), 300/301 VUs, 7183 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  75% ] 300/300 VUs  07m27.5s/10m0s  90.00 iters/s
+
+running (07m51.0s), 300/301 VUs, 7206 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  75% ] 300/300 VUs  07m28.5s/10m0s  90.00 iters/s
+
+running (07m52.0s), 300/301 VUs, 7220 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  75% ] 300/300 VUs  07m29.5s/10m0s  90.00 iters/s
+
+running (07m53.0s), 299/301 VUs, 7238 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  75% ] 299/300 VUs  07m30.5s/10m0s  90.00 iters/s
+
+running (07m54.0s), 300/301 VUs, 7263 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  75% ] 300/300 VUs  07m31.5s/10m0s  90.00 iters/s
+
+running (07m55.0s), 300/301 VUs, 7285 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  75% ] 300/300 VUs  07m32.5s/10m0s  90.00 iters/s
+
+running (07m56.0s), 300/301 VUs, 7296 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  76% ] 300/300 VUs  07m33.5s/10m0s  90.00 iters/s
+
+running (07m57.0s), 300/301 VUs, 7312 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  76% ] 300/300 VUs  07m34.5s/10m0s  90.00 iters/s
+
+running (07m58.0s), 300/301 VUs, 7335 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  76% ] 300/300 VUs  07m35.5s/10m0s  90.00 iters/s
+
+running (07m59.0s), 300/301 VUs, 7354 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  76% ] 300/300 VUs  07m36.5s/10m0s  90.00 iters/s
+
+running (08m00.0s), 300/301 VUs, 7367 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  76% ] 300/300 VUs  07m37.5s/10m0s  90.00 iters/s
+
+running (08m01.0s), 299/301 VUs, 7373 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  76% ] 299/300 VUs  07m38.5s/10m0s  90.00 iters/s
+
+running (08m02.0s), 300/301 VUs, 7388 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  77% ] 300/300 VUs  07m39.5s/10m0s  90.00 iters/s
+
+running (08m03.0s), 300/301 VUs, 7400 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  77% ] 300/300 VUs  07m40.5s/10m0s  90.00 iters/s
+
+running (08m04.0s), 300/301 VUs, 7416 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  77% ] 300/300 VUs  07m41.5s/10m0s  90.00 iters/s
+
+running (08m05.0s), 300/301 VUs, 7431 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  77% ] 300/300 VUs  07m42.5s/10m0s  90.00 iters/s
+
+running (08m06.0s), 300/301 VUs, 7446 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  77% ] 300/300 VUs  07m43.5s/10m0s  90.00 iters/s
+
+running (08m07.0s), 300/301 VUs, 7457 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  77% ] 300/300 VUs  07m44.5s/10m0s  90.00 iters/s
+
+running (08m08.0s), 300/301 VUs, 7476 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  78% ] 300/300 VUs  07m45.5s/10m0s  90.00 iters/s
+
+running (08m09.0s), 300/301 VUs, 7491 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  78% ] 300/300 VUs  07m46.5s/10m0s  90.00 iters/s
+
+running (08m10.0s), 300/301 VUs, 7508 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  78% ] 300/300 VUs  07m47.5s/10m0s  90.00 iters/s
+
+running (08m11.0s), 300/301 VUs, 7527 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  78% ] 300/300 VUs  07m48.5s/10m0s  90.00 iters/s
+
+running (08m12.0s), 300/301 VUs, 7549 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  78% ] 300/300 VUs  07m49.5s/10m0s  90.00 iters/s
+
+running (08m13.0s), 300/301 VUs, 7566 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  78% ] 300/300 VUs  07m50.5s/10m0s  90.00 iters/s
+
+running (08m14.0s), 300/301 VUs, 7580 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  79% ] 300/300 VUs  07m51.5s/10m0s  90.00 iters/s
+
+running (08m15.0s), 300/301 VUs, 7591 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  79% ] 300/300 VUs  07m52.5s/10m0s  90.00 iters/s
+
+running (08m16.0s), 300/301 VUs, 7608 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  79% ] 300/300 VUs  07m53.5s/10m0s  90.00 iters/s
+
+running (08m17.0s), 300/301 VUs, 7625 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  79% ] 300/300 VUs  07m54.5s/10m0s  90.00 iters/s
+
+running (08m18.0s), 300/301 VUs, 7640 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  79% ] 300/300 VUs  07m55.5s/10m0s  90.00 iters/s
+
+running (08m19.0s), 300/301 VUs, 7655 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  79% ] 300/300 VUs  07m56.5s/10m0s  90.00 iters/s
+
+running (08m20.0s), 300/301 VUs, 7668 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  80% ] 300/300 VUs  07m57.5s/10m0s  90.00 iters/s
+
+running (08m21.0s), 300/301 VUs, 7681 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  80% ] 300/300 VUs  07m58.5s/10m0s  90.00 iters/s
+
+running (08m22.0s), 300/301 VUs, 7697 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  80% ] 300/300 VUs  07m59.5s/10m0s  90.00 iters/s
+
+running (08m23.0s), 300/301 VUs, 7711 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  80% ] 300/300 VUs  08m00.5s/10m0s  90.00 iters/s
+
+running (08m24.0s), 300/301 VUs, 7731 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  80% ] 300/300 VUs  08m01.5s/10m0s  90.00 iters/s
+
+running (08m25.0s), 300/301 VUs, 7751 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  80% ] 300/300 VUs  08m02.5s/10m0s  90.00 iters/s
+
+running (08m26.0s), 300/301 VUs, 7761 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  81% ] 300/300 VUs  08m03.5s/10m0s  90.00 iters/s
+
+running (08m27.0s), 300/301 VUs, 7779 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  81% ] 300/300 VUs  08m04.5s/10m0s  90.00 iters/s
+
+running (08m28.0s), 300/301 VUs, 7797 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  81% ] 300/300 VUs  08m05.5s/10m0s  90.00 iters/s
+
+running (08m29.0s), 300/301 VUs, 7818 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  81% ] 300/300 VUs  08m06.5s/10m0s  90.00 iters/s
+
+running (08m30.0s), 300/301 VUs, 7840 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  81% ] 300/300 VUs  08m07.5s/10m0s  90.00 iters/s
+
+running (08m31.0s), 300/301 VUs, 7855 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  81% ] 300/300 VUs  08m08.5s/10m0s  90.00 iters/s
+
+running (08m32.0s), 300/301 VUs, 7871 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  82% ] 300/300 VUs  08m09.5s/10m0s  90.00 iters/s
+
+running (08m33.0s), 300/301 VUs, 7889 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  82% ] 300/300 VUs  08m10.5s/10m0s  90.00 iters/s
+
+running (08m34.0s), 300/301 VUs, 7905 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  82% ] 300/300 VUs  08m11.5s/10m0s  90.00 iters/s
+
+running (08m35.0s), 300/301 VUs, 7925 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  82% ] 300/300 VUs  08m12.5s/10m0s  90.00 iters/s
+
+running (08m36.0s), 300/301 VUs, 7940 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  82% ] 300/300 VUs  08m13.5s/10m0s  90.00 iters/s
+
+running (08m37.0s), 300/301 VUs, 7950 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  82% ] 300/300 VUs  08m14.5s/10m0s  90.00 iters/s
+
+running (08m38.0s), 300/301 VUs, 7961 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  83% ] 300/300 VUs  08m15.5s/10m0s  90.00 iters/s
+
+running (08m39.0s), 300/301 VUs, 7976 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  83% ] 300/300 VUs  08m16.5s/10m0s  90.00 iters/s
+
+running (08m40.0s), 300/301 VUs, 7988 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  83% ] 300/300 VUs  08m17.5s/10m0s  90.00 iters/s
+
+running (08m41.0s), 300/301 VUs, 8006 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  83% ] 300/300 VUs  08m18.5s/10m0s  90.00 iters/s
+
+running (08m42.0s), 300/301 VUs, 8020 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  83% ] 300/300 VUs  08m19.5s/10m0s  90.00 iters/s
+
+running (08m43.0s), 300/301 VUs, 8030 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  83% ] 300/300 VUs  08m20.5s/10m0s  90.00 iters/s
+
+running (08m44.0s), 300/301 VUs, 8042 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  84% ] 300/300 VUs  08m21.5s/10m0s  90.00 iters/s
+
+running (08m45.0s), 300/301 VUs, 8060 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  84% ] 300/300 VUs  08m22.5s/10m0s  90.00 iters/s
+
+running (08m46.0s), 300/301 VUs, 8079 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  84% ] 300/300 VUs  08m23.5s/10m0s  90.00 iters/s
+
+running (08m47.0s), 300/301 VUs, 8099 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  84% ] 300/300 VUs  08m24.5s/10m0s  90.00 iters/s
+
+running (08m48.0s), 300/301 VUs, 8112 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  84% ] 300/300 VUs  08m25.5s/10m0s  90.00 iters/s
+
+running (08m49.0s), 300/301 VUs, 8131 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  84% ] 300/300 VUs  08m26.5s/10m0s  90.00 iters/s
+
+running (08m50.0s), 300/301 VUs, 8156 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  85% ] 300/300 VUs  08m27.5s/10m0s  90.00 iters/s
+
+running (08m51.0s), 300/301 VUs, 8177 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  85% ] 300/300 VUs  08m28.5s/10m0s  90.00 iters/s
+
+running (08m52.0s), 300/301 VUs, 8199 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  85% ] 300/300 VUs  08m29.5s/10m0s  90.00 iters/s
+
+running (08m53.0s), 300/301 VUs, 8212 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  85% ] 300/300 VUs  08m30.5s/10m0s  90.00 iters/s
+
+running (08m54.0s), 300/301 VUs, 8230 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  85% ] 300/300 VUs  08m31.5s/10m0s  90.00 iters/s
+
+running (08m55.0s), 300/301 VUs, 8244 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  85% ] 300/300 VUs  08m32.5s/10m0s  90.00 iters/s
+
+running (08m56.0s), 300/301 VUs, 8258 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  86% ] 300/300 VUs  08m33.5s/10m0s  90.00 iters/s
+
+running (08m57.0s), 300/301 VUs, 8268 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  86% ] 300/300 VUs  08m34.5s/10m0s  90.00 iters/s
+
+running (08m58.0s), 300/301 VUs, 8285 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  86% ] 300/300 VUs  08m35.5s/10m0s  90.00 iters/s
+
+running (08m59.0s), 300/301 VUs, 8304 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  86% ] 300/300 VUs  08m36.5s/10m0s  90.00 iters/s
+
+running (09m00.0s), 300/301 VUs, 8315 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  86% ] 300/300 VUs  08m37.5s/10m0s  90.00 iters/s
+
+running (09m01.0s), 300/301 VUs, 8331 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  86% ] 300/300 VUs  08m38.5s/10m0s  90.00 iters/s
+
+running (09m02.0s), 299/301 VUs, 8340 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  87% ] 299/300 VUs  08m39.5s/10m0s  90.00 iters/s
+
+running (09m03.0s), 300/301 VUs, 8357 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  87% ] 300/300 VUs  08m40.5s/10m0s  90.00 iters/s
+
+running (09m04.0s), 300/301 VUs, 8381 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  87% ] 300/300 VUs  08m41.5s/10m0s  90.00 iters/s
+
+running (09m05.0s), 300/301 VUs, 8396 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  87% ] 300/300 VUs  08m42.5s/10m0s  90.00 iters/s
+
+running (09m06.0s), 300/301 VUs, 8417 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  87% ] 300/300 VUs  08m43.5s/10m0s  90.00 iters/s
+
+running (09m07.0s), 300/301 VUs, 8433 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  87% ] 300/300 VUs  08m44.5s/10m0s  90.00 iters/s
+
+running (09m08.0s), 300/301 VUs, 8446 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  88% ] 300/300 VUs  08m45.5s/10m0s  90.00 iters/s
+
+running (09m09.0s), 300/301 VUs, 8457 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  88% ] 300/300 VUs  08m46.5s/10m0s  90.00 iters/s
+
+running (09m10.0s), 300/301 VUs, 8464 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  88% ] 300/300 VUs  08m47.5s/10m0s  90.00 iters/s
+
+running (09m11.0s), 300/301 VUs, 8480 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  88% ] 300/300 VUs  08m48.5s/10m0s  90.00 iters/s
+
+running (09m12.0s), 300/301 VUs, 8497 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  88% ] 300/300 VUs  08m49.5s/10m0s  90.00 iters/s
+
+running (09m13.0s), 300/301 VUs, 8515 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  88% ] 300/300 VUs  08m50.5s/10m0s  90.00 iters/s
+
+running (09m14.0s), 300/301 VUs, 8524 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  89% ] 300/300 VUs  08m51.5s/10m0s  90.00 iters/s
+
+running (09m15.0s), 300/301 VUs, 8533 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  89% ] 300/300 VUs  08m52.5s/10m0s  90.00 iters/s
+
+running (09m16.0s), 300/301 VUs, 8545 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  89% ] 300/300 VUs  08m53.5s/10m0s  90.00 iters/s
+
+running (09m17.0s), 300/301 VUs, 8554 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  89% ] 300/300 VUs  08m54.5s/10m0s  90.00 iters/s
+
+running (09m18.0s), 300/301 VUs, 8563 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  89% ] 300/300 VUs  08m55.5s/10m0s  90.00 iters/s
+
+running (09m19.0s), 300/301 VUs, 8575 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  89% ] 300/300 VUs  08m56.5s/10m0s  90.00 iters/s
+
+running (09m20.0s), 300/301 VUs, 8582 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  90% ] 300/300 VUs  08m57.5s/10m0s  90.00 iters/s
+
+running (09m21.0s), 300/301 VUs, 8600 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  90% ] 300/300 VUs  08m58.5s/10m0s  90.00 iters/s
+
+running (09m22.0s), 300/301 VUs, 8617 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  90% ] 300/300 VUs  08m59.5s/10m0s  90.00 iters/s
+
+running (09m23.0s), 300/301 VUs, 8633 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  90% ] 300/300 VUs  09m00.5s/10m0s  89.27 iters/s
+
+running (09m24.0s), 300/301 VUs, 8653 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  90% ] 300/300 VUs  09m01.5s/10m0s  87.86 iters/s
+
+running (09m25.0s), 299/301 VUs, 8668 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  90% ] 299/300 VUs  09m02.5s/10m0s  86.44 iters/s
+
+running (09m26.0s), 300/301 VUs, 8689 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  91% ] 300/300 VUs  09m03.5s/10m0s  85.02 iters/s
+
+running (09m27.0s), 300/301 VUs, 8705 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  91% ] 300/300 VUs  09m04.5s/10m0s  83.61 iters/s
+
+running (09m28.0s), 300/301 VUs, 8719 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  91% ] 300/300 VUs  09m05.5s/10m0s  82.19 iters/s
+
+running (09m29.0s), 300/301 VUs, 8742 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  91% ] 300/300 VUs  09m06.5s/10m0s  80.77 iters/s
+
+running (09m30.0s), 300/301 VUs, 8759 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  91% ] 300/300 VUs  09m07.5s/10m0s  79.35 iters/s
+
+running (09m31.0s), 300/301 VUs, 8774 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  91% ] 300/300 VUs  09m08.5s/10m0s  77.95 iters/s
+
+running (09m32.0s), 300/301 VUs, 8792 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  92% ] 300/300 VUs  09m09.5s/10m0s  76.52 iters/s
+
+running (09m33.0s), 300/301 VUs, 8803 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  92% ] 300/300 VUs  09m10.5s/10m0s  75.11 iters/s
+
+running (09m34.0s), 299/301 VUs, 8822 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  92% ] 299/300 VUs  09m11.5s/10m0s  73.69 iters/s
+
+running (09m35.0s), 299/301 VUs, 8841 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  92% ] 299/300 VUs  09m12.5s/10m0s  72.27 iters/s
+
+running (09m36.0s), 300/301 VUs, 8851 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  92% ] 300/300 VUs  09m13.5s/10m0s  70.86 iters/s
+
+running (09m37.0s), 300/301 VUs, 8861 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  92% ] 300/300 VUs  09m14.5s/10m0s  69.43 iters/s
+
+running (09m38.0s), 300/301 VUs, 8872 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  93% ] 300/300 VUs  09m15.5s/10m0s  68.03 iters/s
+
+running (09m39.0s), 300/301 VUs, 8882 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  93% ] 300/300 VUs  09m16.5s/10m0s  66.60 iters/s
+
+running (09m40.0s), 300/301 VUs, 8896 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  93% ] 300/300 VUs  09m17.5s/10m0s  65.20 iters/s
+
+running (09m41.0s), 300/301 VUs, 8914 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  93% ] 300/300 VUs  09m18.5s/10m0s  63.77 iters/s
+
+running (09m42.0s), 300/301 VUs, 8941 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  93% ] 300/300 VUs  09m19.5s/10m0s  62.36 iters/s
+
+running (09m43.0s), 300/301 VUs, 8953 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  93% ] 300/300 VUs  09m20.5s/10m0s  60.93 iters/s
+
+running (09m44.0s), 300/301 VUs, 8969 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  94% ] 300/300 VUs  09m21.5s/10m0s  59.52 iters/s
+
+running (09m45.0s), 300/301 VUs, 8983 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  94% ] 300/300 VUs  09m22.5s/10m0s  58.10 iters/s
+
+running (09m46.0s), 299/301 VUs, 9007 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  94% ] 299/300 VUs  09m23.5s/10m0s  56.69 iters/s
+
+running (09m47.0s), 299/301 VUs, 9025 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  94% ] 299/300 VUs  09m24.5s/10m0s  55.27 iters/s
+
+running (09m48.0s), 300/301 VUs, 9043 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  94% ] 300/300 VUs  09m25.5s/10m0s  53.85 iters/s
+
+running (09m49.0s), 300/301 VUs, 9058 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  94% ] 300/300 VUs  09m26.5s/10m0s  52.43 iters/s
+
+running (09m50.0s), 300/301 VUs, 9072 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  95% ] 300/300 VUs  09m27.5s/10m0s  51.01 iters/s
+
+running (09m51.0s), 300/301 VUs, 9092 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  95% ] 300/300 VUs  09m28.5s/10m0s  49.60 iters/s
+
+running (09m52.0s), 300/301 VUs, 9106 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  95% ] 300/300 VUs  09m29.5s/10m0s  48.18 iters/s
+
+running (09m53.0s), 300/301 VUs, 9121 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  95% ] 300/300 VUs  09m30.5s/10m0s  46.78 iters/s
+
+running (09m54.0s), 300/301 VUs, 9140 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  95% ] 300/300 VUs  09m31.5s/10m0s  45.36 iters/s
+
+running (09m55.0s), 298/301 VUs, 9157 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  95% ] 298/300 VUs  09m32.5s/10m0s  43.94 iters/s
+
+running (09m56.0s), 300/301 VUs, 9171 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  96% ] 300/300 VUs  09m33.5s/10m0s  42.53 iters/s
+
+running (09m57.0s), 300/301 VUs, 9187 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  96% ] 300/300 VUs  09m34.5s/10m0s  41.10 iters/s
+
+running (09m58.0s), 300/301 VUs, 9198 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  96% ] 300/300 VUs  09m35.5s/10m0s  39.70 iters/s
+
+running (09m59.0s), 300/301 VUs, 9214 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  96% ] 300/300 VUs  09m36.5s/10m0s  38.29 iters/s
+
+running (10m00.0s), 300/301 VUs, 9232 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  96% ] 300/300 VUs  09m37.5s/10m0s  36.85 iters/s
+
+running (10m01.0s), 299/301 VUs, 9242 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  96% ] 299/300 VUs  09m38.5s/10m0s  35.44 iters/s
+
+running (10m02.0s), 300/301 VUs, 9260 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  97% ] 300/300 VUs  09m39.5s/10m0s  34.01 iters/s
+
+running (10m03.0s), 300/301 VUs, 9279 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  97% ] 300/300 VUs  09m40.5s/10m0s  32.61 iters/s
+
+running (10m04.0s), 299/301 VUs, 9296 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  97% ] 299/300 VUs  09m41.5s/10m0s  31.19 iters/s
+
+running (10m05.0s), 300/301 VUs, 9314 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  97% ] 300/300 VUs  09m42.5s/10m0s  29.80 iters/s
+
+running (10m06.0s), 300/301 VUs, 9323 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  97% ] 300/300 VUs  09m43.5s/10m0s  28.33 iters/s
+
+running (10m07.0s), 300/301 VUs, 9338 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  97% ] 300/300 VUs  09m44.5s/10m0s  26.95 iters/s
+
+running (10m08.0s), 300/301 VUs, 9350 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  98% ] 300/300 VUs  09m45.5s/10m0s  25.55 iters/s
+
+running (10m09.0s), 299/301 VUs, 9362 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  98% ] 299/300 VUs  09m46.5s/10m0s  24.12 iters/s
+
+running (10m10.0s), 300/301 VUs, 9375 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  98% ] 300/300 VUs  09m47.5s/10m0s  22.67 iters/s
+
+running (10m11.0s), 296/301 VUs, 9397 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  98% ] 296/300 VUs  09m48.5s/10m0s  21.25 iters/s
+
+running (10m12.0s), 294/301 VUs, 9419 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  98% ] 294/300 VUs  09m49.5s/10m0s  19.87 iters/s
+
+running (10m13.0s), 299/301 VUs, 9433 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  98% ] 299/300 VUs  09m50.5s/10m0s  18.46 iters/s
+
+running (10m14.0s), 299/301 VUs, 9446 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  99% ] 299/300 VUs  09m51.5s/10m0s  17.03 iters/s
+
+running (10m15.0s), 298/301 VUs, 9462 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  99% ] 298/300 VUs  09m52.5s/10m0s  15.64 iters/s
+
+running (10m16.0s), 297/301 VUs, 9477 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  99% ] 297/300 VUs  09m53.5s/10m0s  14.22 iters/s
+
+running (10m17.0s), 294/301 VUs, 9494 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  99% ] 294/300 VUs  09m54.5s/10m0s  12.74 iters/s
+
+running (10m18.0s), 292/301 VUs, 9508 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  99% ] 292/300 VUs  09m55.5s/10m0s  11.33 iters/s
+
+running (10m19.0s), 281/301 VUs, 9529 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [  99% ] 281/300 VUs  09m56.5s/10m0s  10.00 iters/s
+
+running (10m20.0s), 273/301 VUs, 9547 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [ 100% ] 273/300 VUs  09m57.5s/10m0s  08.47 iters/s
+
+running (10m21.0s), 260/301 VUs, 9568 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [ 100% ] 260/300 VUs  09m58.5s/10m0s  07.01 iters/s
+
+running (10m22.0s), 250/301 VUs, 9584 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica           [ 100% ] 250/300 VUs  09m59.5s/10m0s  05.66 iters/s
+
+running (10m23.0s), 232/301 VUs, 9604 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m24.0s), 213/301 VUs, 9623 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m25.0s), 195/301 VUs, 9641 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m26.0s), 181/301 VUs, 9655 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m27.0s), 160/301 VUs, 9676 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m28.0s), 138/301 VUs, 9698 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m29.0s), 104/301 VUs, 9732 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m30.0s), 060/301 VUs, 9776 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m31.0s), 028/301 VUs, 9808 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+
+running (10m32.0s), 006/301 VUs, 9830 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ↓ [ 100% ] 242/300 VUs  10m0s           05.41 iters/s
+==================================================================
+ ESCENARIO 1 - Actividad academica concurrente - reporte de k6
+==================================================================
+Fecha: 2026-10-31T05:05:26.226Z
+BASE_URL: https://34-149-212-102.sslip.io/api/v1
+Config: N_STUDENTS=20  RATE_SCALE=1  STAGE_DUR=2m  BASE_DUR=1m
+
+--- GLOBAL (lo que ve el usuario) ---------------------------------
+Peticiones totales......: 77709
+Throughput (req/s)......: 122.81
+Latencia p50 (ms).......: 480.7
+Latencia p90 (ms).......: 2629.8
+Latencia p95 (ms).......: 3125.5
+Latencia p99 (ms).......: 4099.4
+Latencia max (ms).......: 7714.2
+
+--- RESULTADO FUNCIONAL (clasificado) -----------------------------
+Errores funcionales.....: 1054   (fallos reales: 5xx / conexion)
+Rechazos de negocio.....: 2224   (4xx esperados)
+Timeouts................: 0
+Rate-limited (429)......: 0.00%
+Quiz calificado correcto: 100.00%
+Idempotencia (dup sin doble calif): 100.00%
+Checks superados........: 100.00%
+
+--- LATENCIA POR ENDPOINT (ms) ------------------------------------
+endpoint              avg      p95      p99      max
+catalog_list          261.3    749.3   1282.4   3765.9
+catalog_detail        670.4   1827.4   2526.5   4088.7
+outline              1505.8   3818.0   4908.9   7066.3
+progress_event       1258.9   3232.8   4051.8   6717.1
+quiz_start            934.9   2547.4   3381.2   5659.2
+quiz_submit           947.9   3506.8   4494.6   7714.2
+
+--- METRICAS QUE FALTAN (capturar EN LAS VMs / consola) -----------
+CPU/mem/disco Web y Worker : uptime, free -m, top, df -h  (o monitor_vm.sh)
+Conexiones y CPU de la BD  : consola del proveedor o psql
+Profundidad de la cola     : redis-cli (Escenario 1: ~0, es sincrono)
+==================================================================
+
+running (10m32.7s), 000/301 VUs, 9836 complete and 0 interrupted iterations
+integridad_idempotencia ✓ [ 100% ] 1 VUs        00m00.5s/10m0s  1/1 iters, 1 per VU
+carga_academica         ✓ [ 100% ] 000/300 VUs  10m0s           05.41 iters/s
+time="2026-10-31T05:05:26Z" level=error msg="thresholds on metrics 'errores_funcionales' have been crossed"
