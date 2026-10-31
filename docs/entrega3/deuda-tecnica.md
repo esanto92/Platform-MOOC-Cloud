@@ -23,6 +23,7 @@ Contenido:
 
 | Elemento | Valor |
 |---|---|
+| Repositorio de entrega | [`esanto92/Platform-MOOC-Cloud`](https://github.com/esanto92/Platform-MOOC-Cloud): ahi corren el pipeline y el commit evaluado |
 | Herramienta | SonarQube Cloud (sonarcloud.io), organizacion `esanto92`, proyecto `esanto92_Platform-MOOC-Cloud` |
 | Escaner | SonarScanner CLI 7.2.0.5079, via `SonarSource/sonarqube-scan-action@v6` |
 | Perfil de reglas | `Sonar way core` (perfil por defecto) para Go, TypeScript, CSS y YAML. Dockerfiles con las reglas por defecto de Docker |
@@ -122,18 +123,13 @@ Primer analisis completo del pipeline, sobre el codigo tal como estaba.
 
 ### Despues de las correcciones
 
-- Commit [`ef6e054`](https://github.com/esanto92/Platform-MOOC-Cloud/commit/ef6e054c9a5cb76b6679d6f85edeb870caeaf414)
-- Fecha: 2026-10-31
-- Ejecucion: [run 41163150503](https://github.com/esanto92/Platform-MOOC-Cloud/actions/runs/41163150503)
-- Reporte: [`calidad/ef6e054-tras-correcciones/`](calidad/ef6e054-tras-correcciones/)
-
-| Indicador | Valor |
-|---|---|
-| Duplicacion | 1,5 % |
-| Mantenibilidad | A, deuda estimada **0 min** |
-| Seguridad | C (8 vulnerabilidades: 6 Major, 2 Minor) |
-| Cobertura (solo Go) | 4,1 % |
-| Quality Gate | Aprobado |
+Tras las correcciones de la seccion 3 (commit
+[`ef6e054`](https://github.com/esanto92/Platform-MOOC-Cloud/commit/ef6e054c9a5cb76b6679d6f85edeb870caeaf414),
+[run 41163150503](https://github.com/esanto92/Platform-MOOC-Cloud/actions/runs/41163150503),
+reporte en [`calidad/ef6e054-tras-correcciones/`](calidad/ef6e054-tras-correcciones/))
+quedan 8 hallazgos abiertos (6 Major, 2 Minor), la deuda estimada baja a
+0 min y el Quality Gate se aprueba. No es una comparacion exigida: es la
+evidencia de que las correcciones cerraron sus hallazgos.
 
 ### Interpretacion
 
@@ -145,7 +141,7 @@ Primer analisis completo del pipeline, sobre el codigo tal como estaba.
 - **0 min no significa cero deuda.** La estimacion solo suma problemas de
   mantenibilidad. No incluye las vulnerabilidades: las 8 que siguen abiertas
   son de seguridad. Tampoco ve deuda de arquitectura, infraestructura,
-  pruebas u operacion. El inventario de la seccion 4 tiene 18 elementos y
+  pruebas u operacion. El inventario de la seccion 4 tiene 16 elementos y
   solo 3 vienen del analizador.
 - **La duplicacion y la mantenibilidad holgadas** reflejan convenciones que el
   proyecto ya sigue: un archivo de handlers por dominio, errores de API con
@@ -207,11 +203,9 @@ Los responsables se identifican por su usuario de GitHub.
 | DT-11 | Operacion | Prometheus no descubre las VMs de los grupos | Revision | P1 | @brehynnermraz | Pendiente |
 | DT-12 | Operacion | Trazas apagadas en la nube y sin propagacion API -> worker | Revision | P2 | @brehynnermraz | Aceptada temporalmente |
 | DT-13 | Costo | VMs de la Entrega 2 siguen encendidas | Revision | P0 | @Klealp | Pendiente |
-| DT-14 | Operacion | Correo en la nube via Mailpit, sin SMTP real | Revision | P2 | @esanto92 | Aceptada temporalmente |
-| DT-15 | Seguridad | Antimalware de demostracion (solo detecta EICAR) | Decision documentada | P2 | @brehynnermraz | Aceptada temporalmente |
-| DT-16 | Codigo | Filtros resueltos en el BFF y constantes duplicadas | Revision | P3 | @WhiteArctic | Aceptada |
-| DT-17 | Accesibilidad | Sin subtitulos ni transcripciones de video y audio | Auditoria WCAG | P2 | @WhiteArctic | Pendiente |
-| DT-18 | Pipeline | Acciones de GitHub en Node 20 (obsoleto) | Advertencia de GitHub Actions | P1 | @esanto92 | Pendiente |
+| DT-14 | Seguridad | Antimalware de demostracion (solo detecta EICAR) | Decision documentada | P2 | @brehynnermraz | Aceptada temporalmente |
+| DT-15 | Codigo | Filtros resueltos en el BFF y constantes duplicadas | Revision | P3 | @WhiteArctic | Aceptada |
+| DT-16 | Pipeline | Acciones de GitHub en Node 20 (obsoleto) | Advertencia de GitHub Actions | P1 | @esanto92 | Pendiente |
 
 ### Detalle
 
@@ -482,25 +476,7 @@ Los responsables se identifican por su usuario de GitHub.
 - **Responsable y plazo:** @Klealp, cierre de la Entrega 3.
 - **Estado:** pendiente.
 
-#### DT-14 - Correo en la nube via Mailpit, sin SMTP real
-
-- **Categoria:** operacion.
-- **Descripcion y ubicacion:** el worker envia los correos a Mailpit
-  (`internal/mailer`, `infra-server`). El token de verificacion de correo se
-  lee a mano en Mailpit; las pruebas de humo no lo automatizan.
-- **Evidencia:** `CLAUDE.md`, "Deuda tecnica conocida".
-- **Impacto:** un usuario real no recibe el correo de verificacion. El flujo
-  de registro requiere intervencion manual.
-- **Prioridad y justificacion:** P2. El curso no exige correo real y los
-  recorridos se demuestran con cuentas creadas.
-- **Tratamiento:** configurar un proveedor SMTP por variables de entorno (sin
-  cambiar codigo) y leer el token desde la API de Mailpit en las pruebas de
-  humo.
-  - **Verificacion:** registro completo sin pasos manuales.
-- **Responsable y plazo:** @esanto92, Entrega 5.
-- **Estado y decision:** aceptada temporalmente.
-
-#### DT-15 - Antimalware de demostracion
+#### DT-14 - Antimalware de demostracion
 
 - **Categoria:** seguridad.
 - **Descripcion y ubicacion:** el escaneo de archivos subidos
@@ -520,7 +496,7 @@ Los responsables se identifican por su usuario de GitHub.
 - **Responsable y plazo:** @brehynnermraz, Entrega 5.
 - **Estado y decision:** aceptada temporalmente por costo de memoria.
 
-#### DT-16 - Filtros resueltos en el BFF y constantes duplicadas
+#### DT-15 - Filtros resueltos en el BFF y constantes duplicadas
 
 - **Categoria:** codigo.
 - **Descripcion y ubicacion:** `GET /courses` no filtra. `GET /admin/audit`
@@ -539,26 +515,7 @@ Los responsables se identifican por su usuario de GitHub.
 - **Responsable y plazo:** @WhiteArctic con apoyo de backend, sin plazo.
 - **Estado y decision:** aceptada.
 
-#### DT-17 - Sin subtitulos ni transcripciones de video y audio
-
-- **Categoria:** accesibilidad.
-- **Descripcion y ubicacion:** WCAG 2.2 criterios 1.2.2 y 1.2.5. El backend
-  no guarda pistas WebVTT; el reproductor (`hls.js`) no las ofrece.
-- **Evidencia:** auditoria de accesibilidad ([`FuncionalidadFront/`](FuncionalidadFront/)):
-  38 auditorias automaticas aprobadas. Estos dos criterios requieren
-  contenido que la plataforma no gestiona.
-- **Impacto:** usuarios sordos o con hipoacusia no pueden consumir el video.
-- **Prioridad y justificacion:** P2. Requiere cambio de modelo de datos
-  (`db/init.sql`) y de la vista de autoria.
-- **Tratamiento:**
-  1. Recurso de pista WebVTT asociado al video, subido por URL prefirmada
-     como los demas archivos.
-  2. Elemento `<track>` en el reproductor.
-  - **Verificacion:** un video con pista muestra subtitulos.
-- **Responsable y plazo:** @WhiteArctic, Entrega 5.
-- **Estado:** pendiente.
-
-#### DT-18 - Acciones de GitHub en Node 20
+#### DT-16 - Acciones de GitHub en Node 20
 
 - **Categoria:** pipeline.
 - **Descripcion y ubicacion:** `actions/checkout@v4`, `actions/setup-go@v5`,
@@ -588,9 +545,9 @@ de la correccion.
 | Plazo | Elementos | Motivo |
 |---|---|---|
 | Cierre de la Entrega 3 (P0) | DT-02, DT-09, DT-10, DT-13 | Contrasenas en documentacion publica; reconstruccion reproducible obligatoria; costo de VMs sin uso |
-| Entrega 4 (P1) | DT-04, DT-05, DT-18, luego DT-08, DT-07, DT-11 | Primero las pruebas, que desbloquean refactorizaciones seguras; despues los riesgos del escenario elastico |
-| Entrega 5 (P2) | DT-01, DT-06, DT-12, DT-14, DT-15, DT-17 | Dependen de DT-04 o de cambios de infraestructura con costo |
-| Aceptadas (P3) | DT-03, DT-16 | Mitigadas o de bajo impacto; se revisan en cada entrega |
+| Entrega 4 (P1) | DT-04, DT-05, DT-16, luego DT-08, DT-07, DT-11 | Primero las pruebas, que desbloquean refactorizaciones seguras; despues los riesgos del escenario elastico |
+| Entrega 5 (P2) | DT-01, DT-06, DT-12, DT-14 | Dependen de DT-04 o de cambios de infraestructura con costo |
+| Aceptadas (P3) | DT-03, DT-15 | Mitigadas o de bajo impacto; se revisan en cada entrega |
 
 Hallazgos Major abiertos al cierre: los de DT-01 (4) y, si no se cierran
 antes, los de DT-02 (2). Ambos estan registrados con regla, ubicacion,
