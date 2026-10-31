@@ -9,8 +9,8 @@ sustentación (enlazado desde el `README.md` raíz).
 
 | Dato | Valor |
 |---|---|
-| URL del frontend (HTTPS) | `https://34-149-212-102.sslip.io/` |
-| URL del balanceador de API (HTTPS) | `<COMPLETAR>` |
+| URL del frontend (HTTPS) | `https://136-114-53-21.sslip.io ` |
+| URL del balanceador de API (HTTPS) | `https://34-149-212-102.sslip.io/`  |
 | Commit / tag evaluado | tag `entrega-3` |
 | Base de datos | Cloud SQL PostgreSQL administrado |
 | Cuentas usadas | Profesor de prueba, estudiante de prueba (sin contraseñas en este documento) |
