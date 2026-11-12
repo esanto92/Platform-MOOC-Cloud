@@ -17,6 +17,10 @@
 # Variables opcionales:
 #   REGION=us-central1   region del repositorio (la misma de las VMs)
 #   NO_PUSH=1            construye y etiqueta, pero no sube (prueba local)
+#   CLOUD_BUILD=1        construye en Cloud Build y no con el Docker local:
+#                        se sube solo el codigo fuente y la imagen se
+#                        construye y publica dentro de GCP. Util en Cloud
+#                        Shell cuando 'docker push' falla por la red.
 #   ALLOW_DIRTY=1        permite construir con cambios sin commit; la
 #                        etiqueta lleva el sufijo -dirty para no confundirla
 #                        con una version reproducible
@@ -60,13 +64,42 @@ for comp in "$@"; do
   [ -n "${DOCKERFILE[$comp]:-}" ] || { echo "Componente desconocido: $comp (api|worker|web|queue-metrics)" >&2; exit 1; }
 done
 
-if [ "${NO_PUSH:-}" != "1" ]; then
+# construir_en_cloud_build <componente> <imagen>: el Dockerfile no se llama
+# "Dockerfile", asi que se genera una configuracion temporal de Cloud Build.
+construir_en_cloud_build() {
+  local cfg; cfg="$(mktemp)"
+  cat > "$cfg" <<YAML
+steps:
+- name: gcr.io/cloud-builders/docker
+  args: ['build', '--platform', 'linux/amd64', '-f', '${DOCKERFILE[$1]}',
+         '--label', 'org.opencontainers.image.revision=$(git rev-parse HEAD)',
+         '--label', 'org.opencontainers.image.source=$(git remote get-url origin 2>/dev/null || echo local)',
+         '-t', '$2', '.']
+images: ['$2']
+options:
+  machineType: E2_HIGHCPU_8
+timeout: 1800s
+YAML
+  gcloud builds submit --project="$PROJECT" --region="$REGION" --config="$cfg" .
+  rm -f "$cfg"
+}
+
+if [ "${CLOUD_BUILD:-}" = "1" ]; then
+  [ "${NO_PUSH:-}" != "1" ] || { echo "CLOUD_BUILD=1 siempre publica: no se combina con NO_PUSH=1" >&2; exit 1; }
+  say "Habilitando Cloud Build"
+  gcloud services enable cloudbuild.googleapis.com --project="$PROJECT"
+elif [ "${NO_PUSH:-}" != "1" ]; then
   say "Autenticando Docker contra $REGION-docker.pkg.dev"
   gcloud auth configure-docker "$REGION-docker.pkg.dev" --quiet >/dev/null
 fi
 
 for comp in "$@"; do
   img="$REGISTRY/$comp:$VERSION"
+  if [ "${CLOUD_BUILD:-}" = "1" ]; then
+    say "Construyendo $img en Cloud Build"
+    construir_en_cloud_build "$comp" "$img"
+    continue
+  fi
   say "Construyendo $img"
   # linux/amd64: las VMs de GCE son x86 aunque se construya desde un Mac ARM.
   # La etiqueta OCI deja la revision dentro de la imagen (docker inspect).

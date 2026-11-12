@@ -1,0 +1,14 @@
+# Archivos que NO se suben a Cloud Build (deploy/gcp/build.sh con CLOUD_BUILD=1).
+# Solo hace falta lo que usan los Dockerfile; el resto alarga la subida.
+.gcloudignore
+.git
+.gitignore
+.env
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/.env
+frontend/.env*.local
+capacity-planning/
+docs/
+postman/
