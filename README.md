@@ -32,6 +32,10 @@ todo en contenedores.
 | URL del frontend (Entrega 3) | https://34-149-212-102.sslip.io |
 | URL del balanceador de la API (Entrega 3) | https://34-149-212-102.sslip.io/api/v1 (documentacion en `/docs`) |
 | Video de sustentacion (Entrega 3) | PENDIENTE |
+| **Despliegue en Cloud Run y Pub/Sub (Entrega 4)**: servicios, red, secretos, estado de las fases | [`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md) |
+| Script de despliegue en Cloud Run (Entrega 4) | [`deploy/gcp/cloudrun.sh`](deploy/gcp/cloudrun.sh) |
+| URL del frontend (Entrega 4, Cloud Run) | https://mooc-web-88193133859.us-central1.run.app |
+| URL del backend (Entrega 4, Cloud Run) | https://mooc-api-88193133859.us-central1.run.app/api/v1 (estado en `/readyz`) |
 
 Las credenciales de la nube se entregan al equipo docente por el canal privado
 del curso, nunca en este repositorio.

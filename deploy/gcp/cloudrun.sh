@@ -282,7 +282,7 @@ paso_resumen() {
   done
   echo
   echo "Frontend: $(url_de mooc-web)"
-  echo "API:      $(url_de mooc-api)   (prueba: $(url_de mooc-api)/healthz)"
+  echo "API:      $(url_de mooc-api)   (prueba: $(url_de mooc-api)/readyz)"
 }
 
 [ "$#" -gt 0 ] || { sed -n '2,29p' "$0"; exit 1; }

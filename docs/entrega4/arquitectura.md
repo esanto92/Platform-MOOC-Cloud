@@ -10,13 +10,15 @@ los cambios frente a la Entrega 3. La arquitectura lógica de la aplicación
 
 > **Estado del documento (11-11-2026).** La entrega se trabaja en dos fases:
 >
-> - **Fase 1 (en curso):** frontend y API en Cloud Run, con la cola todavía
->   en Redis (`infra-server`). Script: [`deploy/gcp/cloudrun.sh`](../../deploy/gcp/cloudrun.sh).
+> - **Fase 1 (desplegada el 11-11-2026, imágenes `899684d`):** `mooc-web`,
+>   `mooc-api` y el **worker temporal** `mooc-worker` en Cloud Run, con la cola
+>   todavía en Redis (`infra-server`). La aplicación es funcional de punta a
+>   punta. Script: [`deploy/gcp/cloudrun.sh`](../../deploy/gcp/cloudrun.sh).
 > - **Fase 2 (pendiente):** reemplazar Redis/asynq por un topic de Pub/Sub con
 >   suscripción push autenticada hacia el servicio `mooc-worker`.
 >
-> Los valores marcados como _pendiente_ se completan con la salida de
-> `./deploy/gcp/cloudrun.sh resumen` una vez desplegado. Lo descrito para la
+> Los valores marcados como _pendiente_ corresponden a la Fase 2. La
+> configuración efectiva se consulta con `./deploy/gcp/cloudrun.sh resumen`. Lo descrito para la
 > Fase 2 es el **diseño previsto**, no lo desplegado.
 
 Documentos relacionados: arquitectura de la Entrega 3
@@ -147,7 +149,7 @@ con `./deploy/gcp/cloudrun.sh resumen`.
 |---|---|---|---|
 | Región | `us-central1` | `us-central1` | `us-central1` |
 | Entorno de ejecución | gen2 | gen2 | gen2 |
-| Mínimo de instancias | 0 | 0 | 1 (Fase 1, temporal) · _Fase 2: pendiente_ |
+| Mínimo de instancias | 0 | 0 | 1 (Fase 1, temporal, desplegado) · _Fase 2: pendiente_ |
 | Máximo de instancias | **3** | **3** | **3** |
 | CPU | 1 vCPU | 1 vCPU | 2 vCPU |
 | Memoria | 512 MiB | 512 MiB | 4 GiB |
@@ -157,7 +159,7 @@ con `./deploy/gcp/cloudrun.sh resumen`.
 | Asignación de CPU | Solo durante solicitudes, con *startup boost* | Solo durante solicitudes, con *startup boost* | Siempre asignada (Fase 1) |
 | Ingreso / invocación | Público | Público | Interno, sin invocación pública |
 | Cuenta de servicio | `mooc-web` | `mooc-api` | `mooc-worker` |
-| URL | _pendiente_ | _pendiente_ | — |
+| URL | `https://mooc-web-88193133859.us-central1.run.app` | `https://mooc-api-88193133859.us-central1.run.app` | — |
 
 **Justificación de los valores:**
 
@@ -214,7 +216,9 @@ cuenta, un modelo que no encaja con Cloud Run (diseñado para servicios que
 reciben solicitudes). Para probar el flujo completo existe el paso opcional
 `cloudrun.sh worker-temporal`, con CPU siempre asignada y mínimo 1 instancia.
 Esa versión **no escala por la cola** y no satisface el criterio de Pub/Sub:
-es solo un puente.
+es solo un puente. Está desplegada desde el 11-11-2026 para que la
+plataforma siga procesando archivos e insignias mientras se implementa la
+Fase 2.
 
 ### 6.2 Fase 2 (diseño previsto): Pub/Sub
 
@@ -317,7 +321,10 @@ consola (pestaña **Revisiones**).
 
 ### 8.3 Verificación
 
-- `GET <URL de mooc-api>/healthz` → `200`.
+- `GET <URL de mooc-api>/readyz` → `{"checks":{"postgres":"ok","redis":"ok","storage":"ok"},"ready":true}`
+  (verificado el 11-11-2026). **No usar `/healthz` desde fuera:** Cloud Run
+  reserva esa ruta en su frontend y responde un 404 de Google sin llegar al
+  contenedor.
 - Iniciar sesión desde `<URL de mooc-web>` y completar el recorrido
   profesor–estudiante de la Entrega 3.
 - Logs: Cloud Run → servicio → **Registros**.
@@ -329,6 +336,30 @@ desactivado y **0 instancias** (11-11-2026); plantillas, balanceador y
 configuración se conservan para una eventual sustentación de la Entrega 3.
 `infra-server`, Cloud SQL y el bucket siguen activos porque la Entrega 4 los
 usa.
+
+### 8.5 Traspaso a la Fase 2 (Pub/Sub)
+
+Estado al cerrar la Fase 1 y puntos de partida para quien implemente Pub/Sub:
+
+- **Servicios activos:** `mooc-web`, `mooc-api` y `mooc-worker` (temporal,
+  consume Redis). El worker temporal se **reemplaza** desplegando el worker
+  push con el mismo nombre `mooc-worker`; agregar un paso nuevo en
+  `cloudrun.sh` (p. ej. `pubsub` para topic, suscripción y permisos, y
+  `worker` para el servicio push) en lugar de modificar `worker-temporal`.
+- **Productor:** la API encola hoy con asynq (`internal/queue`). Debe
+  publicar en el topic con la identidad `mooc-api` (`roles/pubsub.publisher`
+  solo sobre el topic).
+- **Consumidor:** los handlers están en `internal/tasks`. El worker debe
+  exponer un endpoint HTTP que reciba el push, ejecute el mismo handler y
+  responda `2xx` solo después de persistir (sección 6.2).
+- **Trabajos pendientes en Redis:** no pasan solos a Pub/Sub. Antes de
+  apagar el worker temporal, verificar que la cola de Redis esté vacía.
+- **Costo:** el worker temporal tiene CPU siempre asignada (2 vCPU, 4 GiB) y
+  se cobra todo el tiempo que exista. Si la Fase 2 se demora, se puede
+  reducir con `WORKER_CPU=1 WORKER_MEM=2Gi ./deploy/gcp/cloudrun.sh worker-temporal`
+  o borrarlo (`gcloud run services delete mooc-worker --region=us-central1`).
+- **Pendientes de la Fase 1:** registrar como evidencia la salida de
+  `cloudrun.sh resumen` y capturas del recorrido profesor–estudiante.
 
 ## 9. Limitaciones y deuda técnica identificada
 
@@ -344,7 +375,8 @@ usa.
 
 ## 10. Evidencias pendientes
 
-- [ ] URLs de `mooc-web` y `mooc-api` y salida de `cloudrun.sh resumen` (límites de instancias).
+- [x] URLs de `mooc-web` y `mooc-api` (sección 4.2) y `/readyz` con Postgres, Redis y Storage en `ok`.
+- [ ] Salida de `cloudrun.sh resumen` guardada como evidencia de los límites de instancias.
 - [ ] Recorrido profesor–estudiante desde el navegador sobre Cloud Run.
 - [ ] Fase 2: topic, suscripción y permisos en el script; registros que sigan una tarea desde su publicación hasta su finalización.
 - [ ] Reentrega de un mensaje sin efectos duplicados.
