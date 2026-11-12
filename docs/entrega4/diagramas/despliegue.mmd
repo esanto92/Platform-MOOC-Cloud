@@ -1,0 +1,53 @@
+%% Modelo de despliegue de la Entrega 4 en Google Cloud.
+%% Fase 1 (actual): frontend y API en Cloud Run; la cola sigue en Redis.
+%% Las lineas punteadas marcadas "Fase 2" son el objetivo con Pub/Sub.
+%% Render: npx -p @mermaid-js/mermaid-cli mmdc -i despliegue.mmd -o despliegue.svg
+flowchart TB
+    user["Navegador / k6<br>Internet"]
+
+    subgraph gcp["Proyecto dsc-uniandes-20262 · region us-central1"]
+        direction TB
+
+        subgraph run["Cloud Run (gen2) · max. 3 instancias por servicio"]
+            web["mooc-web · Next.js BFF<br>imagen web:&lt;sha&gt; · :3000<br>1 vCPU · 512 MiB · conc. 80 · min 0<br>publico, sin VPC"]
+            api["mooc-api · API Go<br>imagen api:&lt;sha&gt; · :8080<br>1 vCPU · 512 MiB · conc. 80 · min 0<br>publico (auth. de la app)"]
+            wrk["mooc-worker · ffmpeg<br>imagen worker:&lt;sha&gt;<br>2 vCPU · 4 GiB<br>ingreso interno, sin invocacion publica"]
+        end
+
+        ps["Pub/Sub (Fase 2)<br>topic + suscripcion push autenticada (OIDC)"]
+
+        subgraph vpc["VPC mooc-vpc"]
+            direction TB
+            subgraph sr["Subred mooc-run 10.20.5.0/24 (Direct VPC egress)"]
+                egress["IPs de las instancias de Cloud Run<br>etiquetas de red mooc-api / mooc-worker"]
+            end
+            subgraph inf["Subred mooc-infra 10.20.4.0/24"]
+                infra["infra-server e2-small · 10.20.4.10<br>Redis :6379 (Fase 1: cola, cache de sesiones, limite de tasa)<br>Mailpit :1025"]
+            end
+        end
+
+        subgraph psa["Private Service Access mooc-psa"]
+            sql[("Cloud SQL mooc-pg · PostgreSQL 16<br>IP privada · TLS")]
+        end
+
+        gcs[("Cloud Storage gs://mooc-dsc-uniandes-20262")]
+        ar["Artifact Registry mooc"]
+        sm["Secret Manager<br>mooc-run-database-url · mooc-run-redis-password<br>mooc-run-admin-password · mooc-run-s3-secret-api/worker"]
+        mon["Cloud Logging y Monitoring"]
+    end
+
+    user -- "HTTPS *.run.app" --> web
+    user -. "URL firmada (PUT/GET)" .-> gcs
+    web -- "HTTPS, Bearer (API_BASE_URL)" --> api
+    api -- "Direct VPC egress" --> egress
+    wrk -- "Direct VPC egress" --> egress
+    egress -- ":6379 / :1025" --> infra
+    egress -- ":5432 TLS" --> sql
+    api -- "HMAC mooc-api" --> gcs
+    wrk -- "HMAC mooc-worker" --> gcs
+    infra -- "Fase 1: asynq (el worker busca trabajos)" --> wrk
+    api -. "Fase 2: publica tareas" .-> ps
+    ps -. "Fase 2: push autenticado" .-> wrk
+    run -. "imagen" .-> ar
+    run -. "secretos al arrancar" .-> sm
+    run -. "logs y metricas" .-> mon

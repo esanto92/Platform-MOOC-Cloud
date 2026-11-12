@@ -1,0 +1,20 @@
+%% Modelo de componentes de la Entrega 4 (objetivo, Fase 2).
+%% Render: npx -p @mermaid-js/mermaid-cli mmdc -i componentes.mmd -o componentes.svg
+flowchart LR
+    nav["Navegador"]
+    web["Frontend (Next.js BFF)<br>Cloud Run mooc-web"]
+    api["Backend: API modular Go<br>auth · cursos · inscripciones · quizzes<br>progreso · medios · insignias<br>Cloud Run mooc-api"]
+    ps["Cloud Pub/Sub<br>topic de tareas"]
+    wrk["Workers Go<br>antimalware · HLS (ffmpeg) · correo · insignias<br>Cloud Run mooc-worker"]
+    sql[("Cloud SQL<br>datos de negocio, sesiones,<br>estado de trabajos, processed_jobs")]
+    gcs[("Cloud Storage<br>originales, derivados HLS, documentos")]
+
+    nav -- "HTTPS (sincrono)" --> web
+    web -- "REST /api/v1 + Bearer (sincrono)" --> api
+    nav -. "subida/descarga directa con URL firmada" .-> gcs
+    api -- "SQL" --> sql
+    api -- "firma URLs (HMAC)" --> gcs
+    api -- "publica tarea y responde 202 (asincrono)" --> ps
+    ps -- "push autenticado; ack = HTTP 2xx" --> wrk
+    wrk -- "estado y resultado (idempotente)" --> sql
+    wrk -- "lee original, escribe derivados" --> gcs
