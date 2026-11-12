@@ -8,8 +8,12 @@ autoescalado. Línea base: [`pruebas_de_carga_entrega2.md`](pruebas_de_carga_ent
 Contenido:
 
 1. [Escenario 1 - Actividad académica concurrente](#1-escenario-1---actividad-académica-concurrente)
-2. Escenario 2 - Carga, procesamiento y consumo multimedia (pendiente)
-3. Escenario 3 - Ciclo de escalamiento automático (pendiente)
+2. [Escenario 2 - Carga, procesamiento y consumo multimedia](#2-escenario-2---carga-procesamiento-y-consumo-multimedia-entrega-3)
+3. [Escenario 3 - Ciclo de escalamiento automático (3A API, 3B workers)](#3-escenario-3---ciclo-de-escalamiento-automático)
+
+Todas las horas están en UTC (Colombia es UTC-5). Las series de Cloud
+Monitoring están alineadas a 1 min y cada valor se marca al **final** de su
+intervalo.
 
 ---
 
@@ -248,3 +252,499 @@ corrigió para no cambiar la aplicación entre las dos mediciones.
 
 Ventanas UTC: `r1` 04:36:23 a 04:47:05; `r2` 04:54:50 a 05:05:30; `r3`
 05:08:58 a 05:20:00 (31-10-2026).
+
+---
+
+## 2. Escenario 2 - Carga, procesamiento y consumo multimedia (Entrega 3)
+
+Repetición de la prueba mínima del Escenario 2 de la Entrega 2 sobre la
+arquitectura elástica (balanceador HTTPS, grupo `mooc-api` de 1 a 3 instancias
+por CPU, grupo `mooc-worker` de 1 a 3 por profundidad de cola, Cloud SQL y
+Cloud Storage). Misma herramienta, perfiles, patrón, cadencia y umbrales que la
+Entrega 2. Línea base:
+[`resultados/entrega2_minima_20260928-0254/reporte.md`](escenario2/resultados/entrega2_minima_20260928-0254/reporte.md).
+
+Contenido:
+
+1. [Resumen](#21-resumen)
+2. [Diseño del experimento (igual a la Entrega 2)](#22-diseño-del-experimento-igual-a-la-entrega-2)
+3. [Condiciones y diferencias declaradas](#23-condiciones-y-diferencias-declaradas)
+4. [Resultados por nivel (k6, lo que ve el cliente)](#24-resultados-por-nivel-k6-lo-que-ve-el-cliente)
+5. [Instancias y ciclo de autoescalado (Cloud Logging)](#25-instancias-y-ciclo-de-autoescalado-cloud-logging)
+6. [Tabla comparativa](#26-tabla-comparativa)
+7. [Análisis](#27-análisis)
+8. [Limitaciones](#28-limitaciones)
+9. [Evidencias](#29-evidencias)
+
+---
+
+### 2.1 Resumen
+
+- **El autoescalado de workers sí se activó, por la señal correcta (la cola).**
+  El grupo `mooc-worker` pasó de 1 a 2 instancias durante la prueba: la métrica
+  `queue_backlog` subió hasta **5** (1 pendiente + 4 activos) al entrar las
+  cargas del P3 (1080p) en el nivel L3, el autoescalador creó una segunda VM
+  (`mooc-worker-bp1x`, ~17:19 UTC) y, al drenar la cola a 0 de forma sostenida,
+  el grupo se redujo de nuevo a 1 (17:31 y 17:41). Sin reintentos ni pérdida de
+  trabajos (`reintentos=0`, antigüedad máxima 15 s).
+- **El autoescalado de la API no se activó, y es lo esperado.** `mooc-api` se
+  mantuvo en 1 instancia toda la prueba. En este escenario la API solo hace
+  tráfico de control ligero (firmar, confirmar, consultar estado, servir
+  manifiestos): su CPU no se acerca al objetivo del 60 %. El trabajo pesado
+  (transcodificación) lo hacen los workers, no la API.
+- **La transferencia y el consumo no dependen de las instancias.** Las partes
+  de carga y los segmentos HLS van **directo a Cloud Storage** con URL firmada;
+  no pasan por la API ni por los workers. Por eso el consumo HLS mejora al subir
+  la carga en lugar de empeorar (Cloud Storage escala solo), y esa mejora **no
+  se atribuye al autoscaling de la API**.
+- **El tiempo hasta `ready` mejoró frente a la Entrega 2.** Con dos workers
+  disponibles en el pico, `complete -> ready` p95 bajó de 770 s (E2) a 329 s
+  (E3) en L3, y la cola nunca acumuló trabajos en espera significativos
+  (antigüedad máxima 15 s). Es el efecto directo del escalamiento horizontal de
+  la capa worker.
+- **Integridad conservada:** las 23 cargas de los tres niveles (4 + 7 + 12)
+  llegaron a `ready` con la duración (+-2 s) y el número de rendiciones HLS
+  exactos. Cero errores de control, de transferencia y de consumo; cero 429.
+
+### 2.2 Diseño del experimento (igual a la Entrega 2)
+
+Prueba mínima de tres niveles (L1, L2, L3). Script sin cambios:
+[`k6/escenario2.js`](escenario2/k6/escenario2.js). Guía y niveles:
+[`README.md`](escenario2/README.md), `niveles.json`.
+
+- **Recorrido del profesor** (llegadas a tasa constante): `POST /uploads` (la
+  API firma) -> `PUT` de cada parte de 8 MiB **directo a Cloud Storage** ->
+  `POST /uploads/{id}/complete` -> `POST /units/{id}/resources` ->
+  `GET /assets/{id}` cada 3 s hasta `ready` -> validación funcional (duración
+  +-2 s y rendiciones del master HLS).
+- **Recorrido del espectador** (usuarios concurrentes): master `.m3u8` ->
+  playlist de una rendición (rota por usuario) -> precarga 3 segmentos -> un
+  segmento al ritmo de `#EXTINF` manteniendo 3 de ventaja -> 20 segmentos por
+  sesión -> pausa 5 s -> siguiente contenido.
+- **Niveles:** L1 1 carga/min + 10 espectadores; L2 2/20; L3 4/40. Cada uno:
+  30 s de calentamiento + 3 min de medición; luego k6 sigue cada carga iniciada
+  hasta `ready` (máx. 15 min).
+- **Mezcla de archivos** (patrón fijo de 10 cargas): 4xP1, 3xP2, 2xA1, 1xP3.
+- **Datos sintéticos:** 20 profesores de carga (cada uno con curso y unidad),
+  40 estudiantes inscritos, 1 curso publicado con los 4 assets en HLS
+  (`escenario-2-contenido-hls-1793465320`). Preparados con
+  [`preparar_datos.sh`](escenario2/preparar_datos.sh) antes de medir.
+- **Criterios de éxito (umbrales de k6):** p95 firmar/confirmar/crear recurso
+  < 1 s; p95 consultar estado < 500 ms; p95 manifiestos < 1 s; p95 segmentos
+  < 2 s; errores < 1 %; riesgo de corte < 1 %; >= 99 % de cargas en `ready` y
+  validadas.
+- **Clasificación de resultados:** errores de control (API), errores de
+  transferencia (Cloud Storage), errores de consumo (manifiestos/segmentos),
+  rechazos de tasa (429) y cargas que no llegan a `ready` (saturación), contados
+  por separado.
+- **Repeticiones:** una corrida de los tres niveles seguidos. La variación no se
+  repitió por presupuesto; se declara como limitación.
+
+### 2.3 Condiciones y diferencias declaradas
+
+| Elemento | Entrega 2 | Entrega 3 |
+|---|---|---|
+| Fecha (UTC) | 2026-09-28 03:27 | 2026-10-31 17:00 |
+| Herramienta | k6 v1.3.0 | k6 v1.3.0 (`commit/5870e99ae8`, go1.25.1, linux/amd64) |
+| Generador | `vm-pruebas`, 8 vCPU, 31,3 GiB, fuera de las VMs de la aplicación | **Igual**: `vm-pruebas`, 8 vCPU, 31,3 GiB, fuera de los grupos |
+| Entrada | Caddy en el Web Server (`https://136-114-53-21.sslip.io`) | Balanceador HTTPS externo (`https://34-149-212-102.sslip.io`) |
+| API | 1 VM fija `e2-highcpu-2` | Grupo `mooc-api`, 1 a 3 VMs por CPU (objetivo 60 %). Plantilla `mooc-api-tpl-61f22e4` |
+| Workers | 1 VM fija, **concurrencia 4** | Grupo `mooc-worker`, 1 a 3 VMs por cola, **concurrencia 2 por instancia**. Plantilla `mooc-worker-tpl-61f22e4` |
+| Cola | Redis en el Worker Server | Redis en `infra-server` (fuera de ambos grupos elásticos) |
+| Persistencia | Cloud SQL 16 + Cloud Storage | **Igual**: Cloud SQL `db-custom-1-3840` + mismo bucket |
+| Versión de la app | commit `70bc9f9` | plantillas `*-tpl-61f22e4` (incluye los ajustes para réplicas, `cd9a98d`) |
+| Archivos multimedia | 4 perfiles de un original 1080p | **Mismos 4 perfiles, regenerados del mismo original 1080p**: P3 y A1 coinciden por SHA-256; P1 y P2 difieren por la versión de ffmpeg del generador (recodificación). El patrón, tamaños y rendiciones esperadas son equivalentes |
+
+> **Concurrencia efectiva.** En la Entrega 2 era 4 en una sola VM (= 4). En la
+> Entrega 3 es 2 por instancia, y el número de workers varía por autoscaling:
+> con 1 worker la concurrencia efectiva es 2, con 2 workers es 4. El cambio de
+> concurrencia por instancia (de 4 a 2) es parte del cambio arquitectónico
+> evaluado y se declara aquí.
+
+### 2.4 Resultados por nivel (k6, lo que ve el cliente)
+
+Tiempos en segundos salvo que se indique. p50/p95 sobre las cargas del nivel.
+
+**Carga y procesamiento (profesores)**
+
+| Nivel | Cargas/min | Cargas ok / iniciadas | API firma p95 (ms) | Confirmar p95 (ms) | Transferencia p50 / p95 | Mbps p50 | complete -> ready p50 / p95 | Extremo a extremo p95 | Errores control | Errores transferencia |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| L1 | 1 | 4 / 4 | 85,5 | 2171,3 | 0,1 / 0,2 | 87,8 | 20,3 / 78,1 | 80,5 | 0,00 % | 0,00 % |
+| L2 | 2 | 7 / 7 | 140,8 | 175,4 | 0,1 / 1,1 | 115,1 | 96,8 / 385,9 | 387,2 | 0,00 % | 0,00 % |
+| L3 | 4 | 12 / 12 | 83,9 | 177,8 | 0,1 / 0,8 | 150,6 | 37,7 / 329,1 | 330,1 | 0,00 % | 0,00 % |
+
+> El p95 de "confirmar" de 2171 ms en L1 es un **arranque en frío**: la primera
+> confirmación tras encender `infra-server` abre conexiones nuevas a Redis y
+> Postgres. En L2 y L3 cae a ~175 ms. Es el único umbral de k6 incumplido en
+> toda la prueba y no es saturación: con más carga el tiempo mejora.
+
+**Consumo HLS (estudiantes, fase de medición)**
+
+| Nivel | Espectadores | Manifiestos | Manifiesto p95 (ms) | Segmentos | Segmento p50 / p95 (ms) | Mbps segmento p50 | Riesgo estimado de corte | Errores consumo | Rechazos 429 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| L1 | 10 | 32 | 476,4 | 303 | 64,2 / 159,2 | 207,0 | 0,00 % | 0,00 % | - |
+| L2 | 20 | 68 | 85,4 | 627 | 49,7 / 96,0 | 228,8 | 0,00 % | 0,00 % | - |
+| L3 | 40 | 128 | 89,3 | 1240 | 41,2 / 75,1 | 278,2 | 0,00 % | 0,00 % | - |
+
+**Por perfil (todas las cargas de cada nivel)**
+
+| Nivel | Perfil | Cargas ok / total | Transferencia prom. | complete -> ready prom. | complete -> ready max | Rendiciones obtenidas |
+|---|---|---:|---:|---:|---:|---|
+| L1 | A1 | 1 / 1 | 0,2 | 25,2 | 25,2 | 1 |
+| L1 | P1 | 2 / 2 | 0,1 | 15,2 | 15,4 | 2 |
+| L1 | P2 | 1 / 1 | 0,2 | 87,4 | 87,4 | 3 |
+| L2 | A1 | 1 / 1 | 0,3 | 27,2 | 27,2 | 1 |
+| L2 | P1 | 3 / 3 | 0,1 | 61,0 | 143,9 | 2 |
+| L2 | P2 | 2 / 2 | 0,1 | 132,4 | 167,9 | 3 |
+| L2 | P3 | 1 / 1 | 1,4 | 479,3 | 479,3 | 4 |
+| L3 | A1 | 2 / 2 | 0,3 | 36,2 | 39,2 | 1 |
+| L3 | P1 | 5 / 5 | 0,1 | 25,4 | 36,2 | 2 |
+| L3 | P2 | 4 / 4 | 0,1 | 133,4 | 187,9 | 3 |
+| L3 | P3 | 1 / 1 | 1,4 | 501,7 | 501,7 | 4 |
+
+**Criterios de éxito (umbrales de k6)**
+
+| Nivel | Umbrales incumplidos |
+|---|---|
+| L1 | `http_req_duration{name:POST /uploads/:id/complete (confirmar)}`: p(95)<1000 (arranque en frío; ver sección 2.4) |
+| L2 | ninguno |
+| L3 | ninguno |
+
+Fallos de carga: ninguno. k6 terminó con código 0 (todos los umbrales globales
+cumplidos).
+
+### 2.5 Instancias y ciclo de autoescalado (Cloud Logging)
+
+La `vm-pruebas` no tiene permiso de lectura sobre Compute, por lo que el CSV de
+instancias de la corrida quedó vacío. Las instancias y el ciclo se reconstruyen
+desde Cloud Logging: eventos `instances.insert`/`instances.delete` del grupo y
+la métrica `queue_backlog` que publica `queue-metrics` en `infra-server` cada
+30 s. Ventanas de los niveles (UTC): L1 17:00:05-17:03:55; L2
+17:04:55-17:15:26; L3 17:16:27-17:26:20.
+
+**Línea de tiempo de la capa worker (UTC):**
+
+| Hora | Evento / señal | `queue_backlog` | Nivel |
+|---|---|---:|---|
+| 17:00-17:08 | 1 worker (`mooc-worker-77ct`), backlog bajo | 0-1 | L1 / inicio L2 |
+| ~17:08-17:09 | **Autoescalador crea `mooc-worker-grvm`** (2.ª instancia) | sube | L2 |
+| 17:17-17:18 | backlog crece al entrar cargas de L3 | 4 | L3 |
+| 17:19-17:20 | **pico backlog = 5** (1 pendiente + 4 activos), antigüedad 15 s | **5** | L3 |
+| ~17:19-17:20 | **Autoescalador crea `mooc-worker-bp1x`** (refuerzo del pico) | 5 | L3 |
+| 17:20-17:22 | la cola drena con 2 workers activos | 3 -> 2 | L3 |
+| 17:22-17:26 | backlog = 1 y luego 0 | 1 -> 0 | fin L3 |
+| 17:26-17:31 | backlog = 0 sostenido (ventana de estabilización) | 0 | post-carga |
+| 17:31 | **Reducción:** el grupo retira `mooc-worker-grvm` (scale-in de a 1) | 0 | drenaje |
+| 17:41 | **Reducción final:** retira `mooc-worker-77ct`, el grupo vuelve a 1 | 0 | reducción |
+
+> Cada evento aparece dos veces en el log (inicio y confirmación de la misma
+> operación de GCP); corresponde a una sola instancia.
+
+**El grupo `mooc-api` se mantuvo en 1 instancia durante toda la prueba** (no
+hay eventos `insert`/`delete` de `mooc-api` entre las 17:00 y las 17:26; la
+única VM, `mooc-api-zwx0`, fue creada a las 04:35, mucho antes).
+
+Instancias y concurrencia efectiva por nivel:
+
+| Nivel | Ventana (UTC) | API operativas | Workers operativos | Concurrencia efectiva máx. (workers x 2) |
+|---|---|---:|---:|---:|
+| L1 | 17:00:05-17:03:55 | 1 | 1 | 2 |
+| L2 | 17:04:55-17:15:26 | 1 | 1 -> 2 (crece ~17:08) | 4 |
+| L3 | 17:16:27-17:26:20 | 1 | 2 (pico; refuerzo ~17:19) | 4 |
+
+**Drenaje seguro al reducir.** La reducción ocurrió con la cola ya en 0 y de a
+una instancia cada vez (control `scale-in` de máximo 1 VM por ventana de
+600 s): la retirada del primer worker fue a las 17:31 y la consolidación a 1 a
+las 17:41. No hubo reintentos (`reintentos=0` en toda la serie) ni trabajos
+perdidos: las 23 cargas llegaron a `ready` y validadas.
+
+### 2.6 Tabla comparativa
+
+Misma demanda (mismos niveles, perfiles, patrón y cadencia que la Entrega 2).
+
+| Escenario y operación | Nivel de carga | Métrica y unidad | Entrega 2 | Entrega 3 | Cambio observado y explicación |
+|---|---|---|---:|---:|---|
+| E2, confirmar carga (control API) | L3 (4 cargas/min) | Confirmar p95 (ms) | 151,1 | 177,8 | **+18 %.** El salto extra del balanceador externo frente a Caddy local. En L1 el arranque en frío lo eleva a 2171 ms (puntual, no saturación) |
+| E2, firmar carga (control API) | L3 | API firma p95 (ms) | 68,3 | 83,9 | +23 %, misma causa (salto del balanceador). Ambos muy por debajo del umbral de 1 s |
+| E2, procesamiento | L3 | `complete -> ready` p95 (s) | 770,1 | 329,1 | **-57 %.** Con 2 workers en el pico la cola no acumula espera (antigüedad máx. 15 s). Efecto directo del escalado horizontal de workers |
+| E2, procesamiento del perfil pesado | L3 | P3 `complete -> ready` (s) | 847,6 | 501,7 | **-41 %.** El P3 (1080p, 4 rendiciones) se beneficia de la 2.ª instancia de worker |
+| E2, consumo HLS | L3 (40 espectadores) | Segmento p95 (ms) | 93,1 | 75,1 | **-19 %.** Los segmentos van directo a Cloud Storage; la mejora **no** es del autoscaling de la API |
+| E2, consumo HLS | L3 | Manifiesto p95 (ms) | 58,8 | 89,3 | +52 % en valor absoluto pequeño (~30 ms). El manifiesto lo sirve la API (control); el salto del balanceador lo explica |
+| E2, integridad | L1-L3 | Cargas en `ready` y validadas (%) | 100 % | 100 % | Igual. Duración +-2 s y rendiciones exactas en las 23/24 cargas |
+| E2, errores | L1-L3 | Errores control / transferencia / consumo (%) | 0 / 0 / 0 | 0 / 0 / 0 | Igual |
+
+### 2.7 Análisis
+
+**Qué mejoró.** El tiempo hasta disponibilidad del contenido (`complete ->
+ready`). El autoescalado de workers por la profundidad de la cola añadió una
+segunda instancia justo cuando entraron las cargas pesadas de L3, y la cola
+drenó sin acumular espera (antigüedad máxima 15 s). El P3, el perfil más
+costoso, bajó de 848 s a 502 s. Esta es la evidencia central del escenario: la
+capa de procesamiento ahora crece con la demanda en lugar de quedar fija.
+
+**Qué quedó igual.** La integridad (100 % de cargas en `ready` y validadas,
+cero errores, cero 429) y el consumo HLS, que ya iba directo a Cloud Storage en
+la Entrega 2. El pequeño aumento en las latencias de control (firmar/confirmar/
+manifiesto) es el costo de interponer un balanceador externo; son decenas de ms
+sobre operaciones muy por debajo de sus umbrales, sin impacto funcional.
+
+**Efecto separado del escalado de API y de workers.** El escenario distingue
+los dos efectos, como pide el enunciado:
+- **API:** no escaló (1 instancia) y no debía: el tráfico de control es ligero
+  y su CPU no llega al 60 %. La admisión de cargas (firmar + confirmar) se
+  mantuvo rápida con una sola réplica.
+- **Workers:** escaló de 1 a 2 por la cola. Es el responsable de la mejora en
+  la tasa de procesamiento y el tiempo hasta `ready`.
+- **Consumo/descarga:** lo atiende Cloud Storage, no las instancias. La mejora
+  del p95 de segmentos **no se atribuye al autoscaling de la API**: es la
+  elasticidad propia del almacenamiento de objetos.
+
+**Qué dependencia limita ahora.** En esta prueba mínima ningún recurso llegó a
+saturación: la cola no superó un backlog de 5 y se drenó con 2 de las 3
+instancias posibles. El límite de interés para este escenario es la **tasa de
+transcodificación** (CPU de los workers con ffmpeg), que el autoscaling atiende
+hasta el tope de 3 instancias; forzar ese tope es el objetivo del Escenario 3B.
+
+**Costo adicional.** Durante el pico, dos VMs `e2-highcpu-2` de worker en lugar
+de una, más la VM fija `infra-server` que aloja la cola fuera de los grupos
+elásticos. La segunda instancia vivió solo mientras la cola lo justificó
+(~17:09 a 17:31-17:41), de modo que el costo sigue a la demanda.
+
+### 2.8 Limitaciones
+
+- **Una sola corrida.** La variación entre corridas no se midió (presupuesto);
+  los valores son de una ejecución. La Entrega 2 también fue una corrida mínima.
+- **La prueba mínima mide desde el cliente:** `complete -> ready` junta espera
+  en cola y tiempo de transcodificación. La separación fina (espera vs.
+  procesamiento), la CPU/memoria de los workers y las conexiones de Cloud SQL se
+  toman de Cloud Monitoring con las ventanas de la sección 5.
+- **Instancias reconstruidas desde logs**, no muestreadas por el script, porque
+  `vm-pruebas` no tiene `roles/compute.viewer`. La métrica `queue_backlog` y los
+  eventos `insert`/`delete` dan la línea de tiempo; para el número exacto de
+  workers por minuto conviene contrastar con el tamaño del grupo en Cloud
+  Monitoring.
+- **Material multimedia regenerado** del mismo original: P3 y A1 idénticos por
+  SHA-256; P1 y P2 difieren por la versión de ffmpeg. No cambia el patrón de
+  carga ni las rendiciones esperadas.
+- **"Riesgo estimado de corte"** es una estimación (segmento que llega tarde
+  respecto a la cadencia `#EXTINF`), no la medición de un reproductor real.
+
+### 2.9 Evidencias
+
+| Archivo | Contenido |
+|---|---|
+| [`README.md`](escenario2/README.md) | Guía de la prueba mínima, niveles, perfiles y procedimiento |
+| [`correr_minima.sh`](escenario2/correr_minima.sh) | Corre L1, L2 y L3 seguidos y arma el reporte |
+| [`k6/escenario2.js`](escenario2/k6/escenario2.js) | Guion de k6 (profesores + espectadores), sin cambios frente a la Entrega 2 |
+| [`resultados/entrega3_minima_20261031-1700/`](escenario2/resultados/entrega3_minima_20261031-1700/) | Corrida de la Entrega 3: `condiciones.json`, `reporte.md`, y por nivel `L<n>_params`, `L<n>_ventana`, `L<n>_consola.log`, `L<n>_salida.txt`, `L<n>_resumen.json`, `L<n>_reporte_k6.html`, `L<n>_exit` |
+| [`resultados/entrega2_minima_20260928-0254/`](escenario2/resultados/entrega2_minima_20260928-0254/) | Línea base de la Entrega 2 |
+
+Ventana UTC de la corrida: 17:00:05 a 17:26:20 (31-10-2026); estabilización y
+reducción de workers observadas hasta las 17:41.
+
+---
+
+## 3. Escenario 3 - Ciclo de escalamiento automático
+
+### 3.1 Políticas evaluadas
+
+Los valores efectivos se leyeron del autoescalador con la API de Compute
+Engine el 31-10-2026.
+
+| Parámetro | 3A: grupo `mooc-api` | 3B: grupo `mooc-worker` |
+|---|---|---|
+| Señal | `CPU_UTILIZATION`: CPU promedio del grupo | `custom.googleapis.com/mooc/queue_backlog` = pendientes + activos, publicada cada 30 s por `queue-metrics` desde `infra-server` |
+| Objetivo | 0,60 | 2 trabajos por instancia (`singleInstanceAssignment`) |
+| Mín. / máx. | 1 / 3 | 1 / 3 |
+| Período de inicialización (`coolDownPeriodSec`) | 180 s | 180 s |
+| Control de reducción | Máximo 1 instancia cada 600 s | Máximo 1 instancia cada 600 s |
+| Estabilización de reducción (implícita de GCE) | 10 min | 10 min |
+
+### 3.2 Variante 3B: escalamiento de workers
+
+La carga es el Escenario 2 de la sección 2: L1 → L2 → L3 y luego drenaje.
+
+**Línea de tiempo** (31-10-2026, UTC). Fuentes:
+[`autoscaler_decisiones.json`](escenario3/autoscaler_decisiones.json),
+[`eventos_instancias.csv`](escenario3/eventos_instancias.csv),
+[`arranques.txt`](escenario3/arranques.txt),
+[`worker_logs_3b.txt`](escenario3/worker_logs_3b.txt) y
+[`linea_de_tiempo.txt`](escenario3/cloud_monitoring_3b/linea_de_tiempo.txt).
+
+| Hora | Demanda | Señal | Decisión del servicio | Instancias | Evento |
+|---|---|---|---|---|---|
+| 17:00:05 | Inicia L1 (1 carga/min) | backlog 0 | — | 2 (`77ct`, `50g5`, este último sobrante de una corrida previa) | — |
+| 17:00:59 | L1 | 0 | **Reducir a 1** (`STABILIZATION_PERIOD`) | 2 → 1 | `50g5`: `Waiting for all workers to finish... All workers have finished` en 1 s: no tenía trabajos activos |
+| 17:04:55 | Inicia L2 (2 cargas/min) | 0 → 2 | — | 1 | — |
+| 17:08:48 | L2 | **2,30** > 2 × 1 | **Crear 1** (`calculatedSize` 2) | 1 → 2 | Inserción de `mooc-worker-grvm` a las 17:08:49 |
+| 17:10:34 | L2 | 3 (1 pendiente de 91 s) | — | 2 | `grvm`: `consumiendo la cola (concurrencia=2)`; `LISTA` a las 17:10:37 (t = 85 s desde el arranque del kernel) |
+| 17:12 | L2 | 3 → 1 | — | 2 | El pendiente de 121 s se atiende y la cola baja |
+| 17:16:27 | Inicia L3 (4 cargas/min) | 0 → 5 | — | 2 | — |
+| 17:18-17:21 | L3 | 5, **4 activos** | — | 2 | 4 activos con concurrencia 2 por VM: **`grvm` procesa 2 trabajos** (CPU 82-100 %) |
+| 17:19:48 | L3 | **4,07** > 2 × 2 | **Crear 1** (`calculatedSize` 3) | 2 → 3 | Inserción de `mooc-worker-bp1x` a las 17:19:49 |
+| 17:22:32 | L3 | 2 | — | 3 | `bp1x` consume; `LISTA` a las 17:22:35 (t = 135 s). No le quedan trabajos pendientes |
+| 17:23-17:26 | Fin de llegadas | 1 activo (P3 en `grvm`) | — | 3 | `bp1x` en 3 % de CPU |
+| 17:26:20 | Termina L3 (P3 en `ready`) | 1 → 0 | — | 3 | — |
+| 17:27 | Sin demanda | 0 | — | 3 | Cola vacía |
+| 17:31:09 | — | 0 | **Reducir a 2** (`STABILIZATION_PERIOD`) | 3 → 2 | Retiro de `grvm`: apagado ordenado sin trabajos activos |
+| 17:41:19 | — | 0 | **Reducir a 1** (`SCALE_IN_CONTROL`: 1 cada 600 s) | 2 → 1 | Retiro de `77ct`, igual. Queda `bp1x` |
+
+**Tiempos de reacción:**
+
+| Escalamiento | Desde el aumento de demanda hasta la decisión | Desde la decisión hasta el consumo de la cola | Arranque de la VM (`LISTA`, t desde el kernel) | Desde la cola vacía hasta la reducción |
+|---|---|---|---|---|
+| 1 → 2 | 3 min 53 s (inicio de L2 → 17:08:48) | **1 min 46 s** | 85 s | — |
+| 2 → 3 | 3 min 21 s (inicio de L3 → 17:19:48) | **2 min 44 s** | 135 s | — |
+| 3 → 2 | — | — | — | 4 min (17:27 → 17:31) |
+| 2 → 1 | — | — | — | 14 min (17:27 → 17:41) |
+
+El tiempo de decisión incluye el tiempo que tarda la cola en superar el
+objetivo: llegan 2 o 4 cargas por minuto y cada una pasa por escaneo y
+transcodificación. El arranque se reparte así, según `arranques.txt`:
+
+- 15 a 34 s hasta que corre `startup.sh`;
+- 30 a 77 s instalando Docker;
+- unos 25 s instalando el Ops Agent;
+- unos 10 s para leer el secreto, descargar la imagen y arrancar.
+
+Una imagen de disco con Docker y el Ops Agent preinstalados recortaría
+alrededor de 1 min.
+
+**Otros ciclos automáticos observados el mismo día** (corridas previas, sin
+análisis detallado; están en
+[`cloud_monitoring_3b/previo_15h40_16h50/`](escenario3/cloud_monitoring_3b/previo_15h40_16h50/)):
+
+- 15:43:15: crear 1 con backlog 2,00; reducción a las 15:55:59.
+- 16:41:45: crear 1 con backlog 2,32; reducción a las 17:00:59.
+
+### 3.3 Variante 3A: escalamiento de la API
+
+La carga es la corrida de humo `humo2`, con `RATE_SCALE=0.2` y tramos de 30
+s, seguida 13 s después por la corrida `r1` del Escenario 1, con el perfil
+completo de 5 a 90 usuarios/s. La sección 1 la excluye de la comparación con
+la Entrega 2 justamente porque el grupo escaló durante ella. Aquí es la
+evidencia del ciclo.
+
+**Línea de tiempo** (31-10-2026, UTC). Fuentes:
+[`linea_de_tiempo.txt`](escenario3/cloud_monitoring_3a/linea_de_tiempo.txt),
+[`reparto_api_3a.txt`](escenario3/reparto_api_3a.txt) y las mismas de 3B.
+
+| Hora | Demanda | Señal | Decisión del servicio | Instancias | Evento |
+|---|---|---|---|---|---|
+| 04:33:04 | Inicia `humo2` (carga baja) | CPU de `wqv3` 9 a 12 % (media por minuto) | — | 1 (`wqv3`) | — |
+| 04:35:45 | `humo2` en su tramo alto (~59 req/s en el balanceador) | **CPU 0,645** > 0,60 | **Crear 1** (`calculatedSize` 2) | 1 → 2 | Inserción de `mooc-api-zwx0` a las 04:35:46 |
+| 04:36:23 | Inicia `r1` (5 → 90 usuarios/s) | — | — | 2 (1 operativa) | — |
+| 04:37:57 | — | — | — | 2 | API de `zwx0` escuchando en :8080; Postgres, Redis y bucket conectados en el primer intento |
+| 04:38:00 | — | — | — | 2 | `LISTA` (t = 104 s) |
+| 04:38:01 | — | — | — | 2 | Primera verificación `/readyz` del balanceador con 200 |
+| 04:38:14 | — | — | — | **2 operativas** | **Primera petición `/api/v1` atendida por `zwx0`** |
+| 04:40-04:46 | Meseta de 90 usuarios/s | CPU de cada réplica 20 a 34 % | — | 2 | Cloud SQL al 100 %. Reparto de 04:44:00 a 04:44:20: `wqv3` 1 145 y `zwx0` 1 087 peticiones (51 % / 49 %) |
+| 04:47:05 | Termina `r1` | CPU < 10 % | — | 2 | — |
+| 04:52:11 | Sin demanda | CPU **0,032** | **Reducir a 1** | 2 → 1 | — |
+| 04:53:42 | — | — | — | 1 | Retiro de `wqv3` tras el drenaje del balanceador (30 s) y `shutdown.sh` |
+| 04:54:50 | Inicia `r2` | — | — | 1 (`zwx0`) | Las corridas `r2` y `r3` usan 1 instancia (sección 1) |
+
+**Tiempos de reacción:**
+
+- Desde el aumento de carga (inicio de `humo2`) hasta la decisión: **2 min
+  41 s**.
+- Desde la decisión hasta la primera petición atendida por la réplica nueva:
+  **2 min 28 s**. Se reparte en 53 s de creación y arranque del kernel, 104 s
+  de `startup.sh` hasta `LISTA` y 14 s hasta que el balanceador la incluye
+  (2 verificaciones correctas cada 10 s).
+- Desde el fin de la carga hasta la reducción: **5 min 6 s**. La última vez
+  que la CPU justificó 2 instancias fue hacia las 04:42, y la estabilización
+  de 10 min explica la hora de la decisión.
+
+La media por minuto de Cloud Monitoring (46 % a las 04:36) es menor que el
+valor de la señal que registró el autoescalador (64,5 %). El autoescalador
+evalúa ventanas más cortas y la media por minuto suaviza los picos. Se
+reporta el valor del registro de auditoría porque es el que motivó la
+decisión.
+
+**Resultado de la réplica adicional.** Las dos réplicas se repartieron la
+carga casi por mitades, pero **el rendimiento no mejoró**. En `r1` el p95 fue
+de 4,7 s, frente a 3,1 s de `r2` y `r3` con 1 instancia. Con Cloud SQL al
+100 %, la segunda réplica solo agrega conexiones que compiten por la misma
+vCPU de la base: 45 conexiones frente a 25 (sección 1.7). El grupo no llegó a
+3 instancias porque la CPU de la API nunca volvió a superar el 60 %.
+
+### 3.4 Integridad durante los ciclos
+
+| Verificación | 3A | 3B |
+|---|---|---|
+| Operaciones de negocio | `r1`: quiz calificado correcto al 100 %, envío duplicado idempotente al 100 %. Solo aparecen los 5xx del defecto conocido de `quiz_start` (1,4 %, igual que con 1 instancia) | 23/23 cargas en `ready` con la duración y las rendiciones esperadas |
+| Trabajos aceptados frente a terminados | No aplica (síncrono) | 23 aceptados y 23 en `ready`. 0 fallidos, **0 reintentos** (`queue_retry`) y cola vacía al final |
+| Retiro con trabajo en curso | El retiro de `wqv3` ocurrió sin carga: el drenaje de 30 s no tuvo peticiones en curso que proteger | Los 3 retiros automáticos (`50g5`, `grvm`, `77ct`) ocurrieron con la VM inactiva. El apagado ordenado se ve en los logs, pero sin trabajo activo |
+| Sesión entre réplicas | Las sesiones de `r1` se crearon en su `setup` (04:36:23), cuando solo `wqv3` atendía, y siguieron válidas en `zwx0` desde las 04:38:14: el token opaco se valida contra el caché de Redis y, si falla, contra Postgres (`internal/auth`), nunca en memoria de la réplica | No aplica |
+
+**Pendiente: retiro controlado de un worker con un trabajo activo.** El
+enunciado lo exige y **todavía no se ha ejecutado**. Ninguno de los retiros
+automáticos lo cubre, porque todos encontraron la VM inactiva. Procedimiento
+propuesto:
+
+```bash
+Z=--zone=us-central1-a
+# 1. Minimo de 2 workers durante la prueba, para que otro worker retome el
+#    trabajo sin esperar a que arranque una VM nueva
+gcloud compute instance-groups managed update-autoscaling mooc-worker $Z --min-num-replicas=2
+# 2. Subir un P3 (unos 8 min de procesamiento) desde el frontend o con k6
+# 3. Identificar el worker que lo tomo: queue_active = 1 y CPU ~100 % en una VM
+gcloud compute instance-groups managed list-instances mooc-worker $Z
+# 4. Retirarlo a mitad del procesamiento. El grupo ejecuta shutdown.sh en la
+#    VM y la reemplaza por otra (no cambia el tamano objetivo).
+gcloud compute instance-groups managed recreate-instances mooc-worker $Z --instances=<vm>
+# 5. Esperado en los logs (worker_logs) y en las metricas de la cola:
+#    "apagando: se esperan los trabajos en curso" -> asynq espera 60 s
+#    (WORKER_SHUTDOWN_TIMEOUT_SECONDS) -> el trabajo no alcanza a terminar
+#    -> vuelve a la cola sin gastar reintento -> el otro worker lo toma
+#    -> el asset llega a ready UNA vez (consulta SQL de abajo)
+# 6. Restaurar el minimo
+gcloud compute instance-groups managed update-autoscaling mooc-worker $Z --min-num-replicas=1
+```
+
+Para la reconciliación, ejecutar con `psql` sobre Cloud SQL, por ejemplo por
+IAP desde `infra-server`:
+
+```sql
+-- Cada asset de la ventana debe estar en ready y tener exactamente un
+-- escaneo y una transcodificacion terminados (job_key es la llave primaria
+-- de processed_jobs, asi que un reintento no puede registrar un segundo).
+SELECT a.status,
+       count(*)                                   AS assets,
+       count(s.job_key)                           AS con_escaneo,
+       count(h.job_key)                           AS con_hls
+  FROM assets a
+  LEFT JOIN processed_jobs s ON s.job_key = 'scan:' || a.id
+  LEFT JOIN processed_jobs h ON h.job_key = 'hls:'  || a.id
+ WHERE a.created_at BETWEEN '2026-10-31 17:00Z' AND '2026-10-31 17:27Z'
+ GROUP BY a.status;
+-- Esperado: una fila 'ready' con assets = con_escaneo = con_hls = 23.
+```
+
+Los derivados HLS no se duplican porque cada reintento escribe en las mismas
+llaves (`hls_prefix` del asset). Se puede contrastar el número de objetos bajo
+ese prefijo con `gcloud storage ls gs://<bucket>/<hls_prefix>/** | wc -l`.
+
+Hay respaldo automatizado del comportamiento, sin reemplazar la prueba en
+GCP:
+
+- `internal/tasks/interrupted_test.go`: un trabajo interrumpido no marca el
+  asset como fallido.
+- `internal/tasks/errorhandler_test.go`: la auditoría de la DLQ sobrevive al
+  contexto cancelado.
+
+### 3.5 Limitaciones del Escenario 3
+
+- **3A no es una corrida dedicada.** Se reutiliza la secuencia `humo2` + `r1`.
+  El ciclo está completo: 1 instancia, creación, atención por la réplica
+  nueva y reducción. Pero la carga del Escenario 1 satura Cloud SQL antes que
+  la CPU de la API, por eso no llegó a 3 instancias. Una corrida dedicada
+  debería usar una mezcla con más lecturas, por ejemplo catálogo y outline,
+  para cargar la CPU de la API sin saturar la base.
+- **Ningún retiro, automático ni controlado, encontró trabajo en curso.**
+  Queda pendiente la prueba de la sección 3.4.
+- **Una sola corrida de cada variante.**
+- El reemplazo de `mooc-api-qwrv` por `wqv3` (31-10, 04:29 a 04:31) fue una
+  actualización manual del grupo, no autoescalado. Por eso el tamaño 2 de las
+  04:31 no figura como ciclo en 3A.
