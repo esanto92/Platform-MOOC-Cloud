@@ -7,8 +7,17 @@ Contexto para Claude Code al trabajar sobre este repositorio.
 Plataforma MOOC (cursos masivos abiertos en linea) del curso ISIS4426
 "Desarrollo de Soluciones Cloud" (Universidad de los Andes). Backend en Go
 (monolito modular + workers asincronos) y frontend Next.js que actua como BFF.
-Las Entregas 1 (backend local) y 2 (despliegue en Google Cloud) estan
-terminadas; el proyecto se prepara para la **Entrega 3**.
+Las Entregas 1 (backend local), 2 (despliegue en Google Cloud) y 3
+(arquitectura elastica con MIG) estan terminadas; el proyecto trabaja en la
+**Entrega 4** (Cloud Run + Cloud Pub/Sub).
+
+- La **Entrega 4** despliega los tres servicios en Cloud Run y sustituye la
+  cola de Redis/asynq por Cloud Pub/Sub con una suscripcion push autenticada
+  hacia el worker. La mensajeria es conmutable con `QUEUE_BACKEND`:
+  `asynq` (local y Entrega 3, el worker busca trabajos en Redis) o `pubsub`
+  (Cloud Run, Pub/Sub entrega cada mensaje por HTTP al worker). Los handlers
+  de `internal/tasks` son los mismos en ambos modos; solo cambia como llega
+  el trabajo. Doc: `docs/entrega4/arquitectura.md`.
 
 - La arquitectura vigente es la de [`docs/entrega2/README.md`](docs/entrega2/README.md).
   La arquitectura logica (modulos, reglas, modelo de datos) sigue en
@@ -86,7 +95,11 @@ internal/
   mailer/         SMTP (Mailpit en local)
   metrics/        series de Prometheus
   progress/       reglas de avance, finalizacion y aprobacion
-  queue/          contrato de tareas entre API y workers (asynq)
+  queue/          contrato de tareas entre API y workers. Publisher con dos
+                  implementaciones: asynq (queue.go) y Pub/Sub (pubsub.go);
+                  factory.go elige con QUEUE_BACKEND
+  pubsubpush/     servidor HTTP que recibe la suscripcion push de Pub/Sub,
+                  valida el token OIDC y despacha al handler (Entrega 4)
   queuemetrics/   medicion de la cola y escritura en Cloud Monitoring (REST +
                   token de metadatos, sin el SDK de Google)
   storage/        cliente del almacenamiento de objetos (API S3: MinIO en local, Cloud Storage en la nube)
@@ -149,20 +162,40 @@ docs/entrega1/testdata/
 - Evitar el problema N+1: ver `buildOutline`, que arma el arbol con tres
   consultas.
 
-## Idempotencia (tres capas, a proposito)
+## Idempotencia (a proposito)
 
-1. `asynq.TaskID(llave)` impide encolar dos veces el mismo efecto.
-2. La tabla `processed_jobs` registra el trabajo terminado en Postgres.
+1. `asynq.TaskID(llave)` impide encolar dos veces el mismo efecto. **Solo en
+   modo asynq**: Pub/Sub no deduplica por llave, asi que no se puede depender
+   de esta capa en la Entrega 4.
+2. La tabla `processed_jobs` registra el trabajo terminado en Postgres. Es la
+   capa que importa en ambos modos: una reentrega de Pub/Sub de un trabajo ya
+   hecho se detecta aqui (`alreadyProcessed`).
 3. Restricciones de integridad, como `uniq_badge_alive`. Esta es la unica que
    no se puede esquivar en una carrera entre dos workers.
+4. **Lease de transcodificacion** (`assets.transcode_lease_until`,
+   `claimTranscode` en `internal/tasks/transcode.go`): con la suscripcion push,
+   una reentrega puede llegar mientras otro worker aun transcodifica (la tarea
+   dura mas que el ackDeadline). El claim atomico deja que solo el worker con
+   el lease vigente trabaje; los demas hacen ack sin duplicar. La ventana
+   (`TranscodeLease`) es mayor que el ackDeadline y menor que el umbral del
+   reaper.
 
-Al agregar una tarea nueva, implementar las tres.
+Al agregar una tarea nueva, implementar las capas que le apliquen. Las tareas
+que fallan por contenido (archivo corrupto) marcan el asset `failed` y dejan
+una alerta de auditoria (`ActionAssetFailed`, `alertAssetFailed`); esa alerta
+vive en el dominio, no en un hook de la cola.
 
 ## Cambios que exigen recrear el volumen
 
 `db/init.sql` solo se ejecuta la **primera** vez que se crea el volumen de
 Postgres. Despues de tocarlo hay que correr `make reset` (`docker compose
 down -v`). Avisarlo siempre que se modifique ese archivo.
+
+En la nube, donde Cloud SQL ya tiene datos, los cambios aditivos de esquema se
+aplican con una migracion idempotente en vez de recrear la base. La Entrega 4
+agrego `assets.transcode_lease_until`; se aplica con
+`./deploy/gcp/migrate.sh migrate-e4` (`ALTER TABLE ... ADD COLUMN IF NOT
+EXISTS`).
 
 ## Despliegue en Google Cloud (Entrega 2)
 

@@ -42,6 +42,17 @@ case "${1:-}" in
     psql_cloud < "$RAIZ/db/init.sql"
     ;;
 
+  migrate-e4)
+    # Entrega 4 (Pub/Sub): cambio aditivo y seguro sobre la base con datos.
+    # La columna sostiene el lease de transcodificacion que evita la doble
+    # ejecucion cuando la suscripcion push reentrega un mensaje en curso.
+    # Idempotente: se puede correr varias veces.
+    say "Migracion Entrega 4: assets.transcode_lease_until"
+    psql_cloud <<'SQL'
+ALTER TABLE assets ADD COLUMN IF NOT EXISTS transcode_lease_until TIMESTAMPTZ;
+SQL
+    ;;
+
   restore-db)
     dump="${2:?uso: migrate.sh restore-db <archivo.dump>}"
     say "pg_restore de $dump en Cloud SQL"

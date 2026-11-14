@@ -11,8 +11,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	"github.com/hibiken/asynq"
+	"time"
 
 	"mooc-platform/internal/audit"
 	"mooc-platform/internal/metrics"
@@ -49,10 +48,10 @@ var ladder = []struct {
 	{360, "800k", 900000},
 }
 
-func (d *Deps) HandleTranscode(ctx context.Context, t *asynq.Task) error {
+func (d *Deps) HandleTranscode(ctx context.Context, payload []byte) error {
 	var p queue.AssetPayload
-	if err := json.Unmarshal(t.Payload(), &p); err != nil {
-		return fmt.Errorf("payload invalido: %w: %w", err, asynq.SkipRetry)
+	if err := json.Unmarshal(payload, &p); err != nil {
+		return fmt.Errorf("payload invalido: %w: %w", err, errSkipRetry)
 	}
 	jobKey := "hls:" + p.AssetID
 
@@ -70,7 +69,7 @@ func (d *Deps) HandleTranscode(ctx context.Context, t *asynq.Task) error {
 		SELECT kind::text, status::text, object_key, original_name FROM assets WHERE id = $1`, p.AssetID).
 		Scan(&kind, &status, &objectKey, &originalName)
 	if errors.Is(err, sql.ErrNoRows) {
-		return fmt.Errorf("asset %s no existe: %w", p.AssetID, asynq.SkipRetry)
+		return fmt.Errorf("asset %s no existe: %w", p.AssetID, errSkipRetry)
 	}
 	if err != nil {
 		return err
@@ -80,7 +79,26 @@ func (d *Deps) HandleTranscode(ctx context.Context, t *asynq.Task) error {
 		return nil
 	}
 	if status != "processing" {
-		return fmt.Errorf("asset %s en estado %s, no se transcodifica: %w", p.AssetID, status, asynq.SkipRetry)
+		return fmt.Errorf("asset %s en estado %s, no se transcodifica: %w", p.AssetID, status, errSkipRetry)
+	}
+
+	// Lease contra la doble ejecucion concurrente. Con Pub/Sub, si la
+	// transcodificacion supera el ackDeadline, el mensaje se reentrega mientras
+	// el primer worker sigue trabajando. El claim atomico "renueva" updated_at
+	// solo si nadie lo toco en la ventana del lease; si otro worker tiene un
+	// lease vigente, RowsAffected es 0 y este trabajo se retira (ack, sin
+	// duplicar). La ventana (TranscodeLease) es mayor que el ackDeadline de la
+	// suscripcion y menor que el umbral del reaper (2 h), que recupera el
+	// trabajo si el worker con el lease muere sin terminar. En asynq (local)
+	// el lease no estorba: asynq.TaskID ya evita la concurrencia, y el primer
+	// intento siempre gana el claim.
+	claimed, err := d.claimTranscode(ctx, p.AssetID)
+	if err != nil {
+		return err
+	}
+	if !claimed {
+		d.skipDuplicate(queue.TaskTranscodeHLS, jobKey)
+		return nil
 	}
 
 	// Espacio de trabajo LOCAL DEL WORKER. La API nunca escribe en disco;
@@ -146,7 +164,8 @@ func (d *Deps) HandleTranscode(ctx context.Context, t *asynq.Task) error {
 	}
 
 	if _, err := d.DB.ExecContext(ctx, `
-		UPDATE assets SET status = 'ready', hls_prefix = $1, duration_secs = $2, updated_at = now()
+		UPDATE assets SET status = 'ready', hls_prefix = $1, duration_secs = $2,
+		                  transcode_lease_until = NULL, updated_at = now()
 		WHERE id = $3`, prefix, duration, p.AssetID); err != nil {
 		return err
 	}
@@ -162,12 +181,41 @@ func (d *Deps) HandleTranscode(ctx context.Context, t *asynq.Task) error {
 	return nil
 }
 
+// TranscodeLease es la ventana del lease de transcodificacion. Debe ser mayor
+// que el ackDeadline de la suscripcion push (<= 600 s) para que una reentrega
+// encuentre el lease vigente, y menor que el umbral del reaper (2 h) para que
+// un trabajo colgado por la muerte del worker se recupere.
+const TranscodeLease = 20 * time.Minute
+
+// claimTranscode intenta tomar el lease del asset. Es atomico: el UPDATE
+// condicional solo afecta la fila si el asset sigue en 'processing' y el lease
+// esta libre o vencido. Devuelve true si este worker gano el claim; false si
+// otro lo tiene con un lease vigente (reentrega concurrente) y hay que
+// retirarse. Un lease vencido se puede reclamar: cubre el caso del worker que
+// murio a mitad sin liberar el lease.
+func (d *Deps) claimTranscode(ctx context.Context, assetID string) (bool, error) {
+	res, err := d.DB.ExecContext(ctx, `
+		UPDATE assets SET transcode_lease_until = now() + make_interval(secs => $2)
+		WHERE id = $1 AND status = 'processing'
+		  AND (transcode_lease_until IS NULL OR transcode_lease_until < now())`,
+		assetID, TranscodeLease.Seconds())
+	if err != nil {
+		return false, err
+	}
+	n, err := res.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return n > 0, nil
+}
+
 func (d *Deps) failTranscode(ctx context.Context, assetID, jobKey, reason string) error {
 	if err := interrupted(ctx); err != nil {
 		return err
 	}
 	if _, err := d.DB.ExecContext(ctx, `
-		UPDATE assets SET status = 'failed', failure_reason = $1, updated_at = now()
+		UPDATE assets SET status = 'failed', failure_reason = $1,
+		                  transcode_lease_until = NULL, updated_at = now()
 		WHERE id = $2`, reason, assetID); err != nil {
 		return err
 	}
@@ -177,6 +225,7 @@ func (d *Deps) failTranscode(ctx context.Context, assetID, jobKey, reason string
 		return err
 	}
 	d.markProcessed(ctx, jobKey, queue.TaskTranscodeHLS, map[string]any{"result": "failed", "reason": reason})
+	d.alertAssetFailed(ctx, queue.TaskTranscodeHLS, assetID, reason)
 	return nil
 }
 

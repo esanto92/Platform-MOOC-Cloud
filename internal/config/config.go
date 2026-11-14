@@ -84,6 +84,22 @@ type Config struct {
 	QueueMetricsInterval time.Duration
 	QueueMetricsProject  string
 
+	// --- Mensajeria (Entrega 4) ---
+	// QueueBackend elige como se publican y consumen las tareas asincronas:
+	//   asynq  = Redis + asynq (local y Entrega 3). El worker busca trabajos.
+	//   pubsub = Cloud Pub/Sub (Entrega 4). La API publica en un topic y el
+	//            worker recibe cada mensaje por una suscripcion push.
+	QueueBackend string
+	// PubSubProject vacio = se toma del servidor de metadatos de GCE.
+	PubSubProject string
+	PubSubTopic   string // topic de tareas (lo crea deploy/gcp/cloudrun.sh pubsub)
+	// PushAudience: audiencia OIDC que el worker exige en el token del push.
+	// Es la URL del propio servicio worker. Vacio = no se valida (solo local).
+	PushAudience string
+	// PushSAEmail: email de la cuenta de servicio de la suscripcion push. Si
+	// se fija, el worker exige que el token venga de ella.
+	PushSAEmail string
+
 	// --- Antimalware ---
 	// stub  = detecta la firma de prueba EICAR (suficiente para demostrar)
 	// clamav= delega en un demonio ClamAV (no se despliega en esta entrega)
@@ -147,6 +163,12 @@ func Load() Config {
 		// admite puntos de una misma serie a menos de 5 s.
 		QueueMetricsInterval: time.Duration(envInt("QUEUE_METRICS_INTERVAL_SECONDS", 30)) * time.Second,
 		QueueMetricsProject:  env("QUEUE_METRICS_PROJECT", ""),
+
+		QueueBackend:  env("QUEUE_BACKEND", "asynq"),
+		PubSubProject: env("PUBSUB_PROJECT", ""),
+		PubSubTopic:   env("PUBSUB_TOPIC", "mooc-tasks"),
+		PushAudience:  env("PUBSUB_PUSH_AUDIENCE", ""),
+		PushSAEmail:   env("PUBSUB_PUSH_SA", ""),
 
 		AntimalwareMode: env("ANTIMALWARE_MODE", "stub"),
 		ClamAVAddr:      env("CLAMAV_ADDR", ""),

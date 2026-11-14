@@ -8,18 +8,19 @@ los cambios frente a la Entrega 3. La arquitectura lógica de la aplicación
 (módulos, reglas de negocio, modelo de datos) no cambia y sigue en
 [`../entrega1/ARQUITECTURA.md`](../entrega1/ARQUITECTURA.md).
 
-> **Estado del documento (11-11-2026).** La entrega se trabaja en dos fases:
+> **Estado del documento.** La entrega se trabaja en dos fases:
 >
 > - **Fase 1 (desplegada el 11-11-2026, imágenes `899684d`):** `mooc-web`,
 >   `mooc-api` y el **worker temporal** `mooc-worker` en Cloud Run, con la cola
 >   todavía en Redis (`infra-server`). La aplicación es funcional de punta a
 >   punta. Script: [`deploy/gcp/cloudrun.sh`](../../deploy/gcp/cloudrun.sh).
-> - **Fase 2 (pendiente):** reemplazar Redis/asynq por un topic de Pub/Sub con
->   suscripción push autenticada hacia el servicio `mooc-worker`.
+> - **Fase 2 (implementada en código):** el topic de Pub/Sub con suscripción
+>   push autenticada reemplaza a Redis/asynq. El productor (API) y el consumidor
+>   (worker) están implementados y conmutan con `QUEUE_BACKEND`; los pasos
+>   `pubsub` y `worker` del script crean la infraestructura. **Pendiente:**
+>   desplegar en el proyecto y capturar las evidencias de la sección 10.
 >
-> Los valores marcados como _pendiente_ corresponden a la Fase 2. La
-> configuración efectiva se consulta con `./deploy/gcp/cloudrun.sh resumen`. Lo descrito para la
-> Fase 2 es el **diseño previsto**, no lo desplegado.
+> La configuración efectiva se consulta con `./deploy/gcp/cloudrun.sh resumen`.
 
 Documentos relacionados: arquitectura de la Entrega 3
 ([`../entrega3/arquitectura.md`](../entrega3/arquitectura.md)) y deuda técnica
@@ -59,7 +60,7 @@ consumidor (el worker expondrá un endpoint HTTP que recibe el push).
 
 ## 3. Modelo de componentes
 
-Fuente: [`diagramas/componentes.mmd`](diagramas/componentes.mmd) (objetivo de la Fase 2).
+Fuente: [`diagramas/componentes.mmd`](diagramas/componentes.mmd).
 
 ```mermaid
 flowchart LR
@@ -220,26 +221,44 @@ es solo un puente. Está desplegada desde el 11-11-2026 para que la
 plataforma siga procesando archivos e insignias mientras se implementa la
 Fase 2.
 
-### 6.2 Fase 2 (diseño previsto): Pub/Sub
+### 6.2 Fase 2 (implementada): Pub/Sub
 
-| Elemento | Diseño |
+| Elemento | Implementación |
 |---|---|
-| Topic | Uno para las tareas (antimalware, HLS, correo, insignias), con el tipo en un atributo del mensaje |
-| Suscripción | Push hacia un endpoint del servicio `mooc-worker`, con **token OIDC** de una cuenta de servicio dedicada a la suscripción |
-| Publicación | La API publica la tarea y responde sin esperar (como hoy con asynq). El estado inicial queda en Cloud SQL |
-| Confirmación (ack) | El worker responde `2xx` **solo después** de persistir estado y resultado. Un error responde `5xx` y Pub/Sub reintenta |
-| Reentregas | Se reutilizan las tres capas de idempotencia de la Entrega 3: llave por tarea (`scan:<asset>`, `hls:<asset>`), tabla `processed_jobs` y restricciones únicas en Postgres. Los derivados HLS se reescriben en las mismas llaves del bucket |
-| Reintentos agotados | Topic de mensajes fallidos (*dead-letter*) y estado `failed` diagnosticable en la base |
-| Verificar la finalización | El frontend ya consulta el estado del asset (`GET /assets/:id`) |
+| Topic | Uno (`mooc-tasks`) para todas las tareas. El tipo va en el atributo `task` del mensaje y el payload JSON en `Data`; el consumidor enruta con `tasks.Dispatch`. Código: [`internal/queue/pubsub.go`](../../internal/queue/pubsub.go) |
+| Suscripción | Push (`mooc-tasks-push`) hacia `<URL worker>/pubsub/push`, con **token OIDC** de la cuenta de servicio dedicada `mooc-pubsub-push`. La audiencia del token es la URL del worker |
+| Publicación | La API publica en el topic y responde sin esperar la ejecución; `QUEUE_BACKEND=pubsub` la activa. La identidad `mooc-api` tiene `roles/pubsub.publisher` solo sobre el topic. Call-sites sin cambios (interfaz `queue.Publisher`) |
+| Confirmación (ack) | El worker ([`internal/pubsubpush/server.go`](../../internal/pubsubpush/server.go)) responde `2xx` **solo después** de que el handler persiste estado y resultado. Un fallo transitorio responde `5xx` y Pub/Sub reintenta; un error "no reintentar" (payload corrupto, asset inexistente, duplicado) también responde `2xx` para no reentregar en bucle |
+| Reentregas | Idempotencia en Postgres (`processed_jobs` + estado de dominio + restricciones únicas). **La llave `asynq.TaskID` no aplica en Pub/Sub**, así que la defensa es la tabla y el estado. Los derivados HLS se reescriben en las mismas llaves del bucket |
+| Trabajo en curso | Lease atómico `assets.transcode_lease_until` (`claimTranscode`): si una reentrega llega mientras otro worker transcodifica, el segundo detecta el lease vigente y hace ack sin duplicar |
+| Reintentos agotados | Estado `failed` + `failure_reason` diagnosticable en la base, con alerta de auditoría `asset.failed`. **Sin dead-letter**: el enunciado de la Entrega 4 no lo exige; Pub/Sub reintenta según la política de la suscripción |
+| Verificar la finalización | El frontend consulta el estado del asset (`GET /assets/:id`) |
 
-**Tiempos a compatibilizar (decisión pendiente):** en una suscripción push el
-plazo de confirmación es de **como máximo 600 s**, mientras que la
-transcodificación más larga de la Entrega 3 (P3) tardó unos 8 minutos. Si el
-procesamiento supera el plazo, Pub/Sub reentrega el mensaje mientras el
-primer worker sigue trabajando. Opciones: fijar el plazo en 600 s y el
-timeout del worker por encima de la duración esperada, y asegurar que un
-segundo intento simultáneo **detecte el trabajo en curso** (marca en
-`processed_jobs` antes de empezar) en lugar de duplicarlo.
+**Tiempos compatibilizados.** En una suscripción push el plazo de confirmación
+(ackDeadline) es de **como máximo 600 s**, mientras que la transcodificación
+más larga de la Entrega 3 (P3) tardó unos 8 minutos. Decisión tomada:
+
+- `ack-deadline = 600 s` en la suscripción (`PUBSUB_ACK_DEADLINE`).
+- `timeout = 600 s` en el servicio worker de Cloud Run (una solicitud push dura
+  lo que dure la tarea).
+- Lease de transcodificación `TranscodeLease = 20 min`, mayor que el
+  ackDeadline (para que una reentrega encuentre el lease vigente) y menor que
+  el umbral del reaper de la Entrega 3 (2 h, que recupera el trabajo si el
+  worker con el lease muere sin terminar).
+
+Así, si el procesamiento supera los 600 s y Pub/Sub reentrega mientras el
+primer worker sigue, el segundo worker ve el lease vigente y se retira sin
+duplicar derivados ni efectos de negocio.
+
+**Mantenimiento periódico (reaper).** El reaper de la Entrega 3
+(`internal/tasks/reap.go`) corría con el scheduler de asynq. En modo Pub/Sub
+no hay scheduler: Pub/Sub ya reentrega los mensajes no confirmados, que es la
+garantía que el reaper aportaba sobre Redis. El handler se conserva (sigue
+disponible en modo asynq local) pero no se agenda en Cloud Run. Recuperar un
+trabajo colgado en la nube queda a cargo de la reentrega de Pub/Sub y del
+lease; si se quisiera el barrido periódico completo (cargas multipart
+vencidas, sesiones caducadas), la vía sería Cloud Scheduler → endpoint, fuera
+del alcance de esta entrega.
 
 ## 7. Configuración y acceso
 
@@ -337,29 +356,37 @@ configuración se conservan para una eventual sustentación de la Entrega 3.
 `infra-server`, Cloud SQL y el bucket siguen activos porque la Entrega 4 los
 usa.
 
-### 8.5 Traspaso a la Fase 2 (Pub/Sub)
+### 8.5 Despliegue de la Fase 2 (Pub/Sub)
 
-Estado al cerrar la Fase 1 y puntos de partida para quien implemente Pub/Sub:
+Pasos para pasar de la Fase 1 (Redis) a Pub/Sub, partiendo de los servicios
+`mooc-web`, `mooc-api` y `mooc-worker` (temporal) ya desplegados:
 
-- **Servicios activos:** `mooc-web`, `mooc-api` y `mooc-worker` (temporal,
-  consume Redis). El worker temporal se **reemplaza** desplegando el worker
-  push con el mismo nombre `mooc-worker`; agregar un paso nuevo en
-  `cloudrun.sh` (p. ej. `pubsub` para topic, suscripción y permisos, y
-  `worker` para el servicio push) en lugar de modificar `worker-temporal`.
-- **Productor:** la API encola hoy con asynq (`internal/queue`). Debe
-  publicar en el topic con la identidad `mooc-api` (`roles/pubsub.publisher`
-  solo sobre el topic).
-- **Consumidor:** los handlers están en `internal/tasks`. El worker debe
-  exponer un endpoint HTTP que reciba el push, ejecute el mismo handler y
-  responda `2xx` solo después de persistir (sección 6.2).
+```bash
+export PROJECT=dsc-uniandes-20262
+./deploy/gcp/build.sh worker api          # imagenes del commit de la Fase 2
+./deploy/gcp/migrate.sh migrate-e4        # columna del lease (ALTER aditivo, idempotente)
+./deploy/gcp/cloudrun.sh worker           # worker push (reemplaza worker-temporal)
+./deploy/gcp/cloudrun.sh pubsub           # topic + suscripcion push (usa la URL del worker)
+./deploy/gcp/cloudrun.sh api              # redeploy de la API con QUEUE_BACKEND=pubsub
+```
+
+Notas:
+
+- **Orden.** `worker` antes que `pubsub`: la suscripción necesita la URL del
+  worker como endpoint push y como audiencia del token. `api` al final: hasta
+  que se redespliega, la API sigue publicando en Redis (`QUEUE_BACKEND=asynq`).
 - **Trabajos pendientes en Redis:** no pasan solos a Pub/Sub. Antes de
-  apagar el worker temporal, verificar que la cola de Redis esté vacía.
-- **Costo:** el worker temporal tiene CPU siempre asignada (2 vCPU, 4 GiB) y
-  se cobra todo el tiempo que exista. Si la Fase 2 se demora, se puede
-  reducir con `WORKER_CPU=1 WORKER_MEM=2Gi ./deploy/gcp/cloudrun.sh worker-temporal`
-  o borrarlo (`gcloud run services delete mooc-worker --region=us-central1`).
-- **Pendientes de la Fase 1:** registrar como evidencia la salida de
-  `cloudrun.sh resumen` y capturas del recorrido profesor–estudiante.
+  redesplegar la API, verificar que la cola de Redis esté vacía (que el worker
+  temporal haya drenado los trabajos encolados).
+- **Worker temporal:** el paso `worker` lo reemplaza con el mismo nombre
+  `mooc-worker`, ahora con ingreso interno, sin invocación pública,
+  `min-instances=0` y escalado por los mensajes del push. Deja de tener CPU
+  siempre asignada.
+- **Redis:** sigue encendido porque la API lo usa para caché de sesiones y
+  límite de tasa. Deja de ser la cola.
+- **Rollback:** redesplegar la API y el worker con `QUEUE_BACKEND=asynq`
+  (`QUEUE_BACKEND=asynq ./deploy/gcp/cloudrun.sh api`) vuelve a Redis sin
+  cambios de código.
 
 ## 9. Limitaciones y deuda técnica identificada
 
@@ -373,14 +400,24 @@ Estado al cerrar la Fase 1 y puntos de partida para quien implemente Pub/Sub:
 | Apagado en Cloud Run | 10 s entre SIGTERM y SIGKILL (en la Entrega 3 eran ~90 s) | Con Pub/Sub, un trabajo interrumpido no se confirma y se reentrega |
 | Arranque en frío | Con mínimo 0, la primera solicitud tras inactividad es más lenta | `min-instances=1` durante pruebas y demostración |
 
-## 10. Evidencias pendientes
+## 10. Evidencias
+
+Implementado en código (verificado con `go build`/`go test`/`go vet`):
+
+- [x] Fase 2: topic, suscripción push y permisos en el script
+  (`cloudrun.sh pubsub` / `worker`); productor y consumidor de Pub/Sub.
+- [x] Semántica de ack (2xx tras persistir, 5xx reintenta) y manejo de
+  reentregas (idempotencia + lease), con pruebas unitarias del servidor push
+  (`internal/pubsubpush/server_test.go`).
+
+Pendiente de capturar sobre el despliegue real:
 
 - [x] URLs de `mooc-web` y `mooc-api` (sección 4.2) y `/readyz` con Postgres, Redis y Storage en `ok`.
 - [ ] Salida de `cloudrun.sh resumen` guardada como evidencia de los límites de instancias.
 - [ ] Recorrido profesor–estudiante desde el navegador sobre Cloud Run.
-- [ ] Fase 2: topic, suscripción y permisos en el script; registros que sigan una tarea desde su publicación hasta su finalización.
-- [ ] Reentrega de un mensaje sin efectos duplicados.
-- [ ] Métricas de instancias ante solicitudes concurrentes y mensajes pendientes, con carga controlada.
+- [ ] Registros que sigan una tarea desde su publicación en Pub/Sub hasta su finalización.
+- [ ] Reentrega de un mensaje sin efectos duplicados (forzar un procesamiento > ackDeadline y verificar un solo efecto).
+- [ ] Métricas de instancias (`run.googleapis.com/container/instance_count`) y mensajes pendientes (`pubsub.googleapis.com/subscription/num_undelivered_messages`) con carga controlada.
 - [ ] Video de sustentación (máximo 20 minutos).
 
 ## 11. Archivos fuente

@@ -11,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hibiken/asynq"
-
 	"mooc-platform/internal/audit"
 	"mooc-platform/internal/badge"
 	"mooc-platform/internal/metrics"
@@ -34,10 +32,10 @@ import (
 // Confiar solo en 1 y 2 seria fragil: son estado en Redis y una tabla
 // auxiliar. La restriccion de integridad es la unica que no se puede
 // esquivar por una carrera entre dos workers.
-func (d *Deps) HandleIssueBadge(ctx context.Context, t *asynq.Task) error {
+func (d *Deps) HandleIssueBadge(ctx context.Context, payload []byte) error {
 	var p queue.BadgePayload
-	if err := json.Unmarshal(t.Payload(), &p); err != nil {
-		return fmt.Errorf("payload invalido: %w: %w", err, asynq.SkipRetry)
+	if err := json.Unmarshal(payload, &p); err != nil {
+		return fmt.Errorf("payload invalido: %w: %w", err, errSkipRetry)
 	}
 	jobKey := "badge:" + p.EnrollmentID
 
@@ -61,7 +59,7 @@ func (d *Deps) HandleIssueBadge(ctx context.Context, t *asynq.Task) error {
 		WHERE e.id = $1`, p.EnrollmentID).
 		Scan(&courseID, &userID, &state, &courseTitle, &fullName, &email)
 	if errors.Is(err, sql.ErrNoRows) {
-		return fmt.Errorf("inscripcion %s no existe: %w", p.EnrollmentID, asynq.SkipRetry)
+		return fmt.Errorf("inscripcion %s no existe: %w", p.EnrollmentID, errSkipRetry)
 	}
 	if err != nil {
 		return err
