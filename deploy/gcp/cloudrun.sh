@@ -304,9 +304,9 @@ paso_pubsub() {
   # (scan -> transcode, badge -> email). Ambas identidades necesitan publicar
   # en el topic, y solo eso (minimo privilegio).
   gcloud pubsub topics add-iam-policy-binding "$PUBSUB_TOPIC" \
-    --member="serviceAccount:$SA_API" --role=roles/pubsub.publisher --condition=None >/dev/null
+    --member="serviceAccount:$SA_API" --role=roles/pubsub.publisher >/dev/null
   gcloud pubsub topics add-iam-policy-binding "$PUBSUB_TOPIC" \
-    --member="serviceAccount:$SA_WORKER" --role=roles/pubsub.publisher --condition=None >/dev/null
+    --member="serviceAccount:$SA_WORKER" --role=roles/pubsub.publisher >/dev/null
 
   # Cuenta de servicio dedicada a la suscripcion push.
   existe gcloud iam service-accounts describe "$SA_PUSH" ||
@@ -328,7 +328,7 @@ paso_pubsub() {
   pubsub_agent="service-$NUMERO_PROYECTO@gcp-sa-pubsub.iam.gserviceaccount.com"
   gcloud iam service-accounts add-iam-policy-binding "$SA_PUSH" \
     --member="serviceAccount:$pubsub_agent" \
-    --role=roles/iam.serviceAccountTokenCreator --condition=None >/dev/null
+    --role=roles/iam.serviceAccountTokenCreator >/dev/null
 
   # Suscripcion push: entrega a <worker_url>/pubsub/push con token OIDC cuya
   # audiencia es la URL del worker (lo que el worker valida).
