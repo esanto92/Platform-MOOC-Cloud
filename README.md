@@ -32,28 +32,34 @@ todo en contenedores.
 | URL del frontend (Entrega 3) | https://34-149-212-102.sslip.io |
 | URL del balanceador de la API (Entrega 3) | https://34-149-212-102.sslip.io/api/v1 (documentacion en `/docs`) |
 | Video de sustentacion (Entrega 3) | PENDIENTE |
-| **Despliegue en Cloud Run y Pub/Sub (Entrega 4)**: servicios, red, secretos, estado de las fases | [`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md) |
+| **Despliegue en Cloud Run y Pub/Sub (Entrega 4)**: servicios, red, secretos, Pub/Sub, escalamiento | [`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md) |
 | Script de despliegue en Cloud Run (Entrega 4) | [`deploy/gcp/cloudrun.sh`](deploy/gcp/cloudrun.sh) |
-| URL del frontend (Entrega 4, Cloud Run) | https://mooc-web-88193133859.us-central1.run.app |
-| URL del backend (Entrega 4, Cloud Run) | https://mooc-api-88193133859.us-central1.run.app/api/v1 (estado en `/readyz`) |
+| Script de verificacion de configuracion (Entrega 4) | [`deploy/gcp/verificar-e4.sh`](deploy/gcp/verificar-e4.sh) |
+| Script y reporte de escalamiento (Entrega 4) | [`deploy/gcp/escalamiento-e4.sh`](deploy/gcp/escalamiento-e4.sh), [`docs/entrega4/resultados-escalamiento/`](docs/entrega4/resultados-escalamiento/) |
+| URL del frontend (Entrega 4, Cloud Run) | https://mooc-web-mhuknn2hva-uc.a.run.app |
+| URL del backend (Entrega 4, Cloud Run) | https://mooc-api-mhuknn2hva-uc.a.run.app/api/v1 (estado en `/readyz`) |
 
 Las credenciales de la nube se entregan al equipo docente por el canal privado
 del curso, nunca en este repositorio.
 
 ## Arquitectura actual (despliegue en Google Cloud)
 
-La arquitectura vigente es la de la Entrega 3, descrita en
-[`docs/entrega3/arquitectura.md`](docs/entrega3/arquitectura.md):
+La arquitectura vigente es la de la Entrega 4 (Cloud Run + Cloud Pub/Sub),
+descrita en [`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md):
 
-- un balanceador HTTPS externo;
-- grupos administrados autoescalados de 1 a 3 VMs para la API (por CPU) y
-  para los workers (por trabajos en cola);
-- un grupo de 1 VM para el frontend;
-- Redis compartido en `infra-server`;
-- Cloud SQL y Cloud Storage.
+- tres servicios de **Cloud Run** (`mooc-web`, `mooc-api`, `mooc-worker`),
+  cada uno con escalamiento automatico de 0 a 3 instancias;
+- **Cloud Pub/Sub**: la API publica las tareas en un topic y una suscripcion
+  push autenticada (token OIDC) las entrega al worker, que confirma tras
+  persistir (reemplaza la cola Redis/asynq, que queda solo para local);
+- **Direct VPC egress** desde Cloud Run hacia Cloud SQL y `infra-server`;
+- secretos en **Secret Manager**;
+- Cloud SQL y Cloud Storage (sin cambios).
 
-La de dos VMs fijas de la Entrega 2 se conserva en
-[`docs/entrega2/`](docs/entrega2/README.md) como linea base.
+La arquitectura elastica con MIG y balanceador de la Entrega 3 se conserva en
+[`docs/entrega3/arquitectura.md`](docs/entrega3/arquitectura.md), y la de dos
+VMs fijas de la Entrega 2 en [`docs/entrega2/`](docs/entrega2/README.md), como
+lineas base historicas.
 
 No hace falta tener Go instalado: la compilacion ocurre dentro de Docker.
 
