@@ -96,7 +96,15 @@ gcloud config set project "$PROJECT" >/dev/null
 # (https://<servicio>-<numero de proyecto>.<region>.run.app), asi que se
 # conoce antes del primer despliegue.
 NUMERO_PROYECTO=""
+# url_de <servicio>: devuelve la URL del servicio. Si ya existe en Cloud Run,
+# pregunta la URL REAL (gcloud), porque Cloud Run usa un formato con hash
+# (https://<servicio>-<hash>-<region>.a.run.app) que NO se puede construir a
+# mano. Solo si el servicio aun no existe se cae al patron deterministico
+# clasico, suficiente como valor provisional antes del primer despliegue.
 url_de() {
+  local real
+  real="$(gcloud run services describe "$1" --region="$REGION" --format='value(status.url)' 2>/dev/null)"
+  if [ -n "$real" ]; then echo "$real"; return; fi
   [ -n "$NUMERO_PROYECTO" ] ||
     NUMERO_PROYECTO="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)' | tr -d '\r')"
   echo "https://$1-$NUMERO_PROYECTO.$REGION.run.app"
