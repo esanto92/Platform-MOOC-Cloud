@@ -216,7 +216,7 @@ paso_api() {
   # (todavia con Redis) se puede sobreescribir con QUEUE_BACKEND=asynq.
   env_cloudrun "$(cargar_env api)" "$yaml" \
     "PUBLIC_BASE_URL=$url" "HTTP_ADDR=:8080" "TRUSTED_PROXIES=" \
-    "QUEUE_BACKEND=${QUEUE_BACKEND:-pubsub}" "PUBSUB_TOPIC=$PUBSUB_TOPIC" \
+    "QUEUE_BACKEND=${QUEUE_BACKEND:-pubsub}" "PUBSUB_PROJECT=$PROJECT" "PUBSUB_TOPIC=$PUBSUB_TOPIC" \
     "DB_MAX_OPEN_CONNS=20" "DB_MAX_IDLE_CONNS=10"
   gcloud run deploy mooc-api --quiet \
     --image="$REGISTRY/api:$v" --region="$REGION" \
@@ -300,9 +300,13 @@ paso_pubsub() {
   existe gcloud pubsub topics describe "$PUBSUB_TOPIC" ||
     gcloud pubsub topics create "$PUBSUB_TOPIC"
 
-  # La API publica en el topic (solo publicar, nada mas): minimo privilegio.
+  # La API publica el trabajo inicial; el worker publica los trabajos derivados
+  # (scan -> transcode, badge -> email). Ambas identidades necesitan publicar
+  # en el topic, y solo eso (minimo privilegio).
   gcloud pubsub topics add-iam-policy-binding "$PUBSUB_TOPIC" \
     --member="serviceAccount:$SA_API" --role=roles/pubsub.publisher --condition=None >/dev/null
+  gcloud pubsub topics add-iam-policy-binding "$PUBSUB_TOPIC" \
+    --member="serviceAccount:$SA_WORKER" --role=roles/pubsub.publisher --condition=None >/dev/null
 
   # Cuenta de servicio dedicada a la suscripcion push.
   existe gcloud iam service-accounts describe "$SA_PUSH" ||
@@ -359,7 +363,7 @@ paso_worker() {
   # Concurrencia 1: cada instancia procesa un trabajo a la vez, para que mas
   # mensajes signifiquen mas instancias (hasta el maximo), no mas carga por CPU.
   env_cloudrun "$(cargar_env worker)" "$yaml" \
-    "QUEUE_BACKEND=pubsub" "PUBSUB_TOPIC=$PUBSUB_TOPIC" \
+    "QUEUE_BACKEND=pubsub" "PUBSUB_PROJECT=$PROJECT" "PUBSUB_TOPIC=$PUBSUB_TOPIC" \
     "PUBSUB_PUSH_AUDIENCE=$url" "PUBSUB_PUSH_SA=$SA_PUSH" \
     "HTTP_ADDR=:8080" "WORKER_SHUTDOWN_TIMEOUT_SECONDS=8" \
     "DB_MAX_OPEN_CONNS=5" "DB_MAX_IDLE_CONNS=2"
