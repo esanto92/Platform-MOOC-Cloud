@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 # =====================================================================
-# Despliegue en Cloud Run (Entrega 4).
+# Despliegue en Cloud Run (Entrega 4: Cloud Run + Cloud Pub/Sub).
 #
 #   Navegador --> mooc-web (Cloud Run, Next.js BFF) --HTTPS--> mooc-api (Cloud Run)
-#                                                                |  Direct VPC egress
-#                                                                v  (subred mooc-run)
-#                                    Cloud SQL (IP privada) + Redis en infra-server
+#                                                                |  publica tareas
+#                                                                v
+#                                    Cloud Pub/Sub (topic + suscripcion push OIDC)
+#                                                                |  push autenticado
+#                                                                v
+#                                                        mooc-worker (Cloud Run)
+#   mooc-api/mooc-worker --Direct VPC egress--> Cloud SQL (IP privada) + Redis
 #                 Cloud Storage <-- URLs prefirmadas (HMAC), directo desde el navegador
 #
-# Primera fase: frontend y API en Cloud Run. La API sigue encolando en Redis
-# (infra-server) hasta que se migre a Pub/Sub; por eso infra-server sigue
-# encendida. El paso worker-temporal es OPCIONAL y solo sirve para probar el
-# flujo completo antes de Pub/Sub (ver comentario del paso).
+# Estado desplegado: la API publica las tareas en Pub/Sub y la suscripcion push
+# las entrega al worker (QUEUE_BACKEND=pubsub). Redis en infra-server ya NO es
+# la cola: solo cache de sesiones y limite de tasa. El paso worker-temporal es
+# HISTORICO (modo Redis/asynq) y se conserva solo por si hiciera falta.
 #
 # Uso (desde Cloud Shell o un PC con gcloud, en la raiz del repo o donde sea):
 #   export PROJECT=dsc-uniandes-20262

@@ -51,7 +51,9 @@ descrita en [`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md):
   cada uno con escalamiento automatico de 0 a 3 instancias;
 - **Cloud Pub/Sub**: la API publica las tareas en un topic y una suscripcion
   push autenticada (token OIDC) las entrega al worker, que confirma tras
-  persistir (reemplaza la cola Redis/asynq, que queda solo para local);
+  persistir. Pub/Sub reemplaza la cola Redis/asynq; Redis sigue en
+  `infra-server` solo como cache de sesiones y limite de tasa (el modo
+  asynq/Redis se conserva para el entorno local);
 - **Direct VPC egress** desde Cloud Run hacia Cloud SQL y `infra-server`;
 - secretos en **Secret Manager**;
 - Cloud SQL y Cloud Storage (sin cambios).
