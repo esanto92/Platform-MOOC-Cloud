@@ -150,17 +150,21 @@ con `./deploy/gcp/cloudrun.sh resumen`.
 |---|---|---|---|
 | Región | `us-central1` | `us-central1` | `us-central1` |
 | Entorno de ejecución | gen2 | gen2 | gen2 |
-| Mínimo de instancias | 0 | 0 | 1 (Fase 1, temporal, desplegado) · _Fase 2: pendiente_ |
+| Mínimo de instancias | 0 | 0 | 0 |
 | Máximo de instancias | **3** | **3** | **3** |
 | CPU | 1 vCPU | 1 vCPU | 2 vCPU |
 | Memoria | 512 MiB | 512 MiB | 4 GiB |
-| Concurrencia por instancia | 80 | 80 | _Fase 2: pendiente_ |
-| Tiempo máximo de solicitud | 60 s | 60 s | _Fase 2: pendiente_ |
-| Puerto del contenedor | 3000 | 8080 | 9100 (`/healthz`) en Fase 1 |
-| Asignación de CPU | Solo durante solicitudes, con *startup boost* | Solo durante solicitudes, con *startup boost* | Siempre asignada (Fase 1) |
+| Concurrencia por instancia | 80 | 80 | 1 |
+| Tiempo máximo de solicitud | 60 s | 60 s | 600 s (= ackDeadline del push) |
+| Puerto del contenedor | 3000 | 8080 | 8080 (`/pubsub/push`, `/readyz`) |
+| Asignación de CPU | Solo durante solicitudes, con *startup boost* | Solo durante solicitudes, con *startup boost* | Solo durante solicitudes |
 | Ingreso / invocación | Público | Público | Interno, sin invocación pública |
 | Cuenta de servicio | `mooc-web` | `mooc-api` | `mooc-worker` |
-| URL | `https://mooc-web-88193133859.us-central1.run.app` | `https://mooc-api-88193133859.us-central1.run.app` | — |
+| URL | `https://mooc-web-<hash>-uc.a.run.app` | `https://mooc-api-<hash>-uc.a.run.app` | interna (no pública) |
+
+> Las URLs reales de Cloud Run usan un hash por servicio
+> (`https://<servicio>-<hash>-uc.a.run.app`); se obtienen con
+> `./deploy/gcp/cloudrun.sh resumen`. No se fijan a mano en el repo.
 
 **Justificación de los valores:**
 
@@ -370,6 +374,24 @@ export PROJECT=dsc-uniandes-20262
 ./deploy/gcp/cloudrun.sh api              # redeploy de la API con QUEUE_BACKEND=pubsub
 ```
 
+> **Ajustes incorporados al script tras el despliegue del 14-11-2026** (ya
+> resueltos en `cloudrun.sh`, se documentan para quien mantenga el entorno):
+>
+> - **`PUBSUB_PROJECT` explícito.** El cliente de Pub/Sub no infiere el
+>   proyecto del metadata cuando llega vacío; el worker arrancaba en bucle con
+>   `pubsub: projectID string is empty`. El script ahora pasa
+>   `PUBSUB_PROJECT=$PROJECT` a `mooc-worker` y `mooc-api`.
+> - **Publisher también para el worker.** El worker publica tareas derivadas
+>   (scan→transcode, badge→email), así que necesita `roles/pubsub.publisher`
+>   sobre el topic, no solo la API.
+> - **URL real de Cloud Run.** La suscripción y la audiencia OIDC deben usar la
+>   URL real del worker (con hash, `...-uc.a.run.app`), no un patrón construido
+>   a mano; `url_de` la obtiene con `gcloud` si el servicio ya existe.
+> - **Migración de la base privada.** Cloud SQL es de IP privada: la migración
+>   `migrate-e4` se aplica desde una máquina dentro de `mooc-vpc` (p. ej.
+>   `web-server`), no desde Cloud Shell. Ver el `ALTER TABLE ... IF NOT EXISTS`
+>   en [`deploy/gcp/migrate.sh`](../../deploy/gcp/migrate.sh).
+
 Notas:
 
 - **Orden.** `worker` antes que `pubsub`: la suscripción necesita la URL del
@@ -413,11 +435,11 @@ Implementado en código (verificado con `go build`/`go test`/`go vet`):
 Pendiente de capturar sobre el despliegue real:
 
 - [x] URLs de `mooc-web` y `mooc-api` (sección 4.2) y `/readyz` con Postgres, Redis y Storage en `ok`.
+- [x] Pub/Sub probado end-to-end: un push autenticado llega al worker (`POST 204`), que valida el token OIDC y despacha al handler (verificado el 14-11-2026).
+- [x] Métricas de instancias (`run.googleapis.com/container/instance_count`) y mensajes pendientes (`pubsub.googleapis.com/subscription/num_undelivered_messages`) con carga controlada: [`resultados-escalamiento/escalamiento_20261114.md`](resultados-escalamiento/escalamiento_20261114.md) (worker y api escalan de 1 a 2; máximo 3 respetado).
 - [ ] Salida de `cloudrun.sh resumen` guardada como evidencia de los límites de instancias.
-- [ ] Recorrido profesor–estudiante desde el navegador sobre Cloud Run.
-- [ ] Registros que sigan una tarea desde su publicación en Pub/Sub hasta su finalización.
+- [ ] Recorrido profesor–estudiante desde el navegador sobre Cloud Run (con un video real, demuestra el procesamiento completo por Pub/Sub).
 - [ ] Reentrega de un mensaje sin efectos duplicados (forzar un procesamiento > ackDeadline y verificar un solo efecto).
-- [ ] Métricas de instancias (`run.googleapis.com/container/instance_count`) y mensajes pendientes (`pubsub.googleapis.com/subscription/num_undelivered_messages`) con carga controlada.
 - [ ] Video de sustentación (máximo 20 minutos).
 
 ## 11. Archivos fuente
