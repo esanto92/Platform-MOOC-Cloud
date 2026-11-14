@@ -18,9 +18,16 @@
 #   ./deploy/gcp/build.sh api web worker     # imagenes del commit actual
 #   ./deploy/gcp/cloudrun.sh todo            # apis red secretos api web resumen
 #
-#   Pasos sueltos: apis red secretos api web worker-temporal resumen
+#   Pasos sueltos: apis red secretos api web worker worker-temporal pubsub resumen
 #   Se pueden encadenar: ./deploy/gcp/cloudrun.sh api web
 #   VERSION=<sha> fija la version de las imagenes (por defecto, el commit actual).
+#
+# Entrega 4 (Pub/Sub), orden tipico despues de 'todo':
+#   ./deploy/gcp/migrate.sh migrate-e4    # columna del lease de transcode
+#   ./deploy/gcp/cloudrun.sh worker       # worker push (reemplaza worker-temporal)
+#   ./deploy/gcp/cloudrun.sh pubsub       # topic + suscripcion push (usa la URL del worker)
+#   ./deploy/gcp/cloudrun.sh api          # redeploy para que la API publique en Pub/Sub
+# La API debe redesplegarse con QUEUE_BACKEND=pubsub (ver paso_api).
 #
 # La configuracion NO secreta se toma de los secretos de la Entrega 3
 # (mooc-api-env, mooc-worker-env, mooc-web-env) para no duplicarla. Los
@@ -41,6 +48,18 @@ REGISTRY="$REGION-docker.pkg.dev/$PROJECT/mooc"
 SA_API="mooc-api@$PROJECT.iam.gserviceaccount.com"
 SA_WORKER="mooc-worker@$PROJECT.iam.gserviceaccount.com"
 SA_WEB="mooc-web@$PROJECT.iam.gserviceaccount.com"
+# Cuenta de servicio DEDICADA a la suscripcion push: firma el token OIDC con
+# el que Pub/Sub invoca al worker. Es la unica identidad autorizada a llamarlo.
+SA_PUSH="mooc-pubsub-push@$PROJECT.iam.gserviceaccount.com"
+
+# --- Pub/Sub (Entrega 4) ---
+PUBSUB_TOPIC="${PUBSUB_TOPIC:-mooc-tasks}"
+PUBSUB_SUB="${PUBSUB_SUB:-mooc-tasks-push}"
+# Plazo de confirmacion (ack) de la suscripcion push. El maximo que admite
+# Pub/Sub en push es 600 s. Debe ser menor que el lease de transcodificacion
+# del worker (TranscodeLease, 20 min en internal/tasks/transcode.go) para que
+# una reentrega encuentre el lease vigente y no duplique el trabajo.
+PUBSUB_ACK_DEADLINE="${PUBSUB_ACK_DEADLINE:-600}"
 
 # --- Limites y recursos de cada servicio (se documentan en la entrega) ---
 # Maximo de 3 instancias por servicio, exigido por el enunciado.
@@ -191,8 +210,13 @@ paso_api() {
   # TRUSTED_PROXIES: se quita. Los rangos eran los del balanceador de la
   #   Entrega 3; en Cloud Run las solicitudes llegan por el frontend de
   #   Google. Pendiente verificar la IP de cliente (deuda tecnica).
+  # QUEUE_BACKEND=pubsub: la API publica las tareas en el topic de Pub/Sub en
+  # lugar de encolar en Redis. El topic lo crea paso_pubsub; la identidad
+  # mooc-api tiene roles/pubsub.publisher solo sobre el. Para la Fase 1
+  # (todavia con Redis) se puede sobreescribir con QUEUE_BACKEND=asynq.
   env_cloudrun "$(cargar_env api)" "$yaml" \
     "PUBLIC_BASE_URL=$url" "HTTP_ADDR=:8080" "TRUSTED_PROXIES=" \
+    "QUEUE_BACKEND=${QUEUE_BACKEND:-pubsub}" "PUBSUB_TOPIC=$PUBSUB_TOPIC" \
     "DB_MAX_OPEN_CONNS=20" "DB_MAX_IDLE_CONNS=10"
   gcloud run deploy mooc-api --quiet \
     --image="$REGISTRY/api:$v" --region="$REGION" \
@@ -264,6 +288,99 @@ paso_worker_temporal() {
     --labels="app=mooc,rol=worker,version=$v"
 }
 
+# Topic, cuenta de servicio de la suscripcion y suscripcion push (Entrega 4).
+# Debe ejecutarse DESPUES de desplegar el servicio worker (paso_worker), porque
+# la suscripcion necesita la URL del worker como endpoint push y como audiencia
+# del token OIDC. Idempotente: no recrea lo que ya existe.
+paso_pubsub() {
+  say "Pub/Sub: topic $PUBSUB_TOPIC y suscripcion push $PUBSUB_SUB"
+  gcloud services enable pubsub.googleapis.com >/dev/null
+
+  # Topic de tareas.
+  existe gcloud pubsub topics describe "$PUBSUB_TOPIC" ||
+    gcloud pubsub topics create "$PUBSUB_TOPIC"
+
+  # La API publica en el topic (solo publicar, nada mas): minimo privilegio.
+  gcloud pubsub topics add-iam-policy-binding "$PUBSUB_TOPIC" \
+    --member="serviceAccount:$SA_API" --role=roles/pubsub.publisher --condition=None >/dev/null
+
+  # Cuenta de servicio dedicada a la suscripcion push.
+  existe gcloud iam service-accounts describe "$SA_PUSH" ||
+    gcloud iam service-accounts create mooc-pubsub-push \
+      --display-name="Identidad de la suscripcion push de Pub/Sub"
+
+  # Solo esta identidad puede invocar el worker (ingreso interno + sin invocacion
+  # publica). Asi se protege al worker por IAM, como exige el enunciado.
+  local worker_url
+  worker_url="$(url_de mooc-worker)"
+  gcloud run services add-iam-policy-binding mooc-worker --region="$REGION" \
+    --member="serviceAccount:$SA_PUSH" --role=roles/run.invoker >/dev/null
+
+  # Pub/Sub necesita poder acuñar tokens OIDC como la cuenta de la suscripcion.
+  local pubsub_agent
+  pubsub_agent="service-$NUMERO_PROYECTO@gcp-sa-pubsub.iam.gserviceaccount.com"
+  [ -n "$NUMERO_PROYECTO" ] ||
+    NUMERO_PROYECTO="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)' | tr -d '\r')"
+  pubsub_agent="service-$NUMERO_PROYECTO@gcp-sa-pubsub.iam.gserviceaccount.com"
+  gcloud iam service-accounts add-iam-policy-binding "$SA_PUSH" \
+    --member="serviceAccount:$pubsub_agent" \
+    --role=roles/iam.serviceAccountTokenCreator --condition=None >/dev/null
+
+  # Suscripcion push: entrega a <worker_url>/pubsub/push con token OIDC cuya
+  # audiencia es la URL del worker (lo que el worker valida).
+  if existe gcloud pubsub subscriptions describe "$PUBSUB_SUB"; then
+    gcloud pubsub subscriptions update "$PUBSUB_SUB" \
+      --push-endpoint="$worker_url/pubsub/push" \
+      --push-auth-service-account="$SA_PUSH" \
+      --push-auth-token-audience="$worker_url" \
+      --ack-deadline="$PUBSUB_ACK_DEADLINE"
+  else
+    gcloud pubsub subscriptions create "$PUBSUB_SUB" --topic="$PUBSUB_TOPIC" \
+      --push-endpoint="$worker_url/pubsub/push" \
+      --push-auth-service-account="$SA_PUSH" \
+      --push-auth-token-audience="$worker_url" \
+      --ack-deadline="$PUBSUB_ACK_DEADLINE"
+  fi
+  echo "  suscripcion -> $worker_url/pubsub/push (ack ${PUBSUB_ACK_DEADLINE}s, token de $SA_PUSH)"
+}
+
+# Worker de la Entrega 4: servicio push de Pub/Sub. REEMPLAZA a worker-temporal
+# (mismo nombre mooc-worker). A diferencia del temporal, escala por los mensajes
+# que entrega Pub/Sub (cada mensaje es una solicitud HTTP) y no tiene CPU
+# siempre asignada ni consume Redis como cola.
+paso_worker() {
+  local v yaml url
+  v="$(version)"; imagen_existe worker "$v"
+  url="$(url_de mooc-worker)"
+  say "mooc-worker $v (push de Pub/Sub) -> $url"
+  yaml="$TMPD/worker.yaml"
+  # QUEUE_BACKEND=pubsub cambia el worker a modo push. PUBSUB_PUSH_AUDIENCE y
+  # PUBSUB_PUSH_SA son lo que el worker exige al validar el token OIDC del push.
+  # Concurrencia 1: cada instancia procesa un trabajo a la vez, para que mas
+  # mensajes signifiquen mas instancias (hasta el maximo), no mas carga por CPU.
+  env_cloudrun "$(cargar_env worker)" "$yaml" \
+    "QUEUE_BACKEND=pubsub" "PUBSUB_TOPIC=$PUBSUB_TOPIC" \
+    "PUBSUB_PUSH_AUDIENCE=$url" "PUBSUB_PUSH_SA=$SA_PUSH" \
+    "HTTP_ADDR=:8080" "WORKER_SHUTDOWN_TIMEOUT_SECONDS=8" \
+    "DB_MAX_OPEN_CONNS=5" "DB_MAX_IDLE_CONNS=2"
+  gcloud run deploy mooc-worker --quiet \
+    --image="$REGISTRY/worker:$v" --region="$REGION" \
+    --service-account="$SA_WORKER" --execution-environment=gen2 \
+    --port=8080 --cpu="$WORKER_CPU" --memory="$WORKER_MEM" \
+    --concurrency=1 --timeout="$PUBSUB_ACK_DEADLINE" \
+    --min-instances=0 --max-instances="$MAX_INSTANCIAS" \
+    --network="$NET" --subnet="$SUBNET_RUN" --network-tags=mooc-worker \
+    --vpc-egress=private-ranges-only \
+    --env-vars-file="$yaml" \
+    --set-secrets="DATABASE_URL=mooc-run-database-url:latest,REDIS_PASSWORD=mooc-run-redis-password:latest,S3_SECRET_KEY=mooc-run-s3-secret-worker:latest" \
+    --ingress=internal --no-allow-unauthenticated \
+    --labels="app=mooc,rol=worker,version=$v"
+  # --ingress=internal + --no-allow-unauthenticated: el worker no admite
+  # invocacion publica. Solo la identidad de la suscripcion (paso_pubsub) puede
+  # llamarlo. El timeout = ack-deadline: una solicitud push puede durar lo que
+  # dure la tarea mas larga admitida.
+}
+
 paso_resumen() {
   say "Servicios de Cloud Run"
   gcloud run services list --region="$REGION" --filter="metadata.labels.app=mooc" \
@@ -289,7 +406,7 @@ paso_resumen() {
 for paso in "$@"; do
   case "$paso" in
     todo) paso_apis; paso_red; paso_secretos; paso_api; paso_web; paso_resumen ;;
-    apis|red|secretos|api|web|worker-temporal|resumen) "paso_${paso//-/_}" ;;
+    apis|red|secretos|api|web|worker|worker-temporal|pubsub|resumen) "paso_${paso//-/_}" ;;
     *) echo "Paso desconocido: $paso" >&2; sed -n '2,29p' "$0"; exit 1 ;;
   esac
 done

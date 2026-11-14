@@ -23,6 +23,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -49,29 +50,74 @@ type Deps struct {
 	Cfg    config.Config
 	DB     *sql.DB
 	Store  *storage.Storage
-	Queue  *queue.Client
+	Queue  queue.Publisher
 	Mailer *mailer.Mailer
 	Audit  *audit.Logger
 }
 
-// Register conecta cada tipo de tarea con su handler.
-func (d *Deps) Register(mux *asynq.ServeMux) {
-	mux.HandleFunc(queue.TaskSendEmail, d.instrument(queue.TaskSendEmail, d.HandleSendEmail))
-	mux.HandleFunc(queue.TaskScanAsset, d.instrument(queue.TaskScanAsset, d.HandleScanAsset))
-	mux.HandleFunc(queue.TaskTranscodeHLS, d.instrument(queue.TaskTranscodeHLS, d.HandleTranscode))
-	mux.HandleFunc(queue.TaskIssueBadge, d.instrument(queue.TaskIssueBadge, d.HandleIssueBadge))
-	mux.HandleFunc(queue.TaskReapStale, d.instrument(queue.TaskReapStale, d.HandleReapStale))
+// errSkipRetry marca un error que NO debe reintentarse: el trabajo no va a
+// mejorar repitiendolo (payload corrupto, asset inexistente, estado invalido).
+// Es agnostico de la cola; el adaptador de asynq lo traduce a asynq.SkipRetry
+// y el consumidor de Pub/Sub lo trata como ack (2xx) en vez de reentrega.
+var errSkipRetry = errors.New("no reintentar")
+
+// IsSkipRetry indica si un error del Dispatch marca "no reintentar". El
+// consumidor de Pub/Sub lo usa para responder 2xx (ack) en vez de 5xx.
+func IsSkipRetry(err error) bool { return errors.Is(err, errSkipRetry) }
+
+// Handler es la firma de un handler de tarea desacoplada de la cola: recibe el
+// contexto y el payload crudo del mensaje. La misma funcion sirve para asynq
+// (local) y para la suscripcion push de Pub/Sub (nube), porque ninguna de las
+// dos aparece en la firma.
+type Handler func(context.Context, []byte) error
+
+// Dispatch enruta un payload al handler de su tipo. Lo usa el consumidor de
+// Pub/Sub: Pub/Sub entrega el tipo en un atributo del mensaje y el cuerpo en
+// Data. Devuelve un error si el tipo no tiene handler registrado.
+func (d *Deps) Dispatch(ctx context.Context, taskType string, payload []byte) error {
+	h, ok := d.handlers()[taskType]
+	if !ok {
+		return fmt.Errorf("tipo de tarea desconocido: %s", taskType)
+	}
+	return h(ctx, payload)
 }
 
-type handlerFunc func(context.Context, *asynq.Task) error
+// handlers mapea cada tipo de tarea a su handler instrumentado. Es la unica
+// fuente de verdad del enrutamiento; Register (asynq) y Dispatch (Pub/Sub) la
+// comparten para no duplicar la lista.
+func (d *Deps) handlers() map[string]Handler {
+	return map[string]Handler{
+		queue.TaskSendEmail:    d.instrument(queue.TaskSendEmail, d.HandleSendEmail),
+		queue.TaskScanAsset:    d.instrument(queue.TaskScanAsset, d.HandleScanAsset),
+		queue.TaskTranscodeHLS: d.instrument(queue.TaskTranscodeHLS, d.HandleTranscode),
+		queue.TaskIssueBadge:   d.instrument(queue.TaskIssueBadge, d.HandleIssueBadge),
+		queue.TaskReapStale:    d.instrument(queue.TaskReapStale, d.HandleReapStale),
+	}
+}
+
+// Register conecta cada tipo de tarea con su handler en el mux de asynq
+// (modo local). El cierre adapta el *asynq.Task al Handler desacoplado:
+// extrae el payload crudo, que es lo unico que los handlers usan de la tarea.
+func (d *Deps) Register(mux *asynq.ServeMux) {
+	for taskType, h := range d.handlers() {
+		h := h
+		mux.HandleFunc(taskType, func(ctx context.Context, t *asynq.Task) error {
+			err := h(ctx, t.Payload())
+			// Traduce el sentinel agnostico al de asynq para que no reintente.
+			if errors.Is(err, errSkipRetry) {
+				return fmt.Errorf("%w: %w", err, asynq.SkipRetry)
+			}
+			return err
+		})
+	}
+}
 
 // instrument envuelve cada handler para medir duracion y resultado sin
 // repetir el mismo codigo en los cinco handlers.
-func (d *Deps) instrument(name string, fn handlerFunc) handlerFunc {
-	return func(ctx context.Context, t *asynq.Task) error {
+func (d *Deps) instrument(name string, fn Handler) Handler {
+	return func(ctx context.Context, payload []byte) error {
 		ctx, span := tracer.Start(ctx, "job "+name)
 		span.SetAttributes(
-			attribute.String("messaging.system", "asynq"),
 			attribute.String("messaging.destination", name),
 		)
 		if id, ok := asynq.GetTaskID(ctx); ok {
@@ -79,7 +125,7 @@ func (d *Deps) instrument(name string, fn handlerFunc) handlerFunc {
 		}
 
 		start := time.Now()
-		err := fn(ctx, t)
+		err := fn(ctx, payload)
 		metrics.JobDuration.WithLabelValues(name).Observe(time.Since(start).Seconds())
 
 		status := "success"
@@ -142,33 +188,25 @@ func (d *Deps) skipDuplicate(taskType, jobKey string) {
 	log.Printf("worker: %s ya fue procesado (%s); se ignora la reentrega", taskType, jobKey)
 }
 
-// ErrorHandler se ejecuta cuando un trabajo falla.
+// alertAssetFailed deja la ALERTA cuando el procesamiento de un asset queda en
+// estado terminal de fallo (archivo corrupto, MIME que no corresponde, ffmpeg
+// que no pudo con el archivo). La alerta vive en el dominio, no en un hook de
+// la cola: ocurre al marcar el asset como 'failed', asi que es la misma pase
+// lo que pase con la mensajeria (asynq en local, Pub/Sub en la nube).
 //
-// Cuando se agotan los reintentos, asynq mueve la tarea a la cola "archived":
-// esa es la DEAD LETTER QUEUE. Ahi queda para inspeccion manual. Este handler
-// deja ademas una linea de auditoria, que es la ALERTA que exige el enunciado.
-func (d *Deps) ErrorHandler() asynq.ErrorHandlerFunc {
-	return func(ctx context.Context, task *asynq.Task, err error) {
-		retried, _ := asynq.GetRetryCount(ctx)
-		maxRetry, _ := asynq.GetMaxRetry(ctx)
+// El estado 'failed' con failure_reason en la base es el diagnostico; esta
+// linea de auditoria es la senal para operacion. Solo se llega aqui tras
+// comprobar interrupted(ctx): una interrupcion al retirar el worker NO deja
+// el asset en 'failed' ni dispara esta alerta.
+func (d *Deps) alertAssetFailed(ctx context.Context, taskType, assetID, reason string) {
+	metrics.JobsProcessed.WithLabelValues(taskType, "failed").Inc()
+	log.Printf("ALERTA: %s dejo el asset %s en estado fallido: %s", taskType, assetID, reason)
 
-		if retried >= maxRetry {
-			metrics.JobsProcessed.WithLabelValues(task.Type(), "dead_letter").Inc()
-			log.Printf("ALERTA: %s agoto %d reintentos y paso a la DLQ: %v", task.Type(), maxRetry, err)
-
-			// ctx puede venir cancelado (el trabajo fallo por timeout) y la
-			// auditoria se perderia. WithoutCancel ignora esa cancelacion pero
-			// conserva los valores del contexto, como la traza.
-			bgCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
-			defer cancel()
-			d.Audit.Log(bgCtx, "", audit.ActionJobDeadLettered, "job", task.Type(), "",
-				map[string]any{
-					"payload": string(task.Payload()),
-					"error":   err.Error(),
-					"retries": retried,
-				})
-			return
-		}
-		log.Printf("worker: %s fallo (intento %d/%d): %v", task.Type(), retried+1, maxRetry, err)
-	}
+	// ctx puede venir cancelado (el trabajo fallo por timeout) y la auditoria
+	// se perderia. WithoutCancel ignora esa cancelacion pero conserva los
+	// valores del contexto, como la traza.
+	bgCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+	defer cancel()
+	d.Audit.Log(bgCtx, "", audit.ActionAssetFailed, "asset", assetID, "",
+		map[string]any{"task": taskType, "reason": reason})
 }

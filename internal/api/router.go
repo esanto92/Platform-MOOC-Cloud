@@ -35,12 +35,12 @@ type Server struct {
 	db    *sql.DB
 	rdb   *redis.Client
 	store *storage.Storage
-	queue *queue.Client
+	queue queue.Publisher
 	auth  *auth.Service
 	audit *audit.Logger
 }
 
-func NewServer(cfg config.Config, db *sql.DB, rdb *redis.Client, st *storage.Storage, q *queue.Client) *Server {
+func NewServer(cfg config.Config, db *sql.DB, rdb *redis.Client, st *storage.Storage, q queue.Publisher) *Server {
 	return &Server{
 		cfg:   cfg,
 		db:    db,

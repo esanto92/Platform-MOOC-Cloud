@@ -9,8 +9,6 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/hibiken/asynq"
-
 	"mooc-platform/internal/audit"
 )
 
@@ -45,7 +43,11 @@ func (c *connFalsa) ExecContext(ctx context.Context, query string, _ []driver.Na
 	return driver.RowsAffected(1), nil
 }
 
-func TestErrorHandlerAuditaLaDLQAunqueElTrabajoVengaCancelado(t *testing.T) {
+// La alerta de un asset fallido se registra en audit_log aunque el trabajo
+// llegue con el contexto cancelado (fallo por timeout o retiro del worker).
+// Antes esto lo garantizaba el ErrorHandler de asynq; ahora vive en el dominio
+// (alertAssetFailed), asi que la garantia debe conservarse sin la cola.
+func TestAlertAssetFailedAuditaAunqueElContextoVengaCancelado(t *testing.T) {
 	falso := &driverFalso{}
 	sql.Register("falso-errorhandler", falso)
 	db, err := sql.Open("falso-errorhandler", "")
@@ -54,14 +56,11 @@ func TestErrorHandlerAuditaLaDLQAunqueElTrabajoVengaCancelado(t *testing.T) {
 	}
 	defer db.Close()
 
-	// Un trabajo que agota sus reintentos por timeout llega con el contexto
-	// ya cancelado. Sin metadatos de asynq, reintentos y maximo valen 0, asi
-	// que el handler toma el camino de la DLQ.
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	d := &Deps{Audit: audit.New(db)}
-	d.ErrorHandler()(ctx, asynq.NewTask("video:transcode", []byte(`{}`)), context.DeadlineExceeded)
+	d := &Deps{DB: db, Audit: audit.New(db)}
+	d.alertAssetFailed(ctx, "media:transcode", "a1", "ffmpeg no pudo con el archivo")
 
 	falso.mu.Lock()
 	defer falso.mu.Unlock()
@@ -72,6 +71,6 @@ func TestErrorHandlerAuditaLaDLQAunqueElTrabajoVengaCancelado(t *testing.T) {
 		t.Fatalf("sentencia inesperada: %s", falso.execs[0].query)
 	}
 	if falso.execs[0].cancelado {
-		t.Fatal("la auditoria se intento con el contexto cancelado del trabajo; se perderia la alerta de la DLQ")
+		t.Fatal("la auditoria se intento con el contexto cancelado; se perderia la alerta del asset fallido")
 	}
 }

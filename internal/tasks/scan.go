@@ -13,7 +13,6 @@ import (
 	"strings"
 
 	"github.com/gabriel-vasile/mimetype"
-	"github.com/hibiken/asynq"
 
 	"mooc-platform/internal/audit"
 	"mooc-platform/internal/queue"
@@ -49,10 +48,10 @@ var mimePermitido = map[string][]string{
 //  3. Antimalware: se busca la firma; si aparece, el objeto se BORRA.
 //
 // Solo si las tres pasan el archivo avanza a 'ready' (o a transcodificacion).
-func (d *Deps) HandleScanAsset(ctx context.Context, t *asynq.Task) error {
+func (d *Deps) HandleScanAsset(ctx context.Context, payload []byte) error {
 	var p queue.AssetPayload
-	if err := json.Unmarshal(t.Payload(), &p); err != nil {
-		return fmt.Errorf("payload invalido: %w: %w", err, asynq.SkipRetry)
+	if err := json.Unmarshal(payload, &p); err != nil {
+		return fmt.Errorf("payload invalido: %w: %w", err, errSkipRetry)
 	}
 	jobKey := "scan:" + p.AssetID
 
@@ -73,7 +72,7 @@ func (d *Deps) HandleScanAsset(ctx context.Context, t *asynq.Task) error {
 		FROM assets WHERE id = $1`, p.AssetID).
 		Scan(&ownerID, &kind, &status, &objectKey, &declaredChecksum)
 	if errors.Is(err, sql.ErrNoRows) {
-		return fmt.Errorf("asset %s no existe: %w", p.AssetID, asynq.SkipRetry)
+		return fmt.Errorf("asset %s no existe: %w", p.AssetID, errSkipRetry)
 	}
 	if err != nil {
 		return err
@@ -169,10 +168,11 @@ func (d *Deps) HandleScanAsset(ctx context.Context, t *asynq.Task) error {
 
 	// --- Resultado ---
 	if kind == "video" || kind == "audio" {
-		// Falta transcodificar: el asset queda en 'processing'.
+		// Falta transcodificar: el asset queda en 'processing'. Se limpia el
+		// lease por si el asset se re-escaneo (reap: scanning -> uploaded).
 		if _, err := d.DB.ExecContext(ctx, `
 			UPDATE assets SET status = 'processing', detected_mime = $1, checksum_sha256 = $2,
-			                  updated_at = now()
+			                  transcode_lease_until = NULL, updated_at = now()
 			WHERE id = $3`, detectedMIME, checksum, p.AssetID); err != nil {
 			return err
 		}
@@ -209,6 +209,7 @@ func (d *Deps) failAsset(ctx context.Context, assetID, jobKey, reason string) er
 		return err
 	}
 	d.markProcessed(ctx, jobKey, queue.TaskScanAsset, map[string]any{"result": "failed", "reason": reason})
+	d.alertAssetFailed(ctx, queue.TaskScanAsset, assetID, reason)
 	// Devolver nil evita reintentos inutiles: el archivo no va a mejorar solo.
 	return nil
 }

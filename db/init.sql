@@ -100,6 +100,11 @@ CREATE TABLE assets (
     hls_prefix      TEXT         NOT NULL DEFAULT '',  -- prefijo del derivado HLS
     duration_secs   INTEGER      NOT NULL DEFAULT 0,
     failure_reason  TEXT         NOT NULL DEFAULT '',
+    -- Lease de transcodificacion (Entrega 4, Pub/Sub). Con suscripcion push,
+    -- una reentrega puede llegar mientras otro worker aun transcodifica; este
+    -- marcador deja que solo el que tiene el lease vigente trabaje. NULL = sin
+    -- lease; un valor vencido se puede reclamar (worker que murio a mitad).
+    transcode_lease_until TIMESTAMPTZ,
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT now(),
     updated_at      TIMESTAMPTZ  NOT NULL DEFAULT now()
 );

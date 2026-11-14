@@ -1,12 +1,18 @@
-// Comando worker: consume la cola y ejecuta el trabajo pesado.
+// Comando worker: ejecuta el trabajo pesado (antimalware, HLS, correo,
+// insignias). Tiene dos modos, segun QUEUE_BACKEND:
 //
-// Se despliega como un proceso separado de la API y se escala por su cuenta:
+//   - asynq (local, Entrega 3): se SUSCRIBE a la cola de Redis y busca
+//     trabajos. Se escala con `docker compose up --scale worker=3`; asynq
+//     reparte los trabajos entre las instancias.
+//   - pubsub (Entrega 4, Cloud Run): expone un servidor HTTP que RECIBE cada
+//     mensaje de una suscripcion push de Pub/Sub. Cloud Run escala por esas
+//     solicitudes entrantes. No hay scheduler: Pub/Sub ya reentrega los
+//     mensajes no confirmados, asi que el reaper periodico de asynq no aplica
+//     (ver internal/tasks/reap.go).
 //
-//	docker compose up --scale worker=3
-//
-// Cada instancia se suscribe a la misma cola de Redis; asynq reparte los
-// trabajos entre todas. No hace falta coordinacion entre ellas porque ningun
-// worker guarda estado propio: leen de Postgres y del almacenamiento.
+// En ambos modos los handlers son los mismos (internal/tasks): solo cambia
+// como llega el trabajo. Ninguna instancia guarda estado propio: leen de
+// Postgres y del almacenamiento.
 package main
 
 import (
@@ -25,6 +31,7 @@ import (
 	"mooc-platform/internal/config"
 	"mooc-platform/internal/database"
 	"mooc-platform/internal/mailer"
+	"mooc-platform/internal/pubsubpush"
 	"mooc-platform/internal/queue"
 	"mooc-platform/internal/storage"
 	"mooc-platform/internal/tasks"
@@ -36,7 +43,7 @@ func main() {
 	log.SetPrefix("[worker] ")
 
 	cfg := config.Load()
-	log.Printf("iniciando: %s", cfg.Describe())
+	log.Printf("iniciando: %s backend=%s", cfg.Describe(), cfg.QueueBackend)
 
 	// Trazas OpenTelemetry para el worker: cada trabajo abre su propio span y
 	// las consultas SQL cuelgan de el. Apagado si no hay endpoint configurado.
@@ -70,7 +77,12 @@ func main() {
 		log.Fatalf("almacenamiento: %v", err)
 	}
 
-	q := queue.NewClient(cfg.RedisAddr, cfg.RedisPassword)
+	// El worker tambien publica trabajos derivados (scan -> transcode,
+	// badge -> email), asi que necesita un Publisher del mismo backend.
+	q, err := queue.NewPublisher(context.Background(), cfg)
+	if err != nil {
+		log.Fatalf("cola: %v", err)
+	}
 	defer q.Close()
 
 	deps := &tasks.Deps{
@@ -82,6 +94,53 @@ func main() {
 		Audit:  audit.New(db),
 	}
 
+	if cfg.QueueBackend == "pubsub" {
+		runPubSub(cfg, deps)
+		return
+	}
+	runAsynq(cfg, deps)
+}
+
+// runPubSub arranca el servidor HTTP que recibe las entregas push de Pub/Sub.
+// Cloud Run enruta el trafico al puerto que escucha aqui.
+func runPubSub(cfg config.Config, deps *tasks.Deps) {
+	srv, err := pubsubpush.New(context.Background(), deps, cfg.PushAudience, cfg.PushSAEmail)
+	if err != nil {
+		log.Fatalf("pubsub push: %v", err)
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/pubsub/", srv.Handler())
+	mux.Handle("/metrics", promhttp.Handler())
+	mux.HandleFunc("/readyz", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"status":"ok"}`))
+	})
+
+	httpSrv := &http.Server{
+		Addr:              cfg.HTTPAddr,
+		Handler:           mux,
+		ReadHeaderTimeout: 10 * time.Second,
+	}
+	go func() {
+		log.Printf("worker push escuchando en %s (POST /pubsub/push)", cfg.HTTPAddr)
+		if err := httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("servidor http: %v", err)
+		}
+	}()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	<-stop
+	log.Println("apagando: se esperan los push en curso...")
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.WorkerShutdownTimeout)
+	defer cancel()
+	_ = httpSrv.Shutdown(ctx)
+	log.Println("adios")
+}
+
+// runAsynq arranca el consumidor de la cola de Redis (modo local / Entrega 3).
+func runAsynq(cfg config.Config, deps *tasks.Deps) {
 	// Prometheus tambien raspa al worker: sin esto no habria forma de ver
 	// cuantos trabajos se procesan ni cuantos caen en la DLQ.
 	go func() {
@@ -109,7 +168,6 @@ func main() {
 			queue.QueueDefault:  3,
 			queue.QueueLow:      1,
 		},
-		ErrorHandler: deps.ErrorHandler(),
 		// Al retirar la VM, los trabajos activos tienen este tiempo para
 		// terminar; despues asynq los devuelve a la cola sin gastar un
 		// reintento. Debe ser menor que stop_grace_period del compose.
@@ -121,7 +179,7 @@ func main() {
 
 	// Scheduler: encola el mantenimiento periodico. Aunque haya varias
 	// replicas del worker, asynq garantiza que la tarea programada se encole
-	// una sola vez por periodo.
+	// una sola vez por periodo. Solo existe en modo asynq.
 	scheduler := asynq.NewScheduler(redisOpt, nil)
 	if _, err := scheduler.Register("@every 5m",
 		asynq.NewTask(queue.TaskReapStale, nil), asynq.Queue(queue.QueueLow)); err != nil {

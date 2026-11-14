@@ -81,7 +81,10 @@ func main() {
 		log.Fatalf("bootstrap admin: %v", err)
 	}
 
-	q := queue.NewClient(cfg.RedisAddr, cfg.RedisPassword)
+	q, err := queue.NewPublisher(context.Background(), cfg)
+	if err != nil {
+		log.Fatalf("cola: %v", err)
+	}
 	defer q.Close()
 
 	server := api.NewServer(cfg, db, rdb, store, q)

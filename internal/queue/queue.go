@@ -58,11 +58,31 @@ type BadgePayload struct {
 	EnrollmentID string `json:"enrollment_id"`
 }
 
-// ------------------------- Cliente -------------------------
+// ------------------------- Publisher -------------------------
 
+// Publisher es el contrato que usa la API para publicar trabajos, sin conocer
+// la mensajeria concreta. Hay dos implementaciones:
+//
+//   - Client (asynq sobre Redis), para local y la Entrega 3.
+//   - PubSubPublisher (Cloud Pub/Sub), para la Entrega 4 en Cloud Run.
+//
+// Se elige con QUEUE_BACKEND. Los handlers de los workers son los mismos en
+// ambos casos (ver internal/tasks): solo cambia como llega el trabajo.
+type Publisher interface {
+	EnqueueEmail(to, subject, body string) error
+	EnqueueScan(assetID string, maxRetries int) error
+	EnqueueTranscode(assetID string, maxRetries int) error
+	EnqueueBadge(enrollmentID string, maxRetries int) error
+	Close() error
+}
+
+// Client publica en asynq sobre Redis.
 type Client struct {
 	c *asynq.Client
 }
+
+// Verifica en tiempo de compilacion que Client cumple el contrato.
+var _ Publisher = (*Client)(nil)
 
 func NewClient(redisAddr, redisPassword string) *Client {
 	return &Client{c: asynq.NewClient(asynq.RedisClientOpt{

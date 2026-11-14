@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 	"time"
-
-	"github.com/hibiken/asynq"
 )
 
 // HandleReapStale es el trabajo periodico de mantenimiento.
@@ -20,7 +18,7 @@ import (
 // aqui se detectan esos casos y se vuelven a encolar.
 //
 // Se ejecuta cada 5 minutos (ver el Scheduler en cmd/worker/main.go).
-func (d *Deps) HandleReapStale(ctx context.Context, _ *asynq.Task) error {
+func (d *Deps) HandleReapStale(ctx context.Context, _ []byte) error {
 	// 1. Cargas multipart vencidas: se abortan para liberar las partes que el
 	//    almacenamiento guarda sin ensamblar (ocupan espacio y cuestan).
 	rows, err := d.DB.QueryContext(ctx, `

@@ -38,6 +38,7 @@ const (
 	ActionUploadCompleted  = "asset.upload_completed"
 	ActionAssetInfected    = "asset.infected"
 	ActionAssetReady       = "asset.ready"
+	ActionAssetFailed      = "asset.failed" // alerta: el procesamiento de un asset quedo en estado terminal de fallo
 	ActionEnrolled         = "enrollment.created"
 	ActionWithdrawn        = "enrollment.withdrawn"
 	ActionProgressRejected = "progress.rejected"
