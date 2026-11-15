@@ -29,17 +29,17 @@ Documentos relacionados: arquitectura de la Entrega 3
 
 ## 1. Cambios frente a la Entrega 3
 
-| Componente | Entrega 3 | Entrega 4 |
-|---|---|---|
-| Frontend | MIG `mooc-web`, 1 VM `e2-small` | Servicio Cloud Run **`mooc-web`**, 0 a 3 instancias |
-| API | MIG `mooc-api`, 1 a 3 VMs, autoescalado por CPU 60 % | Servicio Cloud Run **`mooc-api`**, 0 a 3 instancias, autoescalado por solicitudes concurrentes |
-| Workers | MIG `mooc-worker`, 1 a 3 VMs, autoescalado por `queue_backlog` | Servicio Cloud Run **`mooc-worker`**, máximo 3 instancias, escalado por los mensajes que entrega Pub/Sub |
-| Cola | Redis + asynq en `infra-server` (el worker *busca* trabajos) | **Pub/Sub**: topic + suscripción push (Pub/Sub *entrega* cada mensaje al worker). Redis queda para caché de sesiones, límite de tasa e idempotencia |
-| Acceso público | Balanceador HTTPS externo con certificado administrado | URL HTTPS propia de cada servicio (`*.run.app`, certificado de Google). El balanceador de la Entrega 3 ya no se usa |
-| Inicialización | Plantilla de instancia + `startup.sh` | Cloud Run arranca el contenedor directamente desde Artifact Registry; no hay VMs que preparar |
-| Red privada | VMs dentro de `mooc-vpc` | **Direct VPC egress** desde la subred nueva `mooc-run` hacia Cloud SQL y `infra-server` |
-| Secretos | Un `.env` completo por rol (`mooc-<rol>-env`) | **Un secreto por valor sensible** (`mooc-run-*`), inyectado por Cloud Run como variable de entorno |
-| Persistencia | Cloud SQL y Cloud Storage | **Igual** (mismas instancias y bucket) |
+| Componente      | Entrega 3                                                          | Entrega 4                                                                                                                                 |
+| --------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend        | MIG `mooc-web`, 1 VM `e2-small`                                | Servicio Cloud Run **`mooc-web`**, 0 a 3 instancias                                                                               |
+| API             | MIG `mooc-api`, 1 a 3 VMs, autoescalado por CPU 60 %             | Servicio Cloud Run **`mooc-api`**, 0 a 3 instancias, autoescalado por solicitudes concurrentes                                    |
+| Workers         | MIG `mooc-worker`, 1 a 3 VMs, autoescalado por `queue_backlog` | Servicio Cloud Run **`mooc-worker`**, máximo 3 instancias, escalado por los mensajes que entrega Pub/Sub                         |
+| Cola            | Redis + asynq en `infra-server` (el worker *busca* trabajos)   | **Pub/Sub**: topic + suscripción push (Pub/Sub *entrega* cada mensaje al worker). Redis queda solo como caché y límite de tasa |
+| Acceso público | Balanceador HTTPS externo con certificado administrado             | URL HTTPS propia de cada servicio (`*.run.app`, certificado de Google). El balanceador de la Entrega 3 ya no se usa                     |
+| Inicialización | Plantilla de instancia + `startup.sh`                            | Cloud Run arranca el contenedor directamente desde Artifact Registry; no hay VMs que preparar                                             |
+| Red privada     | VMs dentro de `mooc-vpc`                                         | **Direct VPC egress** desde la subred nueva `mooc-run` hacia Cloud SQL y `infra-server`                                         |
+| Secretos        | Un `.env` completo por rol (`mooc-<rol>-env`)                  | **Un secreto por valor sensible** (`mooc-run-*`), inyectado por Cloud Run como variable de entorno                                |
+| Persistencia    | Cloud SQL y Cloud Storage                                          | **Igual** (mismas instancias y bucket)                                                                                              |
 
 **Cambios en el código:** ninguno en las reglas de negocio. La mensajería se
 abstrae con `QUEUE_BACKEND` (ver sección 6): la API publica en Pub/Sub y el
@@ -48,8 +48,8 @@ El modo asynq/Redis se conserva para el entorno local.
 
 ## 2. Correspondencia entre el enunciado y los servicios de GCP
 
-| Requisito | Servicio / recurso | Estado |
-|---|---|---|
+| Requisito                                                        | Servicio / recurso                                                                                                                             | Estado     |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
 | Tres servicios independientes con imágenes en Artifact Registry | Cloud Run `mooc-web`, `mooc-api`, `mooc-worker`; imágenes `us-central1-docker.pkg.dev/dsc-uniandes-20262/mooc/{web,api,worker}:<sha>` | Desplegado |
 | Máximo 3 instancias, un contenedor por instancia | `--max-instances=3` en cada servicio; Cloud Run ejecuta un contenedor de aplicación por instancia | Desplegado |
 | Réplicas sin estado local | Datos en Cloud SQL, archivos en Cloud Storage; `/tmp` solo para temporales reconstruibles | Desplegado |
@@ -84,14 +84,14 @@ flowchart LR
     wrk -- "lee original, escribe derivados" --> gcs
 ```
 
-| Componente | Responsabilidad | Comunicación |
-|---|---|---|
-| `mooc-web` | Interfaz y BFF: guarda el token en la cookie `HttpOnly` `mooc_session` y llama a la API del lado del servidor | Síncrona con la API (HTTPS) |
-| `mooc-api` | Reglas de negocio, autenticación, autorización, firma de URLs; publica tareas sin esperar su ejecución | Síncrona con Cloud SQL; asíncrona hacia Pub/Sub |
-| Pub/Sub | Desacopla productor y consumidor; reintenta la entrega hasta recibir confirmación | Push HTTP autenticado hacia el worker |
-| `mooc-worker` | Antimalware, transcodificación HLS, correos, insignias; persiste estado y resultado | Recibe push; escribe en Cloud SQL y Cloud Storage |
-| Cloud SQL | Fuente de verdad: negocio, sesiones, estado de trabajos, idempotencia (`processed_jobs`) | — |
-| Cloud Storage | Originales, derivados HLS y documentos | El navegador sube y descarga directo con URL firmada |
+| Componente      | Responsabilidad                                                                                                   | Comunicación                                        |
+| --------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `mooc-web`    | Interfaz y BFF: guarda el token en la cookie `HttpOnly` `mooc_session` y llama a la API del lado del servidor | Síncrona con la API (HTTPS)                         |
+| `mooc-api`    | Reglas de negocio, autenticación, autorización, firma de URLs; publica tareas sin esperar su ejecución         | Síncrona con Cloud SQL; asíncrona hacia Pub/Sub    |
+| Pub/Sub         | Desacopla productor y consumidor; reintenta la entrega hasta recibir confirmación                                | Push HTTP autenticado hacia el worker                |
+| `mooc-worker` | Antimalware, transcodificación HLS, correos, insignias; persiste estado y resultado                              | Recibe push; escribe en Cloud SQL y Cloud Storage    |
+| Cloud SQL       | Fuente de verdad: negocio, sesiones, estado de trabajos, idempotencia (`processed_jobs`)                        | —                                                   |
+| Cloud Storage   | Originales, derivados HLS y documentos                                                                            | El navegador sube y descarga directo con URL firmada |
 
 ## 4. Modelo de despliegue
 
@@ -130,13 +130,14 @@ flowchart TB
 
 ### 4.1 Red
 
-| Elemento | Valor | Uso |
-|---|---|---|
-| VPC | `mooc-vpc` (la misma de las Entregas 2 y 3) | — |
-| Subred `mooc-run` | `10.20.5.0/24`, `us-central1`, Private Google Access | IPs de las instancias de Cloud Run con Direct VPC egress |
-| Modo de salida | `--vpc-egress=private-ranges-only` | Solo el tráfico a rangos privados (Cloud SQL, `infra-server`) entra a la VPC. Cloud Storage y la URL pública de la API salen directo, sin Cloud NAT |
-| Etiquetas de red | `mooc-api` en la API, `mooc-worker` en el worker | Reutilizan la regla `mooc-allow-app-to-infra` de la Entrega 3 (6379 y 1025 hacia `infra-server`) |
-| Cloud SQL | IP privada en `mooc-psa`, `sslmode=require` | Sin cambios |
+| Elemento            | Valor                                                    | Uso                                                                                                                                                     |
+| ------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| VPC                 | `mooc-vpc` (la misma de las Entregas 2 y 3)            | —                                                                                                                                                      |
+| Subred `mooc-run` | `10.20.5.0/24`, `us-central1`, Private Google Access | IPs de las instancias de Cloud Run con Direct VPC egress                                                                                                |
+| Modo de salida      | `--vpc-egress=private-ranges-only`                     | Solo el tráfico a rangos privados (Cloud SQL, `infra-server`) entra a la VPC. Cloud Storage y la URL pública de la API salen directo, sin Cloud NAT |
+| Etiquetas de red    | `mooc-api` en la API, `mooc-worker` en el worker     | Reutilizan la regla `mooc-allow-app-to-infra` de la Entrega 3 (6379 y 1025 hacia `infra-server`)                                                    |
+| `infra-server`    | Subred `mooc-infra` `10.20.4.0/24`, IP `10.20.4.10` | Redis (caché de sesiones y límite de tasa) y Mailpit; destino de los rangos privados a los que sale Cloud Run                                       |
+| Cloud SQL           | IP privada por Private Service Access (`mooc-psa`), `sslmode=require` | Sin cambios frente a la Entrega 3. El rango `mooc-psa` es un peering global, no una subred                                      |
 
 `mooc-web` no se conecta a la VPC: solo habla con la URL pública de la API.
 
@@ -222,16 +223,16 @@ instancias, y sin trabajo el worker baja a cero.
 
 ### 6.1 Implementación
 
-| Elemento | Implementación |
-|---|---|
-| Topic | Uno (`mooc-tasks`) para todas las tareas. El tipo va en el atributo `task` del mensaje y el payload JSON en `Data`; el consumidor enruta con `tasks.Dispatch`. Código: [`internal/queue/pubsub.go`](../../internal/queue/pubsub.go) |
-| Suscripción | Push (`mooc-tasks-push`) hacia `<URL worker>/pubsub/push`, con **token OIDC** de la cuenta de servicio dedicada `mooc-pubsub-push`. La audiencia del token es la URL del worker |
-| Publicación | La API publica en el topic y responde sin esperar la ejecución; `QUEUE_BACKEND=pubsub` la activa. La identidad `mooc-api` tiene `roles/pubsub.publisher` solo sobre el topic. Call-sites sin cambios (interfaz `queue.Publisher`) |
-| Confirmación (ack) | El worker ([`internal/pubsubpush/server.go`](../../internal/pubsubpush/server.go)) responde `2xx` **solo después** de que el handler persiste estado y resultado. Un fallo transitorio responde `5xx` y Pub/Sub reintenta; un error "no reintentar" (payload corrupto, asset inexistente, duplicado) también responde `2xx` para no reentregar en bucle |
-| Reentregas | Idempotencia en Postgres (`processed_jobs` + estado de dominio + restricciones únicas). **La llave `asynq.TaskID` no aplica en Pub/Sub**, así que la defensa es la tabla y el estado. Los derivados HLS se reescriben en las mismas llaves del bucket |
-| Trabajo en curso | Lease atómico `assets.transcode_lease_until` (`claimTranscode`): si una reentrega llega mientras otro worker transcodifica, el segundo detecta el lease vigente y hace ack sin duplicar |
-| Reintentos agotados | Estado `failed` + `failure_reason` diagnosticable en la base, con alerta de auditoría `asset.failed`. **Sin dead-letter**: el enunciado de la Entrega 4 no lo exige; Pub/Sub reintenta según la política de la suscripción |
-| Verificar la finalización | El frontend consulta el estado del asset (`GET /assets/:id`) |
+| Elemento                   | Implementación                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Topic                      | Uno (`mooc-tasks`) para todas las tareas. El tipo va en el atributo `task` del mensaje y el payload JSON en `Data`; el consumidor enruta con `tasks.Dispatch`. Código: [`internal/queue/pubsub.go`](../../internal/queue/pubsub.go)                                                                                                                          |
+| Suscripción               | Push (`mooc-tasks-push`) hacia `<URL worker>/pubsub/push`, con **token OIDC** de la cuenta de servicio dedicada `mooc-pubsub-push`. La audiencia del token es la URL del worker                                                                                                                                                                            |
+| Publicación               | La API publica en el topic y responde sin esperar la ejecución; `QUEUE_BACKEND=pubsub` la activa. La identidad `mooc-api` tiene `roles/pubsub.publisher` solo sobre el topic. Call-sites sin cambios (interfaz `queue.Publisher`)                                                                                                                             |
+| Confirmación (ack)        | El worker ([`internal/pubsubpush/server.go`](../../internal/pubsubpush/server.go)) responde `2xx` **solo después** de que el handler persiste estado y resultado. Un fallo transitorio responde `5xx` y Pub/Sub reintenta; un error "no reintentar" (payload corrupto, asset inexistente, duplicado) también responde `2xx` para no reentregar en bucle |
+| Reentregas                 | Idempotencia en Postgres (`processed_jobs` + estado de dominio + restricciones únicas). **La llave `asynq.TaskID` no aplica en Pub/Sub**, así que la defensa es la tabla y el estado. Los derivados HLS se reescriben en las mismas llaves del bucket                                                                                                      |
+| Trabajo en curso           | Lease atómico `assets.transcode_lease_until` (`claimTranscode`): si una reentrega llega mientras otro worker transcodifica, el segundo detecta el lease vigente y hace ack sin duplicar                                                                                                                                                                           |
+| Reintentos agotados        | Estado `failed` + `failure_reason` diagnosticable en la base, con alerta de auditoría `asset.failed`. **Sin dead-letter**: el enunciado de la Entrega 4 no lo exige; Pub/Sub reintenta según la política de la suscripción                                                                                                                             |
+| Verificar la finalización | El frontend consulta el estado del asset (`GET /assets/:id`)                                                                                                                                                                                                                                                                                                         |
 
 **Tiempos compatibilizados.** En una suscripción push el plazo de confirmación
 (ackDeadline) es de **como máximo 600 s**, mientras que la transcodificación
@@ -265,12 +266,12 @@ del alcance de esta entrega.
 
 ### 7.1 Identidades
 
-| Cuenta de servicio | Uso en la Entrega 4 | Permisos relevantes |
-|---|---|---|
-| `mooc-web` | Identidad de `mooc-web` | Logs y métricas. Sin acceso a secretos `mooc-run-*` ni al bucket |
-| `mooc-api` | Identidad de `mooc-api` | `secretAccessor` solo sobre `mooc-run-database-url`, `-redis-password`, `-admin-password`, `-s3-secret-api`; permisos sobre el bucket de la Entrega 2 (crea y lee, **no borra**); `pubsub.publisher` solo sobre el topic |
-| `mooc-worker` | Identidad de `mooc-worker` | `secretAccessor` sobre `mooc-run-database-url`, `-redis-password`, `-s3-secret-worker`; `storage.objectUser` en el bucket; `pubsub.publisher` sobre el topic (publica tareas derivadas: scan→transcode, badge→email) |
-| `mooc-pubsub-push` (cuenta de la suscripción) | Firma el token OIDC del push | `roles/run.invoker` **solo** sobre `mooc-worker` |
+| Cuenta de servicio                               | Uso en la Entrega 4          | Permisos relevantes                                                                                                                                                                                                                        |
+| ------------------------------------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `mooc-web`                                     | Identidad de `mooc-web`    | Logs y métricas. Sin acceso a secretos `mooc-run-*` ni al bucket                                                                                                                                                                        |
+| `mooc-api`                                     | Identidad de `mooc-api`    | `secretAccessor` solo sobre `mooc-run-database-url`, `-redis-password`, `-admin-password`, `-s3-secret-api`; permisos sobre el bucket de la Entrega 2 (crea y lee, **no borra**); `pubsub.publisher` solo sobre el topic |
+| `mooc-worker`                                  | Identidad de `mooc-worker` | `secretAccessor` sobre `mooc-run-database-url`, `-redis-password`, `-s3-secret-worker`; `storage.objectUser` en el bucket; `pubsub.publisher` sobre el topic (publica tareas derivadas: scan→transcode, badge→email)         |
+| `mooc-pubsub-push` (cuenta de la suscripción) | Firma el token OIDC del push | `roles/run.invoker` **solo** sobre `mooc-worker`                                                                                                                                                                                 |
 
 - `mooc-api` y `mooc-web` son públicos en Cloud Run (`allUsers` como
   invocador) porque la autenticación la hace la aplicación (token opaco
@@ -291,13 +292,13 @@ del alcance de esta entrega.
   `WORKER_SHUTDOWN_TIMEOUT_SECONDS=8`).
 - **Secretos**, uno por valor, inyectados con `--set-secrets`:
 
-| Secreto | Variable | Lo leen |
-|---|---|---|
-| `mooc-run-database-url` | `DATABASE_URL` | api, worker |
-| `mooc-run-redis-password` | `REDIS_PASSWORD` | api, worker |
-| `mooc-run-admin-password` | `ADMIN_PASSWORD` | api |
-| `mooc-run-s3-secret-api` | `S3_SECRET_KEY` | api |
-| `mooc-run-s3-secret-worker` | `S3_SECRET_KEY` | worker |
+| Secreto                       | Variable           | Lo leen     |
+| ----------------------------- | ------------------ | ----------- |
+| `mooc-run-database-url`     | `DATABASE_URL`   | api, worker |
+| `mooc-run-redis-password`   | `REDIS_PASSWORD` | api, worker |
+| `mooc-run-admin-password`   | `ADMIN_PASSWORD` | api         |
+| `mooc-run-s3-secret-api`    | `S3_SECRET_KEY`  | api         |
+| `mooc-run-s3-secret-worker` | `S3_SECRET_KEY`  | worker      |
 
 Ningún valor sensible queda en el repositorio, en las imágenes ni en la
 salida del script. Los archivos temporales del script se crean en una
@@ -401,8 +402,8 @@ usa.
 
 ## 11. Archivos fuente
 
-| Archivo | Contenido |
-|---|---|
+| Archivo                                                                                                            | Contenido                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | [`diagramas/componentes.mmd`](diagramas/componentes.mmd), [`diagramas/despliegue.mmd`](diagramas/despliegue.mmd) | Diagramas Mermaid (para SVG: `npx -p @mermaid-js/mermaid-cli mmdc -i <archivo>.mmd -o <archivo>.svg`) |
 | [`deploy/gcp/cloudrun.sh`](../../deploy/gcp/cloudrun.sh) | Red, secretos y despliegue de los servicios de Cloud Run |
 | [`deploy/gcp/verificar-e4.sh`](../../deploy/gcp/verificar-e4.sh), [`deploy/gcp/escalamiento-e4.sh`](../../deploy/gcp/escalamiento-e4.sh) | Verificación de la configuración desplegada y prueba de escalamiento con reporte |
