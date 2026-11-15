@@ -1,6 +1,6 @@
 # Plataforma MOOC
 
-## ***VIDEO SUSTENTACIÓN ENTREGA 4:***  [MOOC Platform - Entrega 4]( )
+## ***VIDEO SUSTENTACIÓN ENTREGA 4:***  [MOOC Platform - Entrega 4]([ ](https://youtu.be/UKYf_Q5Nzx4))
 
 Plataforma de cursos masivos abiertos en linea (MOOC).
 Backend en Go (monolito modular + workers asincronos) y frontend Next.js (BFF),
