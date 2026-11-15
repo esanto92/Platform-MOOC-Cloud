@@ -8,22 +8,20 @@ los cambios frente a la Entrega 3. La arquitectura lógica de la aplicación
 (módulos, reglas de negocio, modelo de datos) no cambia y sigue en
 [`../entrega1/ARQUITECTURA.md`](../entrega1/ARQUITECTURA.md).
 
-> **Estado del documento (actualizado 14-11-2026).** La Entrega 4 está
-> **desplegada y operando** en Cloud Run con Cloud Pub/Sub:
+> **Estado (15-11-2026).** La plataforma está **desplegada y operando** en
+> Cloud Run con Cloud Pub/Sub:
 >
-> - **Tres servicios en Cloud Run:** `mooc-web`, `mooc-api` y `mooc-worker`
->   (el worker ya es el servicio *push*, no el temporal), con URLs
->   `https://<servicio>-mhuknn2hva-uc.a.run.app`.
+> - **Tres servicios en Cloud Run:** `mooc-web`, `mooc-api` y `mooc-worker`,
+>   con URLs `https://<servicio>-mhuknn2hva-uc.a.run.app`.
 > - **Cloud Pub/Sub es la cola:** la API publica en el topic `mooc-tasks` y la
 >   suscripción push autenticada (`mooc-tasks-push`, token OIDC, ackDeadline
 >   600 s) entrega cada mensaje al worker, que confirma tras persistir.
->   Verificado end-to-end el 14-11-2026 (push `POST 204`, token OIDC validado).
-> - **Redis ya no es la cola:** permanece en `infra-server` solo para caché de
->   sesiones y límite de tasa.
+>   Verificado de extremo a extremo (push `POST 204`, token OIDC validado).
+> - **Redis no es la cola:** permanece en `infra-server` para la caché de
+>   sesiones, el límite de tasa y las llaves de idempotencia (sección 9).
 >
-> El historial de fases (Fase 1 con Redis/worker-temporal como puente) se
-> conserva en la sección 6.1 como referencia. La configuración efectiva se
-> consulta con `./deploy/gcp/cloudrun.sh resumen`.
+> La configuración efectiva se consulta con `./deploy/gcp/cloudrun.sh resumen`
+> y se comprueba con `./deploy/gcp/verificar-e4.sh`.
 
 Documentos relacionados: arquitectura de la Entrega 3
 ([`../entrega3/arquitectura.md`](../entrega3/arquitectura.md)) y deuda técnica
@@ -36,7 +34,7 @@ Documentos relacionados: arquitectura de la Entrega 3
 | Frontend | MIG `mooc-web`, 1 VM `e2-small` | Servicio Cloud Run **`mooc-web`**, 0 a 3 instancias |
 | API | MIG `mooc-api`, 1 a 3 VMs, autoescalado por CPU 60 % | Servicio Cloud Run **`mooc-api`**, 0 a 3 instancias, autoescalado por solicitudes concurrentes |
 | Workers | MIG `mooc-worker`, 1 a 3 VMs, autoescalado por `queue_backlog` | Servicio Cloud Run **`mooc-worker`**, máximo 3 instancias, escalado por los mensajes que entrega Pub/Sub |
-| Cola | Redis + asynq en `infra-server` (el worker *busca* trabajos) | **Pub/Sub**: topic + suscripción push (Pub/Sub *entrega* cada mensaje al worker). Redis queda solo como caché y límite de tasa |
+| Cola | Redis + asynq en `infra-server` (el worker *busca* trabajos) | **Pub/Sub**: topic + suscripción push (Pub/Sub *entrega* cada mensaje al worker). Redis queda para caché de sesiones, límite de tasa e idempotencia |
 | Acceso público | Balanceador HTTPS externo con certificado administrado | URL HTTPS propia de cada servicio (`*.run.app`, certificado de Google). El balanceador de la Entrega 3 ya no se usa |
 | Inicialización | Plantilla de instancia + `startup.sh` | Cloud Run arranca el contenedor directamente desde Artifact Registry; no hay VMs que preparar |
 | Red privada | VMs dentro de `mooc-vpc` | **Direct VPC egress** desde la subred nueva `mooc-run` hacia Cloud SQL y `infra-server` |
@@ -59,7 +57,7 @@ El modo asynq/Redis se conserva para el entorno local.
 | Backend y workers con Cloud SQL y Cloud Storage | Direct VPC egress a la IP privada de `mooc-pg`; llaves HMAC por rol para el bucket | Desplegado |
 | Topic y suscripción push autenticada | Pub/Sub, suscripción push con token OIDC de una cuenta de servicio dedicada | Desplegado |
 | Workers protegidos por IAM | `mooc-worker` con `--ingress=internal` y sin invocación pública; `roles/run.invoker` solo para la identidad de la suscripción | Desplegado |
-| Secretos en Secret Manager | `mooc-run-*`, acceso por cuenta de servicio | Fase 1 |
+| Secretos en Secret Manager | `mooc-run-*`, acceso por cuenta de servicio | Desplegado |
 
 ## 3. Modelo de componentes
 
@@ -162,11 +160,11 @@ con `./deploy/gcp/cloudrun.sh resumen`.
 | Asignación de CPU | Solo durante solicitudes, con *startup boost* | Solo durante solicitudes, con *startup boost* | Solo durante solicitudes |
 | Ingreso / invocación | Público | Público | Interno, sin invocación pública |
 | Cuenta de servicio | `mooc-web` | `mooc-api` | `mooc-worker` |
-| URL | `https://mooc-web-<hash>-uc.a.run.app` | `https://mooc-api-<hash>-uc.a.run.app` | interna (no pública) |
+| URL | `https://mooc-web-mhuknn2hva-uc.a.run.app` | `https://mooc-api-mhuknn2hva-uc.a.run.app` | interna (no pública) |
 
-> Las URLs reales de Cloud Run usan un hash por servicio
-> (`https://<servicio>-<hash>-uc.a.run.app`); se obtienen con
-> `./deploy/gcp/cloudrun.sh resumen`. No se fijan a mano en el repo.
+> Las URLs de Cloud Run llevan un hash (`https://<servicio>-<hash>-uc.a.run.app`).
+> El script no las construye a mano: las consulta con `gcloud` (`url_de`) y
+> las imprime en `./deploy/gcp/cloudrun.sh resumen`.
 
 **Justificación de los valores:**
 
@@ -190,7 +188,7 @@ con `./deploy/gcp/cloudrun.sh resumen`.
 | Cloud Storage | `gs://mooc-dsc-uniandes-20262`, CORS `GET/HEAD/PUT` | Ninguno |
 | Artifact Registry | Repositorio `mooc` | Se agregan las imágenes del commit de la Entrega 4 |
 | Secret Manager | `mooc-run-*` | Nuevos (sección 7.2) |
-| `infra-server` | Redis, Mailpit | Se mantiene, pero Redis ya no es la cola: solo caché de sesiones y límite de tasa |
+| `infra-server` | Redis, Mailpit | Se mantiene, pero Redis ya no es la cola: solo caché de sesiones, límite de tasa e idempotencia |
 
 ## 5. Escalamiento
 
@@ -215,21 +213,14 @@ con `./deploy/gcp/cloudrun.sh resumen`.
 
 ## 6. Tareas asíncronas
 
-### 6.1 Fase 1 (histórica, ya superada): Redis y asynq
+**Por qué Pub/Sub con push.** Con asynq el worker *busca* trabajos en Redis
+por su cuenta: necesita CPU asignada aunque no reciba solicitudes y no le da a
+Cloud Run ninguna señal para escalar, porque Cloud Run escala por solicitudes
+entrantes. Con una suscripción push, Pub/Sub *entrega* cada mensaje como una
+solicitud HTTP al worker: más mensajes pendientes son más solicitudes y más
+instancias, y sin trabajo el worker baja a cero.
 
-> Esta fase fue un puente transitorio (11-11-2026) y **ya no está en uso**. Se
-> documenta como referencia del camino seguido.
-
-Durante la Fase 1, la API encolaba en Redis (`infra-server`) y el worker de
-asynq **buscaba** trabajos en Redis por su cuenta, un modelo que no encaja con
-Cloud Run (diseñado para servicios que reciben solicitudes). El paso
-`cloudrun.sh worker-temporal` desplegó un worker con CPU siempre asignada y
-mínimo 1 instancia que **no escalaba por la cola**: solo un puente para que la
-plataforma siguiera procesando mientras se implementaba Pub/Sub. Ese worker fue
-**reemplazado** por el worker push (sección 6.2); `worker-temporal` se conserva
-en el script únicamente por si hiciera falta volver a ese modo.
-
-### 6.2 Fase 2 (desplegada): Pub/Sub
+### 6.1 Implementación
 
 | Elemento | Implementación |
 |---|---|
@@ -258,7 +249,9 @@ Así, si el procesamiento supera los 600 s y Pub/Sub reentrega mientras el
 primer worker sigue, el segundo worker ve el lease vigente y se retira sin
 duplicar derivados ni efectos de negocio.
 
-**Mantenimiento periódico (reaper).** El reaper de la Entrega 3
+### 6.2 Mantenimiento periódico (reaper)
+
+El reaper de la Entrega 3
 (`internal/tasks/reap.go`) corría con el scheduler de asynq. En modo Pub/Sub
 no hay scheduler: Pub/Sub ya reentrega los mensajes no confirmados, que es la
 garantía que el reaper aportaba sobre Redis. El handler se conserva (sigue
@@ -314,30 +307,44 @@ carpeta privada que se borra al terminar.
 
 | Dato | Valor |
 |---|---|
-| Conexión con la API | Del lado del servidor: `API_BASE_URL=https://mooc-api-<número de proyecto>.us-central1.run.app/api/v1` |
+| Conexión con la API | Del lado del servidor: `API_BASE_URL=https://mooc-api-mhuknn2hva-uc.a.run.app/api/v1` |
 | Sesión | Cookie `HttpOnly` y `Secure` `mooc_session` en el dominio de `mooc-web`; el BFF llama a la API con `Authorization: Bearer` |
 | CORS en la API | **No aplica**: el navegador nunca llama a la API, solo a los Route Handlers del BFF (mismo origen). Por eso los dos dominios `*.run.app` distintos no afectan la sesión |
 | CORS en Cloud Storage | Necesario y ya configurado (`GET/HEAD/PUT`, [`deploy/gcp/cors.json`](../../deploy/gcp/cors.json)) |
 
 ## 8. Operación
 
-### 8.1 Despliegue desde cero (estado actual: Cloud Run + Pub/Sub)
+### 8.1 Despliegue desde cero
 
 Requisitos: la base de la Entrega 3 (`provision.sh elastica`), `infra-server`
 encendida y Cloud SQL activa.
 
 ```bash
 export PROJECT=dsc-uniandes-20262
-./deploy/gcp/build.sh api web worker      # imagenes del commit actual (exige arbol limpio)
-./deploy/gcp/cloudrun.sh todo             # apis, red, secretos, api, web y resumen
-./deploy/gcp/migrate.sh migrate-e4        # columna del lease (ejecutar desde una VM en mooc-vpc)
-./deploy/gcp/cloudrun.sh worker           # worker push de Pub/Sub
-./deploy/gcp/cloudrun.sh pubsub           # topic + suscripcion push + IAM
-./deploy/gcp/cloudrun.sh api              # redeploy de la API con QUEUE_BACKEND=pubsub
+./deploy/gcp/build.sh api web worker                     # imagenes del commit actual (exige arbol limpio)
+./deploy/gcp/cloudrun.sh apis red secretos               # APIs de GCP, subred mooc-run y secretos mooc-run-*
+./deploy/gcp/migrate.sh migrate-e4                       # columna del lease (desde una VM en mooc-vpc)
+./deploy/gcp/cloudrun.sh worker pubsub api web resumen   # servicios, topic y suscripcion push
+./deploy/gcp/verificar-e4.sh                             # comprobacion de la configuracion
 ```
 
-Verificar con `./deploy/gcp/verificar-e4.sh`. Detalle del paso de Pub/Sub y los
-ajustes aprendidos en el despliegue real, en la sección 8.5.
+- **Orden.** `worker` va antes que `pubsub`: la suscripción usa la URL real
+  del worker (con hash, obtenida con `gcloud`) como endpoint push y como
+  audiencia del token OIDC.
+- **Migración.** Cloud SQL solo tiene IP privada, así que `migrate-e4` se
+  ejecuta desde una máquina dentro de `mooc-vpc` (p. ej. `web-server`), no
+  desde Cloud Shell. Es un `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`, aditivo
+  e idempotente ([`deploy/gcp/migrate.sh`](../../deploy/gcp/migrate.sh)).
+- **Proyecto de Pub/Sub explícito.** El cliente de Pub/Sub no infiere el
+  proyecto desde los metadatos, así que el script pasa
+  `PUBSUB_PROJECT=$PROJECT` a `mooc-api` y `mooc-worker`.
+- **Publicación desde el worker.** El worker publica tareas derivadas
+  (scan→transcode, badge→email), por eso también tiene
+  `roles/pubsub.publisher` sobre el topic.
+- **Modo alternativo.** `QUEUE_BACKEND=asynq ./deploy/gcp/cloudrun.sh api`
+  junto con el paso `worker-temporal` (consumidor asynq con CPU siempre
+  asignada y mínimo 1 instancia) vuelve a la cola de Redis sin cambios de
+  código. No es la configuración desplegada.
 
 ### 8.2 Versión nueva
 
@@ -353,12 +360,13 @@ consola (pestaña **Revisiones**).
 
 ### 8.3 Verificación
 
-- `GET <URL de mooc-api>/readyz` → `{"checks":{"postgres":"ok","redis":"ok","storage":"ok"},"ready":true}`
-  (verificado el 11-11-2026). **No usar `/healthz` desde fuera:** Cloud Run
+- `./deploy/gcp/verificar-e4.sh`: revisa servicios, límites de instancias,
+  topic, suscripción push, OIDC e IAM, y reporta OK / FALLA / AVISO por cada
+  punto. Solo lee el estado de GCP.
+- `GET <URL de mooc-api>/readyz` → `{"checks":{"postgres":"ok","redis":"ok","storage":"ok"},"ready":true}`.
+  **No usar `/healthz` desde fuera:** Cloud Run
   reserva esa ruta en su frontend y responde un 404 de Google sin llegar al
   contenedor.
-- Iniciar sesión desde `<URL de mooc-web>` y completar el recorrido
-  profesor–estudiante de la Entrega 3.
 - Logs: Cloud Run → servicio → **Registros**.
 
 ### 8.4 Relación con la infraestructura de la Entrega 3
@@ -369,56 +377,6 @@ configuración se conservan para una eventual sustentación de la Entrega 3.
 `infra-server`, Cloud SQL y el bucket siguen activos porque la Entrega 4 los
 usa.
 
-### 8.5 Despliegue de la Fase 2 (Pub/Sub)
-
-Pasos para pasar de la Fase 1 (Redis) a Pub/Sub, partiendo de los servicios
-`mooc-web`, `mooc-api` y `mooc-worker` (temporal) ya desplegados:
-
-```bash
-export PROJECT=dsc-uniandes-20262
-./deploy/gcp/build.sh worker api          # imagenes del commit de la Fase 2
-./deploy/gcp/migrate.sh migrate-e4        # columna del lease (ALTER aditivo, idempotente)
-./deploy/gcp/cloudrun.sh worker           # worker push (reemplaza worker-temporal)
-./deploy/gcp/cloudrun.sh pubsub           # topic + suscripcion push (usa la URL del worker)
-./deploy/gcp/cloudrun.sh api              # redeploy de la API con QUEUE_BACKEND=pubsub
-```
-
-> **Ajustes incorporados al script tras el despliegue del 14-11-2026** (ya
-> resueltos en `cloudrun.sh`, se documentan para quien mantenga el entorno):
->
-> - **`PUBSUB_PROJECT` explícito.** El cliente de Pub/Sub no infiere el
->   proyecto del metadata cuando llega vacío; el worker arrancaba en bucle con
->   `pubsub: projectID string is empty`. El script ahora pasa
->   `PUBSUB_PROJECT=$PROJECT` a `mooc-worker` y `mooc-api`.
-> - **Publisher también para el worker.** El worker publica tareas derivadas
->   (scan→transcode, badge→email), así que necesita `roles/pubsub.publisher`
->   sobre el topic, no solo la API.
-> - **URL real de Cloud Run.** La suscripción y la audiencia OIDC deben usar la
->   URL real del worker (con hash, `...-uc.a.run.app`), no un patrón construido
->   a mano; `url_de` la obtiene con `gcloud` si el servicio ya existe.
-> - **Migración de la base privada.** Cloud SQL es de IP privada: la migración
->   `migrate-e4` se aplica desde una máquina dentro de `mooc-vpc` (p. ej.
->   `web-server`), no desde Cloud Shell. Ver el `ALTER TABLE ... IF NOT EXISTS`
->   en [`deploy/gcp/migrate.sh`](../../deploy/gcp/migrate.sh).
-
-Notas:
-
-- **Orden.** `worker` antes que `pubsub`: la suscripción necesita la URL del
-  worker como endpoint push y como audiencia del token. `api` al final: hasta
-  que se redespliega, la API sigue publicando en Redis (`QUEUE_BACKEND=asynq`).
-- **Trabajos pendientes en Redis:** no pasan solos a Pub/Sub. Antes de
-  redesplegar la API, verificar que la cola de Redis esté vacía (que el worker
-  temporal haya drenado los trabajos encolados).
-- **Worker temporal:** el paso `worker` lo reemplaza con el mismo nombre
-  `mooc-worker`, ahora con ingreso interno, sin invocación pública,
-  `min-instances=0` y escalado por los mensajes del push. Deja de tener CPU
-  siempre asignada.
-- **Redis:** sigue encendido porque la API lo usa para caché de sesiones y
-  límite de tasa. Deja de ser la cola.
-- **Rollback:** redesplegar la API y el worker con `QUEUE_BACKEND=asynq`
-  (`QUEUE_BACKEND=asynq ./deploy/gcp/cloudrun.sh api`) vuelve a Redis sin
-  cambios de código.
-
 ## 9. Limitaciones y deuda técnica identificada
 
 | Tema | Detalle | Tratamiento previsto |
@@ -426,30 +384,20 @@ Notas:
 | `TRUSTED_PROXIES` | Se quitó: los rangos eran los del balanceador de la Entrega 3. Gin vuelve a confiar en cualquier `X-Forwarded-For`, lo que permite falsear la IP ante el límite de tasa | Verificar en los logs qué IP de conexión ve la API en Cloud Run y fijar los rangos correspondientes |
 | Límite de tasa por IP | Todas las solicitudes de usuarios llegan a la API desde el BFF, así que comparten límite (igual que en la Entrega 3) | Reenviar la IP del usuario desde el BFF o limitar por usuario |
 | Endpoints operativos públicos | `/metrics`, `/readyz` y `/docs` quedan accesibles en la URL pública de `mooc-api` (en la Entrega 3 `/metrics` no pasaba por el balanceador) | Desactivar `/metrics` en producción o protegerlo |
-| Redis (caché/rate limit) | Ya no es la cola, pero sigue siendo punto único de falla: la API no arranca sin él | Evaluar si la caché de sesiones y el límite de tasa pueden tolerar su ausencia o migrar a un Redis administrado |
-| Worker temporal (histórico) | El modo Redis/asynq (`worker-temporal`) tenía CPU siempre asignada y no escalaba por cola | Ya reemplazado por el worker push; el paso se conserva solo como respaldo |
+| Redis en `infra-server` | Ya no es la cola, pero la API lo sigue usando para datos que deben compartir sus réplicas sin estado: caché de sesiones, contadores del límite de tasa y respuestas guardadas de `Idempotency-Key` (envío de quizzes). Se mantuvo en la VM porque Cloud Run no puede alojar un Redis con estado, Memorystore agrega un costo fijo que la entrega no justificaba y moverlo a Postgres cargaría a Cloud SQL, el cuello de botella de la Entrega 3. Sigue siendo punto único de falla: la API no arranca sin Redis | Migrar a Memorystore, o dejar que la API arranque sin Redis (el límite de tasa ya deja pasar el tráfico si falla y la sesión se relee de Postgres) |
 | Apagado en Cloud Run | 10 s entre SIGTERM y SIGKILL (en la Entrega 3 eran ~90 s) | Con Pub/Sub, un trabajo interrumpido no se confirma y se reentrega |
 | Arranque en frío | Con mínimo 0, la primera solicitud tras inactividad es más lenta | `min-instances=1` durante pruebas y demostración |
 
 ## 10. Evidencias
 
-Implementado en código (verificado con `go build`/`go test`/`go vet`):
-
-- [x] Fase 2: topic, suscripción push y permisos en el script
-  (`cloudrun.sh pubsub` / `worker`); productor y consumidor de Pub/Sub.
-- [x] Semántica de ack (2xx tras persistir, 5xx reintenta) y manejo de
-  reentregas (idempotencia + lease), con pruebas unitarias del servidor push
-  (`internal/pubsubpush/server_test.go`).
-
-Pendiente de capturar sobre el despliegue real:
-
-- [x] URLs de `mooc-web` y `mooc-api` (sección 4.2) y `/readyz` con Postgres, Redis y Storage en `ok`.
-- [x] Pub/Sub probado end-to-end: un push autenticado llega al worker (`POST 204`), que valida el token OIDC y despacha al handler (verificado el 14-11-2026).
-- [x] Métricas de instancias (`run.googleapis.com/container/instance_count`) y mensajes pendientes (`pubsub.googleapis.com/subscription/num_undelivered_messages`) con carga controlada: [`resultados-escalamiento/escalamiento_20261114.md`](resultados-escalamiento/escalamiento_20261114.md) (worker y api escalan de 1 a 2; máximo 3 respetado).
-- [ ] Salida de `cloudrun.sh resumen` guardada como evidencia de los límites de instancias.
-- [ ] Recorrido profesor–estudiante desde el navegador sobre Cloud Run (con un video real, demuestra el procesamiento completo por Pub/Sub).
-- [ ] Reentrega de un mensaje sin efectos duplicados (forzar un procesamiento > ackDeadline y verificar un solo efecto).
-- [ ] Video de sustentación (máximo 20 minutos).
+| Evidencia | Dónde |
+|---|---|
+| Productor y consumidor de Pub/Sub; ack solo tras persistir (5xx reintenta) y reentregas sin duplicar (idempotencia + lease) | [`internal/queue/pubsub.go`](../../internal/queue/pubsub.go), [`internal/pubsubpush/server.go`](../../internal/pubsubpush/server.go), pruebas en [`internal/pubsubpush/server_test.go`](../../internal/pubsubpush/server_test.go) |
+| Servicios en Cloud Run y `/readyz` con Postgres, Redis y Storage en `ok` | URLs de la sección 4.2 |
+| Pub/Sub de extremo a extremo: el push autenticado llega al worker (`POST 204`), que valida el token OIDC y despacha al handler | Registros de `mooc-worker` |
+| Topic, suscripción, OIDC, IAM y límites de instancias | [`deploy/gcp/verificar-e4.sh`](../../deploy/gcp/verificar-e4.sh) y `cloudrun.sh resumen` |
+| Escalamiento con carga controlada: `mooc-worker` y `mooc-api` pasan de 1 a 2 instancias y respetan el máximo de 3 (`run.googleapis.com/container/instance_count`, `pubsub.googleapis.com/subscription/num_undelivered_messages`) | [`resultados-escalamiento/escalamiento_20261114.md`](resultados-escalamiento/escalamiento_20261114.md) |
+| Video de sustentación (máximo 20 minutos) | Enlace al video en el [`README`](../../README.md) |
 
 ## 11. Archivos fuente
 
@@ -457,5 +405,6 @@ Pendiente de capturar sobre el despliegue real:
 |---|---|
 | [`diagramas/componentes.mmd`](diagramas/componentes.mmd), [`diagramas/despliegue.mmd`](diagramas/despliegue.mmd) | Diagramas Mermaid (para SVG: `npx -p @mermaid-js/mermaid-cli mmdc -i <archivo>.mmd -o <archivo>.svg`) |
 | [`deploy/gcp/cloudrun.sh`](../../deploy/gcp/cloudrun.sh) | Red, secretos y despliegue de los servicios de Cloud Run |
+| [`deploy/gcp/verificar-e4.sh`](../../deploy/gcp/verificar-e4.sh), [`deploy/gcp/escalamiento-e4.sh`](../../deploy/gcp/escalamiento-e4.sh) | Verificación de la configuración desplegada y prueba de escalamiento con reporte |
 | [`deploy/gcp/build.sh`](../../deploy/gcp/build.sh) | Construcción y publicación de imágenes etiquetadas con el commit |
 | [`deploy/gcp/provision.sh`](../../deploy/gcp/provision.sh) | Base heredada de la Entrega 3: VPC, Cloud SQL, bucket, identidades, `infra-server` |

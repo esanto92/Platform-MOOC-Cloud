@@ -1,10 +1,11 @@
 # Plataforma MOOC
 
-## ***VIDEO SUSTENTACIÓN ENTREGA 3:***  [MOOC Platform - Entrega 3](https://www.youtube.com/watch?v=WBGPFwUp3Dk)
+## ***VIDEO SUSTENTACIÓN ENTREGA 4:***  [MOOC Platform - Entrega 4]( )
 
 Plataforma de cursos masivos abiertos en linea (MOOC).
 Backend en Go (monolito modular + workers asincronos) y frontend Next.js (BFF),
-todo en contenedores.
+todo en contenedores. En la nube corre sobre **Cloud Run** con **Cloud
+Pub/Sub** para las tareas asincronas.
 
 > La documentacion detallada de la arquitectura y de cada archivo esta en
 > [`docs/entrega1/DOCUMENTACION.md`](docs/entrega1/DOCUMENTACION.md).
@@ -29,9 +30,8 @@ todo en contenedores.
 | Prueba automatica de accesibilidad WCAG 2.2 AA (Entrega 3) | [`docs/entrega3/FuncionalidadFront/PruebaAccesibilidad/README.md`](docs/entrega3/FuncionalidadFront/PruebaAccesibilidad/README.md) |
 | Ultimo reporte de accesibilidad | [`docs/entrega3/FuncionalidadFront/PruebaAccesibilidad/resultados/REPORTE.md`](docs/entrega3/FuncionalidadFront/PruebaAccesibilidad/resultados/REPORTE.md) |
 | Convenciones de accesibilidad del frontend | [`frontend/README.md`](frontend/README.md), seccion "Accesibilidad (WCAG 2.2 AA)" |
-| URL del frontend (Entrega 3) | https://34-149-212-102.sslip.io |
-| URL del balanceador de la API (Entrega 3) | https://34-149-212-102.sslip.io/api/v1 (documentacion en `/docs`) |
-| Video de sustentacion (Entrega 3) | PENDIENTE |
+| URL del frontend y del balanceador (Entrega 3) | https://34-149-212-102.sslip.io y `/api/v1` (fuera de servicio: los grupos de instancias quedaron en 0 al pasar a Cloud Run) |
+| Video de sustentacion (Entrega 3) | [MOOC Platform - Entrega 3](https://www.youtube.com/watch?v=WBGPFwUp3Dk) |
 | **Despliegue en Cloud Run y Pub/Sub (Entrega 4)**: servicios, red, secretos, Pub/Sub, escalamiento | [`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md) |
 | Script de despliegue en Cloud Run (Entrega 4) | [`deploy/gcp/cloudrun.sh`](deploy/gcp/cloudrun.sh) |
 | Script de verificacion de configuracion (Entrega 4) | [`deploy/gcp/verificar-e4.sh`](deploy/gcp/verificar-e4.sh) |
@@ -51,9 +51,9 @@ descrita en [`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md):
   cada uno con escalamiento automatico de 0 a 3 instancias;
 - **Cloud Pub/Sub**: la API publica las tareas en un topic y una suscripcion
   push autenticada (token OIDC) las entrega al worker, que confirma tras
-  persistir. Pub/Sub reemplaza la cola Redis/asynq; Redis sigue en
-  `infra-server` solo como cache de sesiones y limite de tasa (el modo
-  asynq/Redis se conserva para el entorno local);
+  persistir. Redis sigue en `infra-server` para la cache de sesiones, el
+  limite de tasa y las llaves de idempotencia, pero ya no es la cola (el
+  modo asynq/Redis se usa en el entorno local);
 - **Direct VPC egress** desde Cloud Run hacia Cloud SQL y `infra-server`;
 - secretos en **Secret Manager**;
 - Cloud SQL y Cloud Storage (sin cambios).
@@ -62,6 +62,18 @@ La arquitectura elastica con MIG y balanceador de la Entrega 3 se conserva en
 [`docs/entrega3/arquitectura.md`](docs/entrega3/arquitectura.md), y la de dos
 VMs fijas de la Entrega 2 en [`docs/entrega2/`](docs/entrega2/README.md), como
 lineas base historicas.
+
+Despliegue y verificacion en la nube (detalle en la seccion 8 de
+[`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md)):
+
+```bash
+export PROJECT=dsc-uniandes-20262
+./deploy/gcp/build.sh api web worker
+./deploy/gcp/cloudrun.sh apis red secretos
+./deploy/gcp/migrate.sh migrate-e4                       # desde una VM dentro de mooc-vpc
+./deploy/gcp/cloudrun.sh worker pubsub api web resumen
+./deploy/gcp/verificar-e4.sh
+```
 
 No hace falta tener Go instalado: la compilacion ocurre dentro de Docker.
 
@@ -102,7 +114,7 @@ Administrador inicial: `admin@mooc.local` / `Admin123!`
 ## Prueba de humo
 
 ```bash
-./testdata/smoke.sh
+./docs/entrega1/testdata/smoke.sh
 ```
 
 Recorre el flujo completo: crear profesor, armar el curso, publicarlo,
@@ -147,68 +159,69 @@ docker compose up -d --build --no-deps web   # reconstruir solo el frontend sin 
 ## Arquitectura en una pantalla
 
 ```
-                         Internet (HTTPS, Let's Encrypt)
+                          Internet (HTTPS *.run.app)
                                       │
-  ┌─ Web Server (subred publica) ─────▼────────────────────────────┐
-  │  Caddy ── /api/v1/*, /docs, /openapi.yaml, /healthz, /readyz ─▶ API (Go)
-  │    └──── todo lo demas ─▶ Frontend Next.js (BFF) ─ red interna ─▶ API
-  │  Prometheus + redis-exporter + postgres-exporter (solo localhost)
-  └──────────────┬──────────────────┬──────────────────┬───────────┘
-                 │ SQL + TLS        │ encola (6379)    │ firma URLs
-                 ▼                  ▼                  ▼
-          Cloud SQL (PG 16)   ┌─ Worker Server ─┐   Cloud Storage
-          IP privada          │ Redis / asynq   │   (bucket privado,
-                ▲             │ Worker (Go)     │──▶ API XML S3 + HMAC)
-                └─────────────│ Mailpit         │        ▲
-                              └─ sin IP publica ┘        │
-         Navegador ── PUT/GET directo con URL firmada ───┘
+  ┌─ Cloud Run (us-central1, max. 3 instancias por servicio) ─────────────┐
+  │  mooc-web (Next.js BFF) ── HTTPS + Bearer ──▶ mooc-api (Go)           │
+  │                                                 │ publica tareas      │
+  │                                                 ▼                     │
+  │                        Cloud Pub/Sub (topic + suscripcion push OIDC)  │
+  │                                                 │ push autenticado    │
+  │                                                 ▼                     │
+  │                                    mooc-worker (Go + ffmpeg, interno) │
+  └───────────────┬──────────────────────┬───────────────────┬────────────┘
+                  │ Direct VPC egress    │                   │ firma URLs (HMAC)
+                  ▼                      ▼                   ▼
+          Cloud SQL (PG 16)      infra-server           Cloud Storage
+          IP privada + TLS       Redis · Mailpit        (bucket privado)
+                                                             ▲
+         Navegador ── PUT/GET directo con URL firmada ───────┘
 ```
 
 | Componente | Donde corre | Responsabilidad |
 |---|---|---|
-| **Caddy** | Web Server | Unico servicio expuesto a Internet. Termina TLS y enruta por ruta; oculta `/metrics`. |
-| **API** (`cmd/api`) | Web Server | Autenticacion con tokens opacos, autoria versionada, inscripciones, progreso calculado en servidor, calificacion de quizzes y emision de URLs firmadas. Sin estado; nunca transcodifica. |
-| **Frontend / BFF** (`frontend/`) | Web Server | Interfaz web. Guarda el token en una cookie HttpOnly y llama a la API por la red interna con `Authorization: Bearer`. |
-| **Worker** (`cmd/worker`) | Worker Server | Escaneo antimalware (stub EICAR), transcodificacion HLS con ffmpeg, insignias, correo y limpieza de cargas vencidas. |
-| **Redis + asynq** | Worker Server | Cola con tres prioridades, cache de sesion y rate limit. Solo alcanzable desde el Web Server. |
+| **Frontend / BFF** (`frontend/`) | Cloud Run `mooc-web` | Interfaz web. Guarda el token en una cookie HttpOnly y llama a la API del lado del servidor con `Authorization: Bearer`. |
+| **API** (`cmd/api`) | Cloud Run `mooc-api` | Autenticacion con tokens opacos, autoria versionada, inscripciones, progreso calculado en servidor, calificacion de quizzes, emision de URLs firmadas y publicacion de tareas en Pub/Sub. Sin estado; nunca transcodifica. |
+| **Cloud Pub/Sub** | Administrado | Topic `mooc-tasks` y suscripcion push `mooc-tasks-push` con token OIDC. Reentrega lo que no se confirma. |
+| **Worker** (`cmd/worker`) | Cloud Run `mooc-worker` | Recibe cada tarea por push y confirma tras persistir: antimalware (stub EICAR), transcodificacion HLS con ffmpeg, insignias y correo. Solo lo invoca la identidad de la suscripcion. |
+| **Redis** | `infra-server` | Cache de sesiones, limite de tasa y llaves de idempotencia. No es la cola. |
+| **Mailpit** | `infra-server` | Captura del correo saliente. |
 | **Cloud SQL** | Administrado | PostgreSQL 16, fuente de verdad. IP privada y TLS obligatorio. |
 | **Cloud Storage** | Administrado | Originales, derivados HLS e insignias. El cliente sube y descarga directamente con URLs firmadas. |
-| **Mailpit** | Worker Server | Captura del correo saliente. |
 
 Principios que se mantienen desde la Entrega 1: la API no guarda estado local,
 los archivos no pasan por la API, Postgres es la fuente de verdad (si Redis se
-vacia el sistema sigue siendo correcto) y la idempotencia de las tareas tiene
-tres capas (`asynq.TaskID`, tabla `processed_jobs` y restricciones de
-integridad).
+vacia el sistema sigue siendo correcto) y las reentregas de tareas no duplican
+efectos: tabla `processed_jobs`, restricciones de integridad y un lease de
+transcodificacion en `assets` (en modo asynq local se suma `asynq.TaskID`).
 
-**Observabilidad en la nube:** Cloud Monitoring (Ops Agent en las VMs y
-metricas nativas de Cloud SQL) para infraestructura; Prometheus y exportadores
-en el Web Server para metricas de la aplicacion y de la cola; Grafana corre en
-el PC de quien analiza, conectado por un tunel IAP. Las trazas OpenTelemetry
-estan apagadas en la nube por memoria.
+**Observabilidad en la nube:** metricas nativas de Cloud Run
+(`container/instance_count`), de Pub/Sub (`num_undelivered_messages`) y de
+Cloud SQL en Cloud Monitoring, y registros de cada servicio en Cloud Logging.
+Las trazas OpenTelemetry estan apagadas en la nube.
 
-Para red, firewall, cuentas de servicio, costos, puntos unicos de falla y
-operacion (despliegue, migracion, respaldo) ver
-[`docs/entrega2/README.md`](docs/entrega2/README.md).
+Red, identidades, secretos, escalamiento, operacion y deuda tecnica en
+[`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md).
 
 ## Mapa del repositorio
 
 | Carpeta / archivo | Contenido | Mas documentacion |
 |---|---|---|
 | [`cmd/api/`](cmd/api/) | Punto de entrada del proceso HTTP (`main.go`). | `docs/entrega1/DOCUMENTACION.md` |
-| [`cmd/worker/`](cmd/worker/) | Punto de entrada del proceso que consume la cola (`main.go`). | `docs/entrega1/DOCUMENTACION.md` |
-| [`internal/`](internal/) | Paquetes del backend: `api` (handlers, middlewares, rutas), `auth`, `audit`, `badge`, `config` (unico lugar donde se leen variables de entorno), `database`, `mailer`, `metrics`, `openapi` (contrato embebido), `progress`, `queue`, `storage`, `tasks` (handlers del worker) y `telemetry`. | `docs/entrega1/DOCUMENTACION.md` |
+| [`cmd/worker/`](cmd/worker/) | Punto de entrada del worker (`main.go`): servidor push de Pub/Sub (`QUEUE_BACKEND=pubsub`, Cloud Run) o consumidor asynq (local). | `docs/entrega1/DOCUMENTACION.md` |
+| [`cmd/queue-metrics/`](cmd/queue-metrics/) | Publicaba el tamano de la cola asynq en Cloud Monitoring para autoescalar los workers de la Entrega 3. No se usa en Cloud Run. | [`docs/entrega3/arquitectura.md`](docs/entrega3/arquitectura.md) |
+| [`internal/`](internal/) | Paquetes del backend: `api` (handlers, middlewares, rutas), `auth`, `audit`, `badge`, `config` (unico lugar donde se leen variables de entorno), `database`, `mailer`, `metrics`, `openapi` (contrato embebido), `progress`, `queue` (publicador asynq o Pub/Sub segun `QUEUE_BACKEND`), `pubsubpush` (recepcion del push y validacion OIDC), `queuemetrics`, `storage`, `tasks` (handlers del worker) y `telemetry`. | `docs/entrega1/DOCUMENTACION.md` |
 | [`db/`](db/) | `init.sql`, esquema completo de la base. Solo se ejecuta al crear el volumen. | `docs/entrega1/ARQUITECTURA.md` |
 | [`frontend/`](frontend/) | Frontend Next.js 15 + TypeScript + Tailwind (BFF). | [`frontend/README.md`](frontend/README.md) |
-| [`deploy/gcp/`](deploy/gcp/) | `provision.sh`, `startup.sh`, `migrate.sh`, `cors.json` y un compose por VM: `web/` (API, frontend, Caddy), `worker/` (worker, Redis, Mailpit) y `monitor/` (Prometheus, exportadores, Grafana local, `k6.sh`). | [`docs/entrega2/README.md`](docs/entrega2/README.md) |
+| [`deploy/gcp/`](deploy/gcp/) | Entrega 4: `cloudrun.sh` (red, secretos, servicios de Cloud Run y Pub/Sub), `verificar-e4.sh` y `escalamiento-e4.sh`. Comunes: `build.sh`, `migrate.sh`, `provision.sh`, `cors.json`. Entregas 2 y 3: `startup.sh`, `mig/` y un compose por VM (`web/`, `worker/`, `monitor/`). | [`docs/entrega4/arquitectura.md`](docs/entrega4/arquitectura.md) |
 | [`deploy/`](deploy/) | Configuracion local de Prometheus y Grafana (dashboard provisionado) y `docker-compose.metrics.yml` con exportadores. | — |
-| [`capacity-planning/`](capacity-planning/) | Scripts de k6, resultados y el informe de capacidad de los escenarios 1 y 2. | [`capacity-planning/README.md`](capacity-planning/README.md), [`capacity-planning/escenario2/README.md`](capacity-planning/escenario2/README.md) |
+| [`capacity-planning/`](capacity-planning/) | Scripts de k6, resultados e informes de capacidad de las Entregas 2 y 3. | [`capacity-planning/README.md`](capacity-planning/README.md), [`capacity-planning/escenario2/README.md`](capacity-planning/escenario2/README.md) |
 | [`postman/`](postman/) | Coleccion de la API y entornos local y nube. | [`postman/README.md`](postman/README.md) |
 | [`.postman/`](.postman/) | Metadatos del workspace de Postman. | — |
-| [`docs/`](docs/) | Documentacion de cada entrega (`entrega1/`, `entrega2/`, `entrega3/`). | — |
+| [`docs/`](docs/) | Documentacion de cada entrega (`entrega1/` a `entrega4/`). | — |
 | [`docs/entrega3/FuncionalidadFront/PruebaAccesibilidad/`](docs/entrega3/FuncionalidadFront/PruebaAccesibilidad/) | Auditoria automatica WCAG 2.2 AA (`ejecutar.sh`, script de Playwright + axe en `prueba/`) y su ultimo reporte en `resultados/`. | [`README.md`](docs/entrega3/FuncionalidadFront/PruebaAccesibilidad/README.md) |
 | [`docs/entrega1/testdata/`](docs/entrega1/testdata/) | Pruebas de humo de extremo a extremo (`smoke.sh` y `smoke_*.sh`, cada una demuestra un comportamiento concreto). | [`docs/entrega1/testdata/README.md`](docs/entrega1/testdata/README.md) |
-| `Dockerfile.api`, `Dockerfile.worker`, `Dockerfile.web` | Imagenes de la API, el worker y el frontend. | — |
+| `Dockerfile.api`, `Dockerfile.worker`, `Dockerfile.web`, `Dockerfile.queue-metrics` | Imagenes de la API, el worker, el frontend y la medicion de cola de la Entrega 3. | — |
 | `docker-compose.yml`, `Makefile` | Entorno local completo y atajos. | Esta pagina |
 
 ## Contrato de la API
@@ -262,5 +275,28 @@ docker compose up --scale worker=3   # varios workers
 
 ## Uso de agentes de inteligencia artificial
 
-El diseno y la implementacion se realizaron con asistencia de un agente de IA,
-segun lo permite el enunciado del curso. Debe declararse en la sustentacion.
+Segun lo permite el enunciado del curso, el equipo uso un agente de
+inteligencia artificial como asistente a lo largo de las cuatro entregas. Su
+aporte permitio avanzar mas rapido en cada etapa del proyecto:
+
+- **Diseno e implementacion:** propuesta y discusion de alternativas de
+  arquitectura, escritura de codigo del backend, del frontend y de los
+  scripts de despliegue, y diagnostico de errores encontrados en las pruebas
+  y en la nube.
+- **Operacion en Google Cloud:** generacion de las instrucciones de `gcloud`
+  y de los pasos que se ejecutaron en Cloud Shell para aprovisionar,
+  desplegar, migrar y verificar la infraestructura de cada entrega.
+- **Documentacion:** redaccion y actualizacion de los documentos de
+  arquitectura, los informes de capacidad, las guias de operacion y este
+  README.
+- **Pruebas:** escritura de las pruebas de humo, las pruebas unitarias, los
+  escenarios de carga con k6, la auditoria de accesibilidad y los scripts de
+  verificacion y escalamiento.
+
+Todo el trabajo se hizo bajo la supervision de los integrantes del grupo:
+cada propuesta se reviso antes de incorporarla, los comandos se ejecutaron
+y validaron manualmente sobre el entorno real, y los resultados reportados
+(pruebas, metricas y evidencias) se verificaron contra lo observado en el
+despliegue. Las decisiones de diseno y la responsabilidad sobre el resultado
+final son del equipo. El uso de la herramienta se declara tambien en la
+sustentacion.

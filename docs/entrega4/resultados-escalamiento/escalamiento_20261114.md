@@ -38,8 +38,7 @@ configurado de 3.
   porque el worker confirma cada tarea en ~0.1 s (son tareas no-op, sin
   transcodificacion). Sin acumulacion de backlog, Cloud Run no necesita crear la
   tercera instancia. El escalado a 3 se observaria con tareas que tardan
-  (transcodificacion de video real), que se demuestra en el recorrido funcional
-  por el navegador.
+  (transcodificacion de video real).
 - El enunciado no exige alcanzar el tope de 3, solo demostrar el escalado
   automatico y el limite configurado; ambos quedan evidenciados.
 
